@@ -1,0 +1,11 @@
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+<div>
+    <h1><a href="/">CREME</a></h1>
+    <h2>New Testbed: number of machines</h2>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form_testbed.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+</div>
