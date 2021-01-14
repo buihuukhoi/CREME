@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Testbed, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, NonVulnerableClient,\
-    AttackerServer, MaliciousClient
+    AttackerServer, MaliciousClient, AttackScenario
 
 
 class TestbedForm(forms.ModelForm):
@@ -68,3 +68,11 @@ class MaliciousClientForm(forms.ModelForm):
     class Meta:
         model = MaliciousClient
         fields = ('hostname', 'ip', 'username', 'password')
+
+
+class AttackScenarioForm(forms.ModelForm):
+
+    class Meta:
+        model = AttackScenario
+        fields = ('mirai', 'ransomware', 'resource_hijacking', 'disk_wipe', 'end_point_dos')
+

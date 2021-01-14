@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from .models import Testbed, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, NonVulnerableClient,\
-    AttackerServer, MaliciousClient
+    AttackerServer, MaliciousClient, AttackScenario
 from .forms import TestbedForm, DataLoggerServerForm, TargetServerForm, BenignServerForm, VulnerableClientForm,\
-    NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm
+    NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm
 from django.shortcuts import redirect
 
 # Create your views here.
@@ -38,27 +38,35 @@ def new_testbed(request):
 
     if request.method == "POST":
         form_testbed = TestbedForm(request.POST)
+        form_attack_scenario = AttackScenarioForm(request.POST)
+
         if form_testbed.is_valid():
+            testbeds = Testbed.objects.all()
+            if testbeds:  # update first object if it exists, otherwise --> create new one
+                first_testbed = testbeds.first()
+                form_testbed = TestbedForm(request.POST, instance=first_testbed)
             testbed = form_testbed.save(commit=False)
             testbed.number_of_data_logger_server = 1
             testbed.number_of_target_server = 1
             testbed.number_of_benign_server = 1
             testbed.number_of_attacker_server = 1
             testbed.number_of_malicious_client = 1
+            testbed.save()
 
-            testbeds = Testbed.objects.all()
-            if testbeds:  # update first object
-                first_testbed = testbeds.first()
-                first_testbed.number_of_vulnerable_client = testbed.number_of_vulnerable_client
-                first_testbed.number_of_non_vulnerable_client = testbed.number_of_non_vulnerable_client
-                first_testbed.save()
-            else:  # not exists any object --> create new one
-                testbed.save()
+        if form_attack_scenario.is_valid():
+            attack_scenarios = AttackScenario.objects.all()
+            if attack_scenarios:  # update first object if it exists, otherwise --> create new one
+                first_attack_scenario = attack_scenarios.first()
+                form_attack_scenario = AttackScenarioForm(request.POST, instance=first_attack_scenario)
+            form_attack_scenario.save()
 
-            return redirect(NEW_TESTBED_INFORMATION)
+        return redirect(NEW_TESTBED_INFORMATION)
+
     else:
         form_testbed = TestbedForm()
-    return render(request, 'testbed/new_testbed.html', {'form_testbed': form_testbed})
+        form_attack_scenario = AttackScenarioForm()
+    return render(request, 'testbed/new_testbed.html', {'form_testbed': form_testbed,
+                                                        'form_attack_scenario': form_attack_scenario})
 
 
 def new_testbed_information(request):

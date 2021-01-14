@@ -3,9 +3,12 @@
 
 <div>
     <h1><a href="/">CREME</a></h1>
-    <h2>New Testbed: number of machines</h2>
+    <h2>New Testbed</h2>
     <form method="POST" class="post-form">{% csrf_token %}
+        <h3>Number of machines:</h3>
         {{ form_testbed.as_p }}
+        <h3>Scenario:</h3>
+        {{ form_attack_scenario.as_p }}
         <button type="submit" class="save btn btn-default">Save</button>
     </form>
 </div>

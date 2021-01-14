@@ -69,6 +69,15 @@ class MaliciousClient(models.Model):
     password = models.CharField(max_length=255)
 
 
+class AttackScenario(models.Model):
+    mirai = models.BooleanField(default=True)
+    ransomware = models.BooleanField(default=True)
+    resource_hijacking = models.BooleanField(default=True)
+    disk_wipe = models.BooleanField(default=True)
+    end_point_dos = models.BooleanField(default=True)
+
+
+
 
 
 
