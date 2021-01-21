@@ -28,11 +28,11 @@ class Machine:
 
 
 class DataLoggerServer(Machine):
-    def __init__(self, hostname, ip, username, password, path, net_interface, tcp_file="traffic.pcap",
+    def __init__(self, hostname, ip, username, password, path, network_interface, tcp_file="traffic.pcap",
                  tcp_pids_file="tcp_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
         self.path = path
-        self.net_interface = net_interface
+        self.network_interface = network_interface
         self.tcp_file = tcp_file
         self.tcp_pids_file = tcp_pids_file
 
