@@ -7,6 +7,7 @@ from django.utils import timezone
 
 class Testbed(models.Model):
     status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    number_of_controller = models.IntegerField(default=1)  # only 1
     number_of_data_logger_server = models.IntegerField(default=1)  # only 1
     number_of_target_server = models.IntegerField(default=1)  # only 1
     number_of_benign_server = models.IntegerField(default=1)  # only 1
@@ -16,11 +17,20 @@ class Testbed(models.Model):
     number_of_malicious_client = models.IntegerField(default=1)  # only 1
 
 
-class DataLoggerServer(models.Model):
+class Controller(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+    path = models.CharField(max_length=255)
+
+
+class DataLoggerServer(models.Model):
+    hostname = models.CharField(max_length=255, unique=True)
+    ip = models.CharField(max_length=255, unique=True)
+    username = models.CharField(max_length=255, default="root")
+    password = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, default="/root")
     network_interface = models.CharField(max_length=255)
     #testbed = models.ForeignKey('Testbed', related_name='data_logger_servers', on_delete=models.CASCADE)
 
@@ -28,45 +38,50 @@ class DataLoggerServer(models.Model):
 class TargetServer(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, default="/root")
 
 
 class BenignServer(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, default="/root")
 
 
 class VulnerableClient(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, default="/root")
 
 
 class NonVulnerableClient(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, default="/root")
 
 
 class AttackerServer(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255)
-    path = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, default="/root")
     number_of_new_bots = models.IntegerField(default=3)
 
 
 class MaliciousClient(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, default="/root")
 
 
 class AttackScenario(models.Model):

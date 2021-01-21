@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from .models import Testbed, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, NonVulnerableClient,\
-    AttackerServer, MaliciousClient, AttackScenario
-from .forms import TestbedForm, DataLoggerServerForm, TargetServerForm, BenignServerForm, VulnerableClientForm,\
-    NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm
+from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, \
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario
+from .forms import TestbedForm, ControllerForm, DataLoggerServerForm, TargetServerForm, BenignServerForm, \
+    VulnerableClientForm, NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm
 from django.shortcuts import redirect
+import threading
 
 # Create your views here.
 
@@ -13,7 +14,27 @@ NEW_TESTBED = 'new_testbed'
 NEW_TESTBED_INFORMATION = 'new_testbed_information'
 
 
-def is_running():
+def update_running_testbed():
+    testbeds = Testbed.objects.all()
+    if testbeds:
+        first_testbed = testbeds.first()
+        first_testbed.status = 2
+        first_testbed.save()
+
+
+def load_testbed_information():
+    dls = DataLoggerServer.objects.all().first()
+    target_server = TargetServer.objects.all().first()
+    benign_server = BenignServer.objects.all().first()
+    vulnerable_clients = VulnerableClient.objects.all()
+    non_vulnerable_clients = NonVulnerableClient.objects.all()
+    attacker_server = AttackerServer.objects.all().first()
+    malicious_client = MaliciousClient.objects.all().first()
+
+    # create a CREME object
+
+
+def is_running_testbed():
     # check whether the testbed is running or not?
     testbeds = Testbed.objects.all()
     if testbeds:
@@ -28,12 +49,19 @@ def not_exist_testbed():
         return True
 
 
+def execute_toolchain():
+    update_running_testbed()
+    load_testbed_information()
+    print("the toolchain is executing...............")
+    pass
+
+
 def dashboard(request):
     return render(request, 'testbed/dashboard.html', {})
 
 
 def new_testbed(request):
-    if is_running():
+    if is_running_testbed():
         return redirect(DASHBOARD)
 
     if request.method == "POST":
@@ -46,6 +74,7 @@ def new_testbed(request):
                 first_testbed = testbeds.first()
                 form_testbed = TestbedForm(request.POST, instance=first_testbed)
             testbed = form_testbed.save(commit=False)
+            testbed.number_of_controller = 1
             testbed.number_of_data_logger_server = 1
             testbed.number_of_target_server = 1
             testbed.number_of_benign_server = 1
@@ -72,10 +101,11 @@ def new_testbed(request):
 def new_testbed_information(request):
     if not_exist_testbed():
         return redirect(NEW_TESTBED)
-    if is_running():
+    if is_running_testbed():
         return redirect(DASHBOARD)
 
     testbed = Testbed.objects.all().first()
+    num_of_c = testbed.number_of_controller
     num_of_dls = testbed.number_of_data_logger_server
     num_of_target_server = testbed.number_of_target_server
     num_of_benign_server = testbed.number_of_benign_server
@@ -86,6 +116,7 @@ def new_testbed_information(request):
 
     if request.method == "POST":
         # clear all existing objects
+        Controller.objects.all().delete()
         DataLoggerServer.objects.all().delete()
         TargetServer.objects.all().delete()
         BenignServer.objects.all().delete()
@@ -93,6 +124,10 @@ def new_testbed_information(request):
         NonVulnerableClient.objects.all().delete()
         AttackerServer.objects.all().delete()
         MaliciousClient.objects.all().delete()
+
+        form_c = ControllerForm(request.POST, prefix='c')
+        if form_c.is_valid():
+            form_c.save()
 
         form_dls = DataLoggerServerForm(request.POST, prefix='dls')
         if form_dls.is_valid():
@@ -108,7 +143,9 @@ def new_testbed_information(request):
 
         form_as = AttackerServerForm(request.POST, prefix='as')
         if form_as.is_valid():
-            form_as.save()
+            attacker_server = form_as.save(commit=False)
+            attacker_server.number_of_new_bots = num_of_vulnerable_client
+            attacker_server.save()
 
         form_mc = MaliciousClientForm(request.POST, prefix='mc')
         if form_mc.is_valid():
@@ -123,9 +160,15 @@ def new_testbed_information(request):
             form_nvc = NonVulnerableClientForm(request.POST, prefix='nvc{0}'.format(i+1))
             if form_nvc.is_valid():
                 form_nvc.save()
+
+        # execute the main task
+        t = threading.Thread(target=execute_toolchain(), args=())
+        t.start()
+
         return redirect(DASHBOARD)
     else:
         dict_machines = dict()
+        dict_machines['Controller'] = ControllerForm(prefix='c')
         dict_machines['Data Logger Server'] = DataLoggerServerForm(prefix='dls')
         dict_machines['Target Server'] = TargetServerForm(prefix='ts')
         dict_machines['Benign Server'] = BenignServerForm(prefix='bs')
