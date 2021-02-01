@@ -32,7 +32,7 @@ class DataLoggerServer(models.Model):
     password = models.CharField(max_length=255)
     path = models.CharField(max_length=255, default="/root")
     network_interface = models.CharField(max_length=255)
-    #testbed = models.ForeignKey('Testbed', related_name='data_logger_servers', on_delete=models.CASCADE)
+    atop_interval = models.IntegerField(default=1)  # second
 
 
 class TargetServer(models.Model):

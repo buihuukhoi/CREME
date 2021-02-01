@@ -25,7 +25,7 @@ def update_running_testbed():
 
 
 def load_testbed_information():
-    # Load testbed's information from database
+    # ===> Load testbed's information from database <===
     info_controller = Controller.objects.all().first()
     info_dls = DataLoggerServer.objects.all().first()
     info_ts = TargetServer.objects.all().first()
@@ -42,7 +42,7 @@ def load_testbed_information():
     disk_wipe = info_attack_scenario.disk_wipe
     end_point_dos = info_attack_scenario.end_point_dos
 
-    # prepare machine's information for a Creme object
+    # ===> prepare machine's information for a Creme object <===
     machines.Machine.controller_hostname = info_controller.hostname
     machines.Machine.controller_ip = info_controller.ip
     machines.Machine.controller_username = info_controller.username
@@ -50,22 +50,23 @@ def load_testbed_information():
     machines.Machine.controller_path = info_controller.path
 
     dls = machines.DataLoggerServer(info_dls.hostname, info_dls.ip, info_dls.username, info_dls.password,
-                                    info_dls.path, info_dls.network_interface)
+                                    info_dls.path, info_dls.network_interface, atop_interval=info_dls.atop_interval)
+    machines.DataLoggerClient.dls = dls  # load dls to Data Logger Client, use to centralize data from clients
     target_server = machines.TargetServer(info_ts.hostname, info_ts.ip, info_ts.username, info_ts.password,
-                                          info_ts.path)
+                                          info_ts.path, attacker_server_ip=info_as.ip)
     benign_server = machines.BenignServer(info_bs.hostname, info_bs.ip, info_bs.username, info_bs.password,
-                                          info_bs.path)
+                                          info_bs.path, attacker_server_ip=info_as.ip)
 
     vulnerable_clients = []
     for info_vc in info_list_vc:
         vulnerable_client = machines.VulnerableClient(info_vc.hostname, info_vc.ip, info_vc.username, info_vc.password,
-                                                      info_vc.path)
+                                                      info_vc.path, server=target_server)
         vulnerable_clients.append(vulnerable_client)
 
     non_vulnerable_clients = []
     for info_nvc in info_list_nvc:
         non_vulnerable_client = machines.NonVulnerableClient(info_nvc.hostname, info_nvc.ip, info_nvc.username,
-                                                             info_nvc.password, info_nvc.path)
+                                                             info_nvc.password, info_nvc.path, server=benign_server)
         non_vulnerable_clients.append(non_vulnerable_client)
 
     attacker_server = machines.AttackerServer(info_as.hostname, info_as.ip, info_as.username, info_as.password,
@@ -73,7 +74,7 @@ def load_testbed_information():
     malicious_client = machines.MaliciousClient(info_mc.hostname, info_mc.ip, info_mc.username, info_mc.password,
                                                 info_mc.path)
 
-    # create a Creme object
+    # ===> create a Creme object <===
     creme = Creme(dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients, attacker_server,
                   malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos)
     creme.test_print_information()

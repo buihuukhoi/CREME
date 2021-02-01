@@ -33,7 +33,7 @@ class DataLoggerServerForm(forms.ModelForm):
 
     class Meta:
         model = DataLoggerServer
-        fields = ('hostname', 'ip', 'username', 'password', 'path', 'network_interface')
+        fields = ('hostname', 'ip', 'username', 'password', 'path', 'network_interface', 'atop_interval')
 
 
 class TargetServerForm(forms.ModelForm):

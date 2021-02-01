@@ -31,5 +31,33 @@ class Creme:
     def configure(self):
         pass
 
+    def attack(self):
+        pass
+
+    def test_print_information(self):
+        """
+        This function uses only for testing purpose.
+        It will be removed later.
+        """
+        print("=====> Print Information <=====")
+        print("controller: {0}, {1}, {2}, {3}, {4}".format(self.dls.controller_hostname, self.dls.controller_ip,
+                                                           self.dls.controller_username, self.dls.controller_password,
+                                                           self.dls.controller_path))
+        print("<<<DLS>>> {0}".format(self.dls))
+        print("<<<Target Server>>> {0}".format(self.target_server))
+        print("<<<Benign Server>>> {0}".format(self.benign_server))
+        for vulnerable_client in self.vulnerable_clients:
+            print("<<<Vulnerable Client>>> {0}".format(vulnerable_client))
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            print("<<<Non Vulnerable Client>>> {0}".format(non_vulnerable_client))
+        print("<<<Attacker Server>>> {0}".format(self.attacker_server))
+        print("<<<Malicious Client>>> {0}".format(self.malicious_client))
+
+        print("mirai: {0}".format(self.mirai))
+        print("ransomware: {0}".format(self.ransomware))
+        print("resource_hijacking: {0}".format(self.resource_hijacking))
+        print("disk_wipe: {0}".format(self.disk_wipe))
+        print("end_point_dos: {0}".format(self.end_point_dos))
+        print("===============================")
 
 

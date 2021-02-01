@@ -29,24 +29,27 @@ class Machine:
 
 class DataLoggerServer(Machine):
     def __init__(self, hostname, ip, username, password, path, network_interface, tcp_file="traffic.pcap",
-                 tcp_pids_file="tcp_pids.txt"):
+                 tcp_pids_file="tcp_pids.txt", atop_interval=1):
         super().__init__(hostname, ip, username, password, path)
         self.path = path
         self.network_interface = network_interface
         self.tcp_file = tcp_file
         self.tcp_pids_file = tcp_pids_file
+        self.atop_interval = atop_interval
 
     def configure(self):
         pass
 
 
 class DataLoggerClient(Machine):
-    def __init__(self, hostname, ip, username, password, path, interval=1, atop_pids_file="atop_pids.txt"):
+    dls = None  # store information of data logger server
+
+    def __init__(self, hostname, ip, username, password, path, atop_pids_file="atop_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
         self.path = path
         self.atop_file = "{0}.raw".format(hostname)
-        self.interval = str(interval)
         self.atop_pids_file = atop_pids_file
+        self.atop_interval = str(self.dls.atop_interval)
 
     def configure(self):
         pass
@@ -72,7 +75,7 @@ class NonVulnerableClient(DataLoggerClient):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
-        self.server = server  # target server
+        self.server = server  # benign server
         self.ftp_folder = ftp_folder
         last_ip = int(ip.split('.')[-1])
         self.virtual_account = "client{0}".format(str(last_ip))
