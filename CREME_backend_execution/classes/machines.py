@@ -1,9 +1,11 @@
 import os
-from datetime import datetime
+from interface import implements
+from .interfaces import IConfiguration
+from .helper import ScriptHelper
 
 
 class Machine:
-    show_cmd = False
+    show_cmd = True
 
     # Controller's information
     controller_hostname = None
@@ -19,15 +21,12 @@ class Machine:
         self.password = password
         self.path = path
 
-    def configure(self):
-        raise NotImplementedError('subclasses must override configure()!')
-
     def __str__(self):
         attrs = vars(self)
         return ', '.join("%s: %s" % item for item in attrs.items())
 
 
-class DataLoggerServer(Machine):
+class DataLoggerServer(Machine, implements(IConfiguration)):
     def __init__(self, hostname, ip, username, password, path, network_interface, tcp_file="traffic.pcap",
                  tcp_pids_file="tcp_pids.txt", atop_interval=1):
         super().__init__(hostname, ip, username, password, path)
@@ -37,11 +36,20 @@ class DataLoggerServer(Machine):
         self.tcp_pids_file = tcp_pids_file
         self.atop_interval = atop_interval
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerServer_base.sh")
+        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
+        print(cmd) if self.show_cmd else os.system(cmd)
+
+    def configure_data_collection(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerServer_data_collection.sh")
+        cmd += " {0} {1} {2} {3} {4} {5} {6} {7}".format(del_known_hosts_path, self.ip, self.username, self.password,
+                                                         self.controller_ip, self.controller_username,
+                                                         self.controller_password, self.controller_path)
+        print(cmd) if self.show_cmd else os.system(cmd)
 
 
-class DataLoggerClient(Machine):
+class DataLoggerClient(Machine, implements(IConfiguration)):
     dls = None  # store information of data logger server
 
     def __init__(self, hostname, ip, username, password, path, atop_pids_file="atop_pids.txt"):
@@ -50,12 +58,27 @@ class DataLoggerClient(Machine):
         self.atop_file = "{0}.raw".format(hostname)
         self.atop_pids_file = atop_pids_file
         self.atop_interval = str(self.dls.atop_interval)
+        self.rsyslog_apache = False  # True will be overridden by Benign and Target Servers
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerClient_base.sh")
+        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
+        print(cmd) if self.show_cmd else os.system(cmd)
+
+    def configure_data_collection(self):
+        if self.rsyslog_apache:
+            rsyslog_file = "rsyslog_apache.conf"
+        else:
+            rsyslog_file = "rsyslog_no_apache.conf"
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerClient_data_collection.sh")
+        cmd += " {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}".format(del_known_hosts_path, self.ip, self.username,
+                                                                 self.password, self.controller_ip,
+                                                                 self.controller_username, self.controller_password,
+                                                                 self.controller_path, self.dls.ip, rsyslog_file)
+        print(cmd) if self.show_cmd else os.system(cmd)
 
 
-class VulnerableClient(DataLoggerClient):
+class VulnerableClient(DataLoggerClient, implements(IConfiguration)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -67,11 +90,14 @@ class VulnerableClient(DataLoggerClient):
         self.sleep_second = sleep_second
         self.benign_pids_file = benign_pids_file
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        super().configure_base()
+
+    def configure_data_collection(self):
+        super().configure_data_collection()
 
 
-class NonVulnerableClient(DataLoggerClient):
+class NonVulnerableClient(DataLoggerClient, implements(IConfiguration)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -84,33 +110,46 @@ class NonVulnerableClient(DataLoggerClient):
         self.benign_pids_file = benign_pids_file
         # something else
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        super().configure_base()
+
+    def configure_data_collection(self):
+        super().configure_data_collection()
 
 
-class TargetServer(DataLoggerClient):
+class TargetServer(DataLoggerClient, implements(IConfiguration)):
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
+        self.rsyslog_apache = True
         self.domain_name = domain_name
         self.attacker_server_ip = attacker_server_ip
         # something else
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        super().configure_base()
+
+    def configure_data_collection(self):
+        super().configure_data_collection()
 
 
-class BenignServer(DataLoggerClient):
+class BenignServer(DataLoggerClient, implements(IConfiguration)):
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
+        self.rsyslog_apache = True
         self.domain_name = domain_name
         self.attacker_server_ip = attacker_server_ip
         # something else
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        super().configure_base()
+
+    def configure_data_collection(self):
+        super().configure_data_collection()
 
 
-class AttackerServer(Machine):
+class AttackerServer(Machine, implements(IConfiguration)):
+    data_logger_server_ip = None
+
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
                  cnc_pids_file="cnc_pids.txt", transfer_pids_file="transfer_pids.txt", num_of_new_bots="3",
                  targeted_DDoS="", DDoS_type="udp", DDoS_duration="30"):
@@ -123,17 +162,35 @@ class AttackerServer(Machine):
         self.DDoS_type = DDoS_type
         self.DDoS_duration = DDoS_duration
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./AttackerServer_base.sh")
+        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
+        print(cmd) if self.show_cmd else os.system(cmd)
+
+    def configure_data_collection(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./AttackerServer_data_collection.sh")
+        cmd += " {0} {1} {2} {3} {4}".format(del_known_hosts_path, self.ip, self.username, self.password,
+                                             self.data_logger_server_ip)
+        print(cmd) if self.show_cmd else os.system(cmd)
 
 
-class MaliciousClient(Machine):
+class MaliciousClient(Machine, implements(IConfiguration)):
+    data_logger_server_ip = None
+
     def __init__(self, hostname, ip, username, password, path, mirai_pids_file="mirai_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
         self.path = path
         self.mirai_pids_file = mirai_pids_file
         # do something else
 
-    def configure(self):
-        pass
+    def configure_base(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./MaliciousClient_base.sh")
+        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
+        print(cmd) if self.show_cmd else os.system(cmd)
+
+    def configure_data_collection(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./MaliciousClient_data_collection.sh")
+        cmd += " {0} {1} {2} {3} {4}".format(del_known_hosts_path, self.ip, self.username, self.password,
+                                             self.data_logger_server_ip)
+        print(cmd) if self.show_cmd else os.system(cmd)
 
