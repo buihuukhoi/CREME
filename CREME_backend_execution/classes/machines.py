@@ -151,13 +151,13 @@ class AttackerServer(Machine, implements(IConfiguration)):
     data_logger_server_ip = None
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
-                 cnc_pids_file="cnc_pids.txt", transfer_pids_file="transfer_pids.txt", num_of_new_bots="3",
+                 cnc_pids_file="cnc_pids.txt", transfer_pids_file="transfer_pids.txt", number_of_new_bots="3",
                  targeted_DDoS="", DDoS_type="udp", DDoS_duration="30"):
         super().__init__(hostname, ip, username, password, path)
         self.cnc_pids_file = cnc_pids_file
         self.transfer_pids_file = transfer_pids_file
         self.bot_input_files = []
-        self.num_of_new_bots = num_of_new_bots
+        self.num_of_new_bots = number_of_new_bots
         self.targeted_DDoS = targeted_DDoS
         self.DDoS_type = DDoS_type
         self.DDoS_duration = DDoS_duration
