@@ -1,6 +1,6 @@
 import os
 from interface import implements
-from .interfaces import IConfiguration
+from .interfaces import IConfiguration, IConfigurationAttack
 from .helper import ScriptHelper
 
 
@@ -78,7 +78,7 @@ class DataLoggerClient(Machine, implements(IConfiguration)):
         print(cmd) if self.show_cmd else os.system(cmd)
 
 
-class VulnerableClient(DataLoggerClient, implements(IConfiguration)):
+class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationAttack)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -95,6 +95,25 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration)):
 
     def configure_data_collection(self):
         super().configure_data_collection()
+
+    def configure_mirai(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./VulnerableClient_mirai.sh")
+        cmd += " {0} {1} {2} {3} {4} {5} {6} {7}".format(del_known_hosts_path, self.ip, self.username, self.password,
+                                                         self.controller_ip, self.controller_username,
+                                                         self.controller_password, self.controller_path)
+        print(cmd) if self.show_cmd else os.system(cmd)
+
+    def configure_ransomware(self):
+        pass
+
+    def configure_resource_hijacking(self):
+        pass
+
+    def configure_disk_wipe(self):
+        pass
+
+    def configure_end_point_dos(self):
+        pass
 
 
 class NonVulnerableClient(DataLoggerClient, implements(IConfiguration)):
@@ -117,7 +136,7 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration)):
         super().configure_data_collection()
 
 
-class TargetServer(DataLoggerClient, implements(IConfiguration)):
+class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationAttack)):
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
         self.rsyslog_apache = True
@@ -130,6 +149,25 @@ class TargetServer(DataLoggerClient, implements(IConfiguration)):
 
     def configure_data_collection(self):
         super().configure_data_collection()
+
+    def configure_mirai(self):
+        pass
+
+    def configure_ransomware(self):
+        # ?????
+        pass
+
+    def configure_resource_hijacking(self):
+        # ?????
+        pass
+
+    def configure_disk_wipe(self):
+        # ?????
+        pass
+
+    def configure_end_point_dos(self):
+        # ?????
+        pass
 
 
 class BenignServer(DataLoggerClient, implements(IConfiguration)):
@@ -147,7 +185,7 @@ class BenignServer(DataLoggerClient, implements(IConfiguration)):
         super().configure_data_collection()
 
 
-class AttackerServer(Machine, implements(IConfiguration)):
+class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationAttack)):
     data_logger_server_ip = None
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
@@ -173,9 +211,33 @@ class AttackerServer(Machine, implements(IConfiguration)):
                                              self.data_logger_server_ip)
         print(cmd) if self.show_cmd else os.system(cmd)
 
+    def configure_mirai(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./AttackerServer_mirai.sh")
+        cmd += " {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}".format(del_known_hosts_path, self.ip, self.username,
+                                                                 self.password, self.path, self.controller_ip,
+                                                                 self.controller_username, self.controller_password,
+                                                                 self.controller_path, self.transfer_pids_file)
 
-class MaliciousClient(Machine, implements(IConfiguration)):
+    def configure_ransomware(self):
+        # ?????
+        pass
+
+    def configure_resource_hijacking(self):
+        # ?????
+        pass
+
+    def configure_disk_wipe(self):
+        # ?????
+        pass
+
+    def configure_end_point_dos(self):
+        # ?????
+        pass
+
+
+class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationAttack)):
     data_logger_server_ip = None
+    attacker_server = None
 
     def __init__(self, hostname, ip, username, password, path, mirai_pids_file="mirai_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -194,3 +256,25 @@ class MaliciousClient(Machine, implements(IConfiguration)):
                                              self.data_logger_server_ip)
         print(cmd) if self.show_cmd else os.system(cmd)
 
+    def configure_mirai(self):
+        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./MaliciousClient_mirai.sh")
+        cmd += " {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(del_known_hosts_path, self.ip, self.username,
+                                                             self.password, self.path, self.attacker_server.ip,
+                                                             self.attacker_server.username,
+                                                             self.attacker_server.password, self.attacker_server.path)
+
+    def configure_ransomware(self):
+        # ?????
+        pass
+
+    def configure_resource_hijacking(self):
+        # ?????
+        pass
+
+    def configure_disk_wipe(self):
+        # ?????
+        pass
+
+    def configure_end_point_dos(self):
+        # ?????
+        pass
