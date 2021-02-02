@@ -1,7 +1,8 @@
 import os
 from interface import implements
-from .interfaces import IConfiguration, IConfigurationAttack
+from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack
 from .helper import ScriptHelper
+from .CREME import Creme
 
 
 class Machine:
@@ -26,7 +27,7 @@ class Machine:
         return ', '.join("%s: %s" % item for item in attrs.items())
 
 
-class DataLoggerServer(Machine, implements(IConfiguration)):
+class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon)):
     def __init__(self, hostname, ip, username, password, path, network_interface, tcp_file="traffic.pcap",
                  tcp_pids_file="tcp_pids.txt", atop_interval=1):
         super().__init__(hostname, ip, username, password, path)
@@ -35,6 +36,10 @@ class DataLoggerServer(Machine, implements(IConfiguration)):
         self.tcp_file = tcp_file
         self.tcp_pids_file = tcp_pids_file
         self.atop_interval = atop_interval
+
+    def configure(self):
+        self.configure_base()
+        self.configure_data_collection()
 
     def configure_base(self):
         cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerServer_base.sh")
@@ -49,7 +54,7 @@ class DataLoggerServer(Machine, implements(IConfiguration)):
         print(cmd) if self.show_cmd else os.system(cmd)
 
 
-class DataLoggerClient(Machine, implements(IConfiguration)):
+class DataLoggerClient(Machine, implements(IConfigurationCommon)):
     dls = None  # store information of data logger server
 
     def __init__(self, hostname, ip, username, password, path, atop_pids_file="atop_pids.txt"):
@@ -78,7 +83,8 @@ class DataLoggerClient(Machine, implements(IConfiguration)):
         print(cmd) if self.show_cmd else os.system(cmd)
 
 
-class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationAttack)):
+class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
+                       implements(IConfigurationAttack)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -89,6 +95,20 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
         self.target_virtual_account = "client{0}".format(str(last_ip + 1))
         self.sleep_second = sleep_second
         self.benign_pids_file = benign_pids_file
+
+    def configure(self):
+        self.configure_base()
+        self.configure_data_collection()
+        if Creme.mirai:
+            self.configure_mirai()
+        if Creme.ransomware:
+            self.configure_ransomware()
+        if Creme.resource_hijacking:
+            self.configure_resource_hijacking()
+        if Creme.disk_wipe:
+            self.configure_disk_wipe()
+        if Creme.end_point_dos:
+            self.configure_end_point_dos()
 
     def configure_base(self):
         super().configure_base()
@@ -116,7 +136,7 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
         pass
 
 
-class NonVulnerableClient(DataLoggerClient, implements(IConfiguration)):
+class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -129,6 +149,10 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration)):
         self.benign_pids_file = benign_pids_file
         # something else
 
+    def configure(self):
+        self.configure_base()
+        self.configure_data_collection()
+
     def configure_base(self):
         super().configure_base()
 
@@ -136,13 +160,28 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration)):
         super().configure_data_collection()
 
 
-class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationAttack)):
+class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
+                   implements(IConfigurationAttack)):
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
         self.rsyslog_apache = True
         self.domain_name = domain_name
         self.attacker_server_ip = attacker_server_ip
         # something else
+
+    def configure(self):
+        self.configure_base()
+        self.configure_data_collection()
+        if Creme.mirai:
+            self.configure_mirai()
+        if Creme.ransomware:
+            self.configure_ransomware()
+        if Creme.resource_hijacking:
+            self.configure_resource_hijacking()
+        if Creme.disk_wipe:
+            self.configure_disk_wipe()
+        if Creme.end_point_dos:
+            self.configure_end_point_dos()
 
     def configure_base(self):
         super().configure_base()
@@ -170,13 +209,17 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         pass
 
 
-class BenignServer(DataLoggerClient, implements(IConfiguration)):
+class BenignServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon)):
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
         self.rsyslog_apache = True
         self.domain_name = domain_name
         self.attacker_server_ip = attacker_server_ip
         # something else
+
+    def configure(self):
+        self.configure_base()
+        self.configure_data_collection()
 
     def configure_base(self):
         super().configure_base()
@@ -185,7 +228,8 @@ class BenignServer(DataLoggerClient, implements(IConfiguration)):
         super().configure_data_collection()
 
 
-class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationAttack)):
+class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
+                     implements(IConfigurationAttack)):
     data_logger_server_ip = None
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
@@ -199,6 +243,20 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         self.targeted_DDoS = targeted_DDoS
         self.DDoS_type = DDoS_type
         self.DDoS_duration = DDoS_duration
+
+    def configure(self):
+        self.configure_base()
+        self.configure_data_collection()
+        if Creme.mirai:
+            self.configure_mirai()
+        if Creme.ransomware:
+            self.configure_ransomware()
+        if Creme.resource_hijacking:
+            self.configure_resource_hijacking()
+        if Creme.disk_wipe:
+            self.configure_disk_wipe()
+        if Creme.end_point_dos:
+            self.configure_end_point_dos()
 
     def configure_base(self):
         cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./AttackerServer_base.sh")
@@ -235,7 +293,8 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         pass
 
 
-class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationAttack)):
+class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationCommon),
+                      implements(IConfigurationAttack)):
     data_logger_server_ip = None
     attacker_server = None
 
@@ -244,6 +303,20 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
         self.path = path
         self.mirai_pids_file = mirai_pids_file
         # do something else
+
+    def configure(self):
+        self.configure_base()
+        self.configure_data_collection()
+        if Creme.mirai:
+            self.configure_mirai()
+        if Creme.ransomware:
+            self.configure_ransomware()
+        if Creme.resource_hijacking:
+            self.configure_resource_hijacking()
+        if Creme.disk_wipe:
+            self.configure_disk_wipe()
+        if Creme.end_point_dos:
+            self.configure_end_point_dos()
 
     def configure_base(self):
         cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./MaliciousClient_base.sh")

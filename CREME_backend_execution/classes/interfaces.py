@@ -2,7 +2,11 @@ from interface import Interface
 
 
 class IConfiguration(Interface):
+    def configure(self):
+        pass
 
+
+class IConfigurationCommon(Interface):
     def configure_base(self):
         pass
 

@@ -2,6 +2,12 @@ from .machines import *
 
 
 class Creme:
+    mirai = True
+    ransomware = True
+    resource_hijacking = True
+    disk_wipe = True
+    end_point_dos = True
+
     def __init__(self, dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
                  attacker_server, malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos):
         # self.stage = 0
@@ -22,11 +28,11 @@ class Creme:
         self.malicious_client = malicious_client
 
         # Attack scenarios. True/False
-        self.mirai = mirai
-        self.ransomware = ransomware
-        self.resource_hijacking = resource_hijacking
-        self.disk_wipe = disk_wipe
-        self.end_point_dos = end_point_dos
+        Creme.mirai = mirai
+        Creme.ransomware = ransomware
+        Creme.resource_hijacking = resource_hijacking
+        Creme.disk_wipe = disk_wipe
+        Creme.end_point_dos = end_point_dos
 
     def configure(self):
         pass
@@ -59,5 +65,7 @@ class Creme:
         print("disk_wipe: {0}".format(self.disk_wipe))
         print("end_point_dos: {0}".format(self.end_point_dos))
         print("===============================")
+
+        # self.dls.configure_base()
 
 
