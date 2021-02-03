@@ -35,7 +35,33 @@ class Creme:
         Creme.end_point_dos = end_point_dos
 
     def configure(self):
-        pass
+        self.dls.configure()
+        self.target_server.configure()
+        self.benign_server.configure()
+        for vulnerable_client in self.vulnerable_clients:
+            vulnerable_client.configure()
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            non_vulnerable_client.configure()
+        self.attacker_server.configure()
+        self.malicious_client.configure()
+
+    def start_collect_data(self):
+        self.dls.start_collect_data()
+        self.target_server.start_collect_data()
+        self.benign_server.start_collect_data()
+        for vulnerable_client in self.vulnerable_clients:
+            vulnerable_client.start_collect_data()
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            non_vulnerable_client.start_collect_data()
+
+    def stop_collect_data(self):
+        self.dls.stop_collect_data()
+        self.target_server.stop_collect_data()
+        self.benign_server.stop_collect_data()
+        for vulnerable_client in self.vulnerable_clients:
+            vulnerable_client.stop_collect_data()
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            non_vulnerable_client.stop_collect_data()
 
     def attack(self):
         pass
