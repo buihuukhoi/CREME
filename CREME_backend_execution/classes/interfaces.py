@@ -31,3 +31,12 @@ class IConfigurationAttack(Interface):
         pass
 
 
+class IDataCollection(Interface):
+    def start_collect_data(self):
+        pass
+
+    def stop_collect_data(self):
+        pass
+
+
+

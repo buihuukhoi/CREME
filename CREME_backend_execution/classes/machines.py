@@ -1,6 +1,6 @@
 import os
 from interface import implements
-from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack
+from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IDataCollection
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -27,7 +27,8 @@ class Machine:
         return ', '.join("%s: %s" % item for item in attrs.items())
 
 
-class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon)):
+class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
+                       implements(IDataCollection)):
     def __init__(self, hostname, ip, username, password, path, network_interface, tcp_file="traffic.pcap",
                  tcp_pids_file="tcp_pids.txt", atop_interval=1):
         super().__init__(hostname, ip, username, password, path)
@@ -52,8 +53,19 @@ class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigur
                       self.controller_password, self.controller_path]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def start_collect_data(self):
+        filename_path = "data_collection/./start_packet.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.tcp_file, self.network_interface,
+                      self.tcp_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
-class DataLoggerClient(Machine, implements(IConfigurationCommon)):
+    def stop_collect_data(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.tcp_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+
+class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDataCollection)):
     dls = None  # store information of data logger server
 
     def __init__(self, hostname, ip, username, password, path, atop_pids_file="atop_pids.txt"):
@@ -79,9 +91,21 @@ class DataLoggerClient(Machine, implements(IConfigurationCommon)):
                       self.controller_password, self.controller_path, self.dls.ip, rsyslog_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def start_collect_data(self):
+        filename_path = "data_collection/./start_atop.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.atop_file, self.interval,
+                      self.atop_pids_file, self.controller_ip, self.controller_username, self.controller_password,
+                      self.controller_path]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def stop_collect_data(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.atop_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
 
 class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                       implements(IConfigurationAttack)):
+                       implements(IConfigurationAttack), implements(IDataCollection)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -113,6 +137,12 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
     def configure_data_collection(self):
         super().configure_data_collection()
 
+    def start_collect_data(self):
+        super().start_collect_data()
+
+    def stop_collect_data(self):
+        super().stop_collect_data()
+
     def configure_mirai(self):
         filename_path = "configuration/./VulnerableClient_mirai.sh"
         parameters = [self.ip, self.username, self.password, self.controller_ip, self.controller_username,
@@ -132,7 +162,8 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
         pass
 
 
-class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon)):
+class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
+                          implements(IDataCollection)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -155,9 +186,15 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
     def configure_data_collection(self):
         super().configure_data_collection()
 
+    def start_collect_data(self):
+        super().start_collect_data()
+
+    def stop_collect_data(self):
+        super().stop_collect_data()
+
 
 class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                   implements(IConfigurationAttack)):
+                   implements(IConfigurationAttack), implements(IDataCollection)):
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
         self.rsyslog_apache = True
@@ -185,6 +222,12 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
     def configure_data_collection(self):
         super().configure_data_collection()
 
+    def start_collect_data(self):
+        super().start_collect_data()
+
+    def stop_collect_data(self):
+        super().stop_collect_data()
+
     def configure_mirai(self):
         pass
 
@@ -205,7 +248,8 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         pass
 
 
-class BenignServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon)):
+class BenignServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
+                   implements(IDataCollection)):
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
         self.rsyslog_apache = True
@@ -222,6 +266,12 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def configure_data_collection(self):
         super().configure_data_collection()
+
+    def start_collect_data(self):
+        super().start_collect_data()
+
+    def stop_collect_data(self):
+        super().stop_collect_data()
 
 
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
