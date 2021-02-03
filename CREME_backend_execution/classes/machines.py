@@ -6,7 +6,7 @@ from .CREME import Creme
 
 
 class Machine:
-    show_cmd = True
+    show_cmd = True  # a flag use to show cmd or execute cmd
 
     # Controller's information
     controller_hostname = None
@@ -42,16 +42,15 @@ class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigur
         self.configure_data_collection()
 
     def configure_base(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerServer_base.sh")
-        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./DataLoggerServer_base.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_data_collection(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerServer_data_collection.sh")
-        cmd += " {0} {1} {2} {3} {4} {5} {6} {7}".format(del_known_hosts_path, self.ip, self.username, self.password,
-                                                         self.controller_ip, self.controller_username,
-                                                         self.controller_password, self.controller_path)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./DataLoggerServer_data_collection.sh"
+        parameters = [self.ip, self.username, self.password, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
 
 class DataLoggerClient(Machine, implements(IConfigurationCommon)):
@@ -66,21 +65,19 @@ class DataLoggerClient(Machine, implements(IConfigurationCommon)):
         self.rsyslog_apache = False  # True will be overridden by Benign and Target Servers
 
     def configure_base(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerClient_base.sh")
-        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./DataLoggerClient_base.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_data_collection(self):
         if self.rsyslog_apache:
             rsyslog_file = "rsyslog_apache.conf"
         else:
             rsyslog_file = "rsyslog_no_apache.conf"
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./DataLoggerClient_data_collection.sh")
-        cmd += " {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}".format(del_known_hosts_path, self.ip, self.username,
-                                                                 self.password, self.controller_ip,
-                                                                 self.controller_username, self.controller_password,
-                                                                 self.controller_path, self.dls.ip, rsyslog_file)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./DataLoggerClient_data_collection.sh"
+        parameters = [self.ip, self.username, self.password, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, self.dls.ip, rsyslog_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
 
 class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
@@ -117,11 +114,10 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
         super().configure_data_collection()
 
     def configure_mirai(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./VulnerableClient_mirai.sh")
-        cmd += " {0} {1} {2} {3} {4} {5} {6} {7}".format(del_known_hosts_path, self.ip, self.username, self.password,
-                                                         self.controller_ip, self.controller_username,
-                                                         self.controller_password, self.controller_path)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./VulnerableClient_mirai.sh"
+        parameters = [self.ip, self.username, self.password, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):
         pass
@@ -259,22 +255,20 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
             self.configure_end_point_dos()
 
     def configure_base(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./AttackerServer_base.sh")
-        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./AttackerServer_base.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_data_collection(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./AttackerServer_data_collection.sh")
-        cmd += " {0} {1} {2} {3} {4}".format(del_known_hosts_path, self.ip, self.username, self.password,
-                                             self.data_logger_server_ip)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./AttackerServer_data_collection.sh"
+        parameters = [self.ip, self.username, self.password, self.data_logger_server_ip]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_mirai(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./AttackerServer_mirai.sh")
-        cmd += " {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}".format(del_known_hosts_path, self.ip, self.username,
-                                                                 self.password, self.path, self.controller_ip,
-                                                                 self.controller_username, self.controller_password,
-                                                                 self.controller_path, self.transfer_pids_file)
+        filename_path = "configuration/./AttackerServer_mirai.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, self.transfer_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):
         # ?????
@@ -319,22 +313,20 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
             self.configure_end_point_dos()
 
     def configure_base(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./MaliciousClient_base.sh")
-        cmd += " {0} {1} {2} {3}".format(del_known_hosts_path, self.ip, self.username, self.password)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./MaliciousClient_base.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_data_collection(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./MaliciousClient_data_collection.sh")
-        cmd += " {0} {1} {2} {3} {4}".format(del_known_hosts_path, self.ip, self.username, self.password,
-                                             self.data_logger_server_ip)
-        print(cmd) if self.show_cmd else os.system(cmd)
+        filename_path = "configuration/./MaliciousClient_data_collection.sh"
+        parameters = [self.ip, self.username, self.password, self.data_logger_server_ip]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_mirai(self):
-        cmd, del_known_hosts_path = ScriptHelper.get_script_cmd("configuration/./MaliciousClient_mirai.sh")
-        cmd += " {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(del_known_hosts_path, self.ip, self.username,
-                                                             self.password, self.path, self.attacker_server.ip,
-                                                             self.attacker_server.username,
-                                                             self.attacker_server.password, self.attacker_server.path)
+        filename_path = "configuration/./MaliciousClient_mirai.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.attacker_server.ip,
+                      self.attacker_server.username, self.attacker_server.password, self.attacker_server.path]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):
         # ?????
