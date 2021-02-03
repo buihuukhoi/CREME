@@ -43,3 +43,13 @@ class IConfigurationBenign(Interface):
     def configure_benign_services(self):
         pass
 
+
+class IBenignReproduction(Interface):
+    """
+    defining actions for clients to generate benign behaviors to servers
+    """
+    def start_benign_behaviors(self):
+        pass
+
+    def stop_benign_behaviors(self):
+        pass

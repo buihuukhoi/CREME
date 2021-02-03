@@ -1,7 +1,7 @@
 import os
 from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IDataCollection,\
-    IConfigurationBenign
+    IConfigurationBenign, IBenignReproduction
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -106,7 +106,8 @@ class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDa
 
 
 class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                       implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection)):
+                       implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection),
+                       implements(IBenignReproduction)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -169,9 +170,21 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
     def configure_end_point_dos(self):
         pass
 
+    def start_benign_behaviors(self):
+        filename_path = "configuration/./Client_start_benign_behaviors.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.ftp_folder,
+                      self.target_virtual_account, self.sleep_second, self.benign_pids_file, self.server.domain_name]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def stop_benign_behaviors(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.benign_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
 
 class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                          implements(IConfigurationBenign), implements(IDataCollection)):
+                          implements(IConfigurationBenign), implements(IDataCollection),
+                          implements(IBenignReproduction)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -206,6 +219,17 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
 
     def stop_collect_data(self):
         super().stop_collect_data()
+
+    def start_benign_behaviors(self):
+        filename_path = "configuration/./Client_start_benign_behaviors.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.ftp_folder,
+                      self.target_virtual_account, self.sleep_second, self.benign_pids_file, self.server.domain_name]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def stop_benign_behaviors(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.benign_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
 
 class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
