@@ -39,4 +39,7 @@ class IDataCollection(Interface):
         pass
 
 
+class IConfigurationBenign(Interface):
+    def configure_benign_services(self):
+        pass
 

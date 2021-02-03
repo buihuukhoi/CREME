@@ -69,6 +69,11 @@ def load_testbed_information():
                                                              info_nvc.password, info_nvc.path, server=benign_server)
         non_vulnerable_clients.append(non_vulnerable_client)
 
+    machines.TargetServer.vulnerable_clients = vulnerable_clients
+    machines.TargetServer.non_vulnerable_clients = non_vulnerable_clients
+    machines.BenignServer.vulnerable_clients = vulnerable_clients
+    machines.BenignServer.non_vulnerable_clients = non_vulnerable_clients
+
     machines.AttackerServer.data_logger_server_ip = info_dls.ip
     attacker_server = machines.AttackerServer(info_as.hostname, info_as.ip, info_as.username, info_as.password,
                                               info_as.path, number_of_new_bots=info_as.number_of_new_bots,

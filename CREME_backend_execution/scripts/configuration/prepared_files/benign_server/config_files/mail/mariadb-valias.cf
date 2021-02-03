@@ -1,0 +1,5 @@
+user = dba
+password = qsefthuk
+hosts = 127.0.0.1
+dbname = EmailServer_db
+query = SELECT Destination FROM Alias_tbl WHERE Source='%s'

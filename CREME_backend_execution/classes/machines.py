@@ -1,6 +1,7 @@
 import os
 from interface import implements
-from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IDataCollection
+from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IDataCollection,\
+    IConfigurationBenign
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -105,7 +106,7 @@ class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDa
 
 
 class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                       implements(IConfigurationAttack), implements(IDataCollection)):
+                       implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -137,6 +138,13 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
     def configure_data_collection(self):
         super().configure_data_collection()
 
+    def configure_benign_services(self):
+        filename_path = "configuration/./Client_benign_services.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.ftp_folder,
+                      self.controller_ip, self.controller_username, self.controller_password, self.controller_path,
+                      self.server.ip, self.virtual_account, self.server.domain_name]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
     def start_collect_data(self):
         super().start_collect_data()
 
@@ -163,7 +171,7 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
 
 
 class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                          implements(IDataCollection)):
+                          implements(IConfigurationBenign), implements(IDataCollection)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -186,6 +194,13 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
     def configure_data_collection(self):
         super().configure_data_collection()
 
+    def configure_benign_services(self):
+        filename_path = "configuration/./Client_benign_services.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.ftp_folder,
+                      self.controller_ip, self.controller_username, self.controller_password, self.controller_path,
+                      self.server.ip, self.virtual_account, self.server.domain_name]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
     def start_collect_data(self):
         super().start_collect_data()
 
@@ -194,7 +209,10 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
 
 
 class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                   implements(IConfigurationAttack), implements(IDataCollection)):
+                   implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection)):
+    vulnerable_clients = None
+    non_vulnerable_clients = None
+
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
         self.rsyslog_apache = True
@@ -221,6 +239,22 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def configure_data_collection(self):
         super().configure_data_collection()
+
+    def configure_benign_services(self):
+        filename_path = "configuration/./Server_benign_services.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.controller_ip,
+                      self.controller_username, self.controller_password, self.controller_path, self.domain_name,
+                      self.attacker_server_ip]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+        # add FTP users
+        for client in self.vulnerable_clients:
+            filename_path = "configuration/./Server_create_FTP_user.sh"
+            parameters = [self.ip, self.username, self.password, client.hostname, client.password]
+            ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+        for client in self.non_vulnerable_clients:
+            filename_path = "configuration/./Server_create_FTP_user.sh"
+            parameters = [self.ip, self.username, self.password, client.hostname, client.password]
+            ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def start_collect_data(self):
         super().start_collect_data()
@@ -249,7 +283,10 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
 
 class BenignServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                   implements(IDataCollection)):
+                   implements(IConfigurationBenign), implements(IDataCollection)):
+    vulnerable_clients = None
+    non_vulnerable_clients = None
+
     def __init__(self, hostname, ip, username, password, path, domain_name="speedlab.net", attacker_server_ip=""):
         super().__init__(hostname, ip, username, password, path)
         self.rsyslog_apache = True
@@ -266,6 +303,22 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def configure_data_collection(self):
         super().configure_data_collection()
+
+    def configure_benign_services(self):
+        filename_path = "configuration/./Server_benign_services.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.controller_ip,
+                      self.controller_username, self.controller_password, self.controller_path, self.domain_name,
+                      self.attacker_server_ip]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+        # add FTP users
+        for client in self.vulnerable_clients:
+            filename_path = "configuration/./Server_create_FTP_user.sh"
+            parameters = [self.ip, self.username, self.password, client.hostname, client.password]
+            ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+        for client in self.non_vulnerable_clients:
+            filename_path = "configuration/./Server_create_FTP_user.sh"
+            parameters = [self.ip, self.username, self.password, client.hostname, client.password]
+            ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def start_collect_data(self):
         super().start_collect_data()

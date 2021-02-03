@@ -1,0 +1,9 @@
+# 2.2.22 (fe789d2): /etc/dovecot/dovecot.conf
+# Pigeonhole version 0.4.13 (7b14904)
+# OS: Linux 4.15.0-112-generic x86_64 Ubuntu 16.04.6 LTS ext4
+
+postmaster_address=postmaster@mail.XXDOMAINXX
+!include_try /usr/share/dovecot/protocols.d/*.protocol
+protocols = imap pop3 lmtp
+!include conf.d/*.conf
+!include_try local.conf

@@ -1,0 +1,13 @@
+set from = "XXX@mail.YYY"
+set realname = "XXX"
+set imap_user = "XXX@mail.YYY"
+set imap_pass = "qsefthuk"
+set folder = "imap://mail.YYY:143"
+set spoolfile = "+INBOX"
+set header_cache =~/.mutt/cache/headers
+set message_cachedir =~/.mutt/cache/bodies
+set certificate_file =~/.mutt/certificates
+set smtp_url = "smtp://XXX@mail.YYY@mail.YYY:587"
+set smtp_pass = "qsefthuk"
+set move = no
+set imap_keepalive = 900

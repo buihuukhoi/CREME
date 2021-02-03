@@ -9,3 +9,5 @@ apply to our database
 # start web server
 python manage.py migrate
 
+# should install expect script
+apt -y install expect
