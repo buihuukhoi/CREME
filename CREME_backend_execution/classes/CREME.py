@@ -75,6 +75,15 @@ class Creme:
         for non_vulnerable_client in self.non_vulnerable_clients:
             non_vulnerable_client.stop_benign_behaviors()
 
+    def attack_mirai(self):
+        self.attacker_server.mirai_start_cnc_and_login()
+        self.malicious_client.mirai_start_malicious()
+        self.attacker_server.mirai_wait_for_finished_scan()
+        self.malicious_client.mirai_stop_malicious()
+        self.attacker_server.mirai_transfer_and_start_malicious()
+        self.attacker_server.mirai_wait_for_finished_transfer()
+        self.attacker_server.mirai_wait_for_finished_ddos()
+
     def attack(self):
         pass
 

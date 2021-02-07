@@ -1,7 +1,7 @@
 import os
 from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IDataCollection,\
-    IConfigurationBenign, IBenignReproduction
+    IConfigurationBenign, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -30,6 +30,9 @@ class Machine:
 
 class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
                        implements(IDataCollection)):
+    """
+
+    """
     def __init__(self, hostname, ip, username, password, path, network_interface, tcp_file="traffic.pcap",
                  tcp_pids_file="tcp_pids.txt", atop_interval=1):
         super().__init__(hostname, ip, username, password, path)
@@ -352,7 +355,7 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
 
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
-                     implements(IConfigurationAttack)):
+                     implements(IConfigurationAttack), implements(IMiraiAttackerServer)):
     data_logger_server_ip = None
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
@@ -413,9 +416,47 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         # ?????
         pass
 
+    def mirai_start_cnc_and_login(self):
+        filename_path = "attacks/mirai/./AttackerServer_start_cnc_and_login.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.cnc_pids_file,
+                      self.targeted_DDoS, self.DDoS_type, self.DDoS_duration]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def mirai_wait_for_finished_scan(self):
+        FinishedFile = "ScanFinishedFile.txt"
+
+        filename_path = "attacks/mirai/./AttackerServer_wait_for_finished_phase.sh"
+        parameters = [self.ip, self.username, self.password, self.path, FinishedFile]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def mirai_transfer_and_start_malicious(self):
+        scan_flag = "0"
+        input_bot = "input_bot"  # example: input_bot_192.168.1.112.txt
+        logs_path = "CREME_backend_execution/logs/mirai/times"
+        output_time = "time_2_start_transfer.txt"
+
+        filename_path = "attacks/mirai/./AttackerServer_transfer_and_start_malicious.sh"
+        parameters = [self.ip, self.username, self.password, self.path, input_bot, scan_flag, self.transfer_pids_file,
+                      logs_path, output_time]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def mirai_wait_for_finished_transfer(self):
+        FinishedFile = "TransferFinishedFile.txt"
+
+        filename_path = "attacks/mirai/./AttackerServer_wait_for_finished_phase.sh"
+        parameters = [self.ip, self.username, self.password, self.path, FinishedFile]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def mirai_wait_for_finished_ddos(self):
+        FinishedFile = "ddosFinishedFile.txt"
+
+        filename_path = "attacks/mirai/./AttackerServer_wait_for_finished_phase.sh"
+        parameters = [self.ip, self.username, self.password, self.path, FinishedFile]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
 
 class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationCommon),
-                      implements(IConfigurationAttack)):
+                      implements(IConfigurationAttack), implements(IMiraiMaliciousClient)):
     data_logger_server_ip = None
     attacker_server = None
 
@@ -470,3 +511,16 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
     def configure_end_point_dos(self):
         # ?????
         pass
+
+    def mirai_start_malicious(self):
+        logs_path = "CREME_backend_execution/logs/mirai/times"
+        outputTime = "time_1_kali_start_scan.txt"
+
+        filename_path = "attacks/mirai/./MaliciousClient_start_malicious.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.mirai_pids_file, logs_path, outputTime]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def mirai_stop_malicious(self):
+        filename_path = "attacks/mirai/./MaliciousClient_stop_malicious.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.mirai_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
