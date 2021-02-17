@@ -64,6 +64,28 @@ class Creme:
         for non_vulnerable_client in self.non_vulnerable_clients:
             non_vulnerable_client.stop_collect_data()
 
+    def centralize_data(self, contain_continuum_log=False):
+        """
+        using to centralize data from the data logger client to the data logger server
+        :param contain_continuum_log: whether the attack scenario should collect log of apache continuum server or not
+        """
+        for vulnerable_client in self.vulnerable_clients:
+            self.dls.centralize_data(vulnerable_client)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            self.dls.centralize_data(non_vulnerable_client)
+        self.dls.centralize_data(self.target_server, contain_continuum_log)
+        self.dls.centralize_data(self.benign_server, contain_continuum_log)
+
+    def centralize_time_files(self, data_logger_client, is_mirai=False):
+        """
+        using to centralize time files from the data logger client to the data logger server
+        :param data_logger_client: the machine (cnc) which we want to centralize time files from
+        :param is_mirai: whether the scenario is mirai or not
+        """
+        if is_mirai:
+            self.dls.mirai_centralize_time_files(data_logger_client)
+        # should implement for other scenario *******************************************************
+
     # ---------- benign behavior reproduction ----------
     def start_reproduce_benign_behavior(self):
         for vulnerable_client in self.vulnerable_clients:

@@ -1,7 +1,7 @@
 import os
 from interface import implements
-from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IDataCollection,\
-    IConfigurationBenign, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient
+from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
+    IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -29,7 +29,7 @@ class Machine:
 
 
 class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
-                       implements(IDataCollection)):
+                       implements(IDataCollection), implements(IDataCentralization)):
     """
 
     """
@@ -67,6 +67,37 @@ class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigur
         filename_path = "./kill_pids.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.tcp_pids_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def download_atop_data(self, data_logger_client):
+        filename_path = "data_collection/./download_atop_data.sh"
+        parameters = [self.ip, self.username, self.password, data_logger_client.ip, data_logger_client.username,
+                      data_logger_client.password, data_logger_client.path, data_logger_client.atop_file, self.path]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def download_log_data(self, data_logger_client, remote_path, remote_log, new_log):
+        filename_path = "data_collection/./download_log_data.sh"
+        parameters = [self.ip, self.username, self.password, data_logger_client.ip, data_logger_client.username,
+                      data_logger_client.password, remote_path, remote_log, self.path, new_log]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def download_time_file(self, data_logger_client, time_file):
+        filename_path = "data_collection/./download_atop_data.sh"
+        parameters = [self.ip, self.username, self.password, data_logger_client.ip, data_logger_client.username,
+                      data_logger_client.password, data_logger_client.path, time_file, self.path]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def centralize_data(self, data_logger_client, contain_continuum_log=False):
+        self.download_atop_data(data_logger_client)
+        if contain_continuum_log:  # download apache continuum's log
+            remote_path = '/opt/apache_continuum/apache-continuum-1.4.2/logs'
+            remote_log = 'continuum.log'
+            new_log = '{0}_continuum.log'.format(data_logger_client.hostname)
+            self.download_log_data(data_logger_client, remote_path, remote_log, new_log)
+
+    def mirai_centralize_time_files(self, data_logger_client):
+        time_files = ["time_4_start_DDoS.txt"]
+        for time_file in time_files:
+            self.download_time_file(data_logger_client, time_file)
 
 
 class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDataCollection)):

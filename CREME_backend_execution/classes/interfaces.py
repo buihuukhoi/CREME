@@ -62,6 +62,30 @@ class IDataCollection(Interface):
         pass
 
 
+class IDataCentralization(Interface):
+    """
+    defining functions to centralize data that should be implemented by the data logger server:
+    """
+    def centralize_data(self, data_logger_client, contain_continuum_log=False):
+        """
+        using to centralize data from the data logger client to the data logger server
+        :param data_logger_client: the machine which we want to centralize data from
+        :param contain_continuum_log: whether the data logger client contains log of apache continuum server or not
+        """
+        pass
+
+    def mirai_centralize_time_files(self, data_logger_client):
+        """
+        using to centralize time file of mirai scenario from the data logger client to the data logger server
+        :param data_logger_client: the machine which we want to centralize time files from
+        """
+        pass
+
+    # def centralize_time_files(self, data_logger_client):
+    #     pass
+
+
+# ---------- benign behavior reproduction ----------
 class IBenignReproduction(Interface):
     """
     defining actions for clients to generate benign behaviors to servers
@@ -73,6 +97,7 @@ class IBenignReproduction(Interface):
         pass
 
 
+# ---------- attacks ----------
 class IAttack(Interface):
     """
     defining attack scenarios that should be implemented by Creme
