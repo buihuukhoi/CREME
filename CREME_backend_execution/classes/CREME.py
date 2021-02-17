@@ -45,6 +45,7 @@ class Creme:
         self.attacker_server.configure()
         self.malicious_client.configure()
 
+    # ---------- data collection ----------
     def start_collect_data(self):
         self.dls.start_collect_data()
         self.target_server.start_collect_data()
@@ -63,6 +64,7 @@ class Creme:
         for non_vulnerable_client in self.non_vulnerable_clients:
             non_vulnerable_client.stop_collect_data()
 
+    # ---------- benign behavior reproduction ----------
     def start_reproduce_benign_behavior(self):
         for vulnerable_client in self.vulnerable_clients:
             vulnerable_client.start_benign_behaviors()
@@ -75,6 +77,7 @@ class Creme:
         for non_vulnerable_client in self.non_vulnerable_clients:
             non_vulnerable_client.stop_benign_behaviors()
 
+    # ---------- attacks ----------
     def attack_mirai(self):
         self.attacker_server.mirai_start_cnc_and_login()
         self.malicious_client.mirai_start_malicious()
@@ -85,7 +88,8 @@ class Creme:
         self.attacker_server.mirai_wait_for_finished_ddos()
 
     def attack(self):
-        pass
+        if Creme.mirai:
+            self.attack_mirai()
 
     def test_print_information(self):
         """

@@ -1,12 +1,21 @@
 from interface import Interface
 
 
+# ---------- configuration ----------
 class IConfiguration(Interface):
     def configure(self):
+        """
+        this function calls all of necessary configurations for each machine.
+        """
         pass
 
 
 class IConfigurationCommon(Interface):
+    """
+    defining common configurations that should be implemented by all cases of machines:
+    including DataLoggerServer, DataLoggerClient, VulnerableClient, NonVulnerableClient, TargetServer, BenignServer,
+    AttackerServer, MaliciousClient
+    """
     def configure_base(self):
         pass
 
@@ -14,7 +23,20 @@ class IConfigurationCommon(Interface):
         pass
 
 
+class IConfigurationBenign(Interface):
+    """
+    defining configurations for benign services that should be implemented by clients and servers:
+    including VulnerableClient, NonVulnerableClient, TargetServer, BenignServer
+    """
+    def configure_benign_services(self):
+        pass
+
+
 class IConfigurationAttack(Interface):
+    """
+    defining configurations for attack scenarios that should be implemented by clients and servers:
+    including VulnerableClient, TargetServer, AttackerServer, MaliciousClient
+    """
     def configure_mirai(self):
         pass
 
@@ -31,16 +53,12 @@ class IConfigurationAttack(Interface):
         pass
 
 
+# ---------- data collection ----------
 class IDataCollection(Interface):
     def start_collect_data(self):
         pass
 
     def stop_collect_data(self):
-        pass
-
-
-class IConfigurationBenign(Interface):
-    def configure_benign_services(self):
         pass
 
 
@@ -80,18 +98,34 @@ class IMiraiAttackerServer(Interface):
     defining actions of Mirai attack for the attacker server
     """
     def mirai_start_cnc_and_login(self):
+        """
+        starting cnc program and telnet login to cnc program to control bots
+        """
         pass
 
     def mirai_wait_for_finished_scan(self):
+        """
+        waiting the malicious client to finish scanning new bots
+        """
         pass
 
     def mirai_transfer_and_start_malicious(self):
+        """
+        cnc transfers malicious software (mirai) to new bots and run it (mirai)
+        """
         pass
 
     def mirai_wait_for_finished_transfer(self):
+        """
+        cnc waits to finish transferring malicious software (mirai) to new bots.
+        Then, cnc sends ddos commands to bots.
+        """
         pass
 
     def mirai_wait_for_finished_ddos(self):
+        """
+        waiting to finish ddos attack.
+        """
         pass
 
 
@@ -100,8 +134,17 @@ class IMiraiMaliciousClient(Interface):
     defining actions of Mirai attack for the malicious client
     """
     def mirai_start_malicious(self):
+        """
+        starting the malicious software (mirai) at malicious client and scanning to find new bots.
+        """
         pass
 
     def mirai_stop_malicious(self):
+        """
+        should stop the malicious software (mirai) before cnc transfers mirai to new bots.
+        Otherwise, cnc may fail to telnet login to new bots. Because the ip range is small, the malicious client will
+        continue to scan the bot even it already found the username and password.
+        Contracting a list of existing bots may help to deal this problem.
+        """
         pass
 
