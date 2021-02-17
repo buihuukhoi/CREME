@@ -1,7 +1,8 @@
 import os
 from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
-    IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient
+    IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
+    ICleaningBenignReproduction, ICleaningAttackReproduction
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -141,7 +142,7 @@ class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDa
 
 class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
                        implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection),
-                       implements(IBenignReproduction)):
+                       implements(IBenignReproduction), implements(ICleaningBenignReproduction)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -215,10 +216,15 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
         parameters = [self.ip, self.username, self.password, self.path, self.benign_pids_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def clean_benign_reproduction(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.benign_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
 
 class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
                           implements(IConfigurationBenign), implements(IDataCollection),
-                          implements(IBenignReproduction)):
+                          implements(IBenignReproduction), implements(ICleaningBenignReproduction)):
     def __init__(self, hostname, ip, username, password, path, server=None, ftp_folder="ftp_folder", sleep_second='2',
                  benign_pids_file="benign_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -261,6 +267,11 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def stop_benign_behaviors(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.benign_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def clean_benign_reproduction(self):
         filename_path = "./kill_pids.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.benign_pids_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
@@ -386,7 +397,8 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
 
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
-                     implements(IConfigurationAttack), implements(IMiraiAttackerServer)):
+                     implements(IConfigurationAttack), implements(IMiraiAttackerServer),
+                     implements(ICleaningAttackReproduction)):
     data_logger_server_ip = None
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
@@ -484,6 +496,20 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         filename_path = "attacks/mirai/./AttackerServer_wait_for_finished_phase.sh"
         parameters = [self.ip, self.username, self.password, self.path, FinishedFile]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def stop_malicious(self):
+        filename_path = "attacks/mirai/./AttackerServer_cnc_stop_malicious.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.transfer_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def stop_cnc_and_login(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.cnc_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def clean_mirai(self):
+        self.stop_malicious()
+        self.stop_cnc_and_login()
 
 
 class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationCommon),

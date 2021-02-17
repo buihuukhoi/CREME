@@ -173,3 +173,21 @@ class IMiraiMaliciousClient(Interface):
         """
         pass
 
+
+# ---------- process cleaning ----------
+class ICleaningBenignReproduction(Interface):
+    """
+    defining actions for clients to clean benign reproduction.
+    should be implemented by VulnerableClient and NonVulnerableClient.
+    """
+    def clean_benign_reproduction(self):
+        pass
+
+
+class ICleaningAttackReproduction(Interface):
+    """
+    defining actions for attacker server to clean attack reproduction.
+    should be implemented by AttackerServer.
+    """
+    def clean_mirai(self):
+        pass
