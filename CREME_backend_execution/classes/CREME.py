@@ -111,6 +111,10 @@ class Creme:
 
     # ---------- download data to controller ----------
     def download_data_to_controller(self, scenario_log_folder):
+        """
+        using to download data from the data logger server to controller, and save it to scenario_log_folder.
+        :param scenario_log_folder: a folder of specific scenario insides the logs folder.
+        """
         log_folder = Machine.controller_path
         tmp_folder_names = ["CREME", "CREME_backend_execution", "logs", scenario_log_folder]
         for folder in tmp_folder_names:
@@ -151,11 +155,6 @@ class Creme:
         # ----- download timestamp files -----
         # not yet implement ==> must implement this later
 
-    def attack(self):
-        if Creme.mirai:
-            self.attack_mirai()
-
-    """
     def run_mirai(self):
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
@@ -179,7 +178,6 @@ class Creme:
         # process data
         # train ML
         # evaluation
-    """
 
     def test_print_information(self):
         """
