@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, \
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData
 from .forms import TestbedForm, ControllerForm, DataLoggerServerForm, TargetServerForm, BenignServerForm, \
     VulnerableClientForm, NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm
 from django.shortcuts import redirect
@@ -8,12 +8,23 @@ import threading
 from CREME_backend_execution.classes import machines
 from CREME_backend_execution.classes.CREME import Creme
 
+from .serializers import ProgressDataSerializer
+from rest_framework import viewsets
+from rest_framework import permissions
+
 # Create your views here.
 
 
 DASHBOARD = 'dashboard'
 NEW_TESTBED = 'new_testbed'
 NEW_TESTBED_INFORMATION = 'new_testbed_information'
+
+
+# ---------- API ----------
+class ProgressDataViewSet(viewsets.ModelViewSet):
+    queryset = ProgressData.objects.all()
+    serializer_class = ProgressDataSerializer
+    # permission_classes = [permissions.IsAuthenticated]
 
 
 def update_running_testbed():
@@ -105,6 +116,14 @@ def not_exist_testbed():
         return True
 
 
+def create_progress_data_if_not_exist():
+    progress_datas = ProgressData.objects.all()
+    if not progress_datas:
+        for i in range(1, 7+1):
+            obj_progress_data = ProgressData(stage=i, status=1, detail="")
+            obj_progress_data.save()
+
+
 def execute_toolchain():
     update_running_testbed()
     load_testbed_information()
@@ -113,6 +132,7 @@ def execute_toolchain():
 
 
 def dashboard(request):
+    create_progress_data_if_not_exist()
     return render(request, 'testbed/dashboard.html', {})
 
 

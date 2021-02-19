@@ -1,6 +1,108 @@
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<div>
-    <h1><a href="/">CREME</a></h1>
-</div>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <script src="{% static 'javascript/script.js' %}"></script>
+
+    <title>Dash Board</title>
+  </head>
+
+  <body>
+    <div>
+        <h1><a href="/">CREME</a></h1>
+    </div>
+    <div style="text-align:center;">
+        <h2> Progress : Mirai </h2>
+    </div>
+
+    <br>
+
+    <div class="progress" style="height: 70px; font-size: 21px;">
+        <div id="1" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Configuration</div>
+        <div id="2" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 1<br>(Valid Accounts)</div>
+        <div id="3" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 2</br>(Non-App Layer Protocol)</div>
+        <div id="4" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 3</br>(Network DoS)</div>
+        <div id="5" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Data Processing</div>
+        <div id="6" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Training ML Models</div>
+        <div id="7" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Evaluation</div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-header" style="text-align:center">Configuration</h5>
+            <div id="stage1" class="card-text">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-header" style="text-align:center">Attack Phase 1<br>(Valid Accounts)</h5>
+            <div id="stage2" class="card-text">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-header" style="text-align:center">Attack Phase 2<br>(Non-App Layer Protocol)</h5>
+            <div id="stage3" class="card-text">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-header" style="text-align:center">Attack Phase 3<br>(Network DoS)</h5>
+            <div id="stage4" class="card-text"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-header" style="text-align:center">Data Processing</h5>
+            <div id="stage5" class="card-text"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-header" style="text-align:center">Training ML</h5>
+            <div id="stage6" class="card-text"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-header" style="text-align:center">Evaluation</h5>
+            <div id="stage7" class="card-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -9,6 +9,12 @@ DDOS_TYPE_CHOICES = [('udp', 'udp'), ('others...', 'others...')]
 
 # Create your models here.
 
+class ProgressData(models.Model):
+    stage = models.IntegerField(default=0)
+    status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    detail = models.TextField(default='')
+
+
 class Testbed(models.Model):
     status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
     number_of_controller = models.IntegerField(default=1)  # only 1
