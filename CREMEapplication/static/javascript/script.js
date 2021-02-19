@@ -7,7 +7,7 @@ setInterval(function(){
         if (this.readyState == 4 && this.status == 200) {
             var myArr = JSON.parse(this.responseText);
             //processJson(myArr[0]);
-            processJson(myArr);
+            processJson(myArr[0]);
         }
     };
 
@@ -15,12 +15,22 @@ setInterval(function(){
     ajaxRequest.send();
 }, 1000);
 
-function processJson(myArr){
-    for(let i=0 ; i<7 ; ++i){
-        let stage = myArr[i].stage;
-        change(stage, myArr[i].status);
-        document.getElementById("stage" + stage).innerHTML = myArr[i].detail;
-    }
+function processJson(data){
+    document.getElementById("progress").innerHTML = "Scenario: " + data.scenario;
+    change("status1", data.stage_1_status);
+    document.getElementById("detail1").innerHTML = data.stage_1_detail;
+    change("status2", data.stage_2_status);
+    document.getElementById("detail2").innerHTML = data.stage_2_detail;
+    change("status3", data.stage_3_status);
+    document.getElementById("detail3").innerHTML = data.stage_3_detail;
+    change("status4", data.stage_4_status);
+    document.getElementById("detail4").innerHTML = data.stage_4_detail;
+    change("status5", data.stage_5_status);
+    document.getElementById("detail5").innerHTML = data.stage_5_detail;
+    change("status6", data.stage_6_status);
+    document.getElementById("detail6").innerHTML = data.stage_6_detail;
+    change("status7", data.stage_7_status);
+    document.getElementById("detail7").innerHTML = data.stage_7_detail;
 }
 
 function change(id, status){

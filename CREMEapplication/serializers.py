@@ -9,4 +9,7 @@ from rest_framework import serializers
 class ProgressDataSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ProgressData
-        fields = ('url', 'stage', 'status', 'detail')
+        fields = ('url', 'scenario', 'stage_1_status', 'stage_1_detail', 'stage_2_status', 'stage_2_detail',
+                  'stage_3_status', 'stage_3_detail', 'stage_4_status', 'stage_4_detail',
+                  'stage_5_status', 'stage_5_detail', 'stage_6_status', 'stage_6_detail',
+                  'stage_7_status', 'stage_7_detail')

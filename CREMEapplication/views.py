@@ -119,9 +119,7 @@ def not_exist_testbed():
 def create_progress_data_if_not_exist():
     progress_datas = ProgressData.objects.all()
     if not progress_datas:
-        for i in range(1, 7+1):
-            obj_progress_data = ProgressData(stage=i, status=1, detail="")
-            obj_progress_data.save()
+        ProgressData.objects.create()
 
 
 def execute_toolchain():

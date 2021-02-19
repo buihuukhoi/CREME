@@ -10,9 +10,21 @@ DDOS_TYPE_CHOICES = [('udp', 'udp'), ('others...', 'others...')]
 # Create your models here.
 
 class ProgressData(models.Model):
-    stage = models.IntegerField(default=0)
-    status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
-    detail = models.TextField(default='')
+    scenario = models.TextField(max_length=50, default='None')
+    stage_1_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    stage_1_detail = models.TextField(default='None')
+    stage_2_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    stage_2_detail = models.TextField(default='None')
+    stage_3_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    stage_3_detail = models.TextField(default='None')
+    stage_4_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    stage_4_detail = models.TextField(default='None')
+    stage_5_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    stage_5_detail = models.TextField(default='None')
+    stage_6_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    stage_6_detail = models.TextField(default='None')
+    stage_7_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
+    stage_7_detail = models.TextField(default='None')
 
 
 class Testbed(models.Model):
