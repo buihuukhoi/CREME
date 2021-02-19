@@ -1,4 +1,5 @@
 from .machines import *
+from .helper import DownloadDataHelper
 
 
 class Creme:
@@ -76,14 +77,13 @@ class Creme:
         self.dls.centralize_data(self.target_server, contain_continuum_log)
         self.dls.centralize_data(self.benign_server, contain_continuum_log)
 
-    def centralize_time_files(self, data_logger_client, is_mirai=False):
+    def centralize_time_files(self, is_mirai=False):
         """
         using to centralize time files from the data logger client to the data logger server
-        :param data_logger_client: the machine (cnc) which we want to centralize time files from
         :param is_mirai: whether the scenario is mirai or not
         """
         if is_mirai:
-            self.dls.mirai_centralize_time_files(data_logger_client)
+            self.dls.mirai_centralize_time_files(self.attacker_server)
         # should implement for other scenario *******************************************************
 
     # ---------- benign behavior reproduction ----------
@@ -109,9 +109,77 @@ class Creme:
         self.attacker_server.mirai_wait_for_finished_transfer()
         self.attacker_server.mirai_wait_for_finished_ddos()
 
+    # ---------- download data to controller ----------
+    def download_data_to_controller(self, scenario_log_folder):
+        log_folder = Machine.controller_path
+        tmp_folder_names = ["CREME", "CREME_backend_execution", "logs", scenario_log_folder]
+        for folder in tmp_folder_names:
+            log_folder = os.path.join(log_folder, folder)
+
+        # ----- download pcap file -----
+        traffic = "traffic"
+        traffic_folder = os.path.join(log_folder, traffic)
+
+        file_names = [self.dls.tcpFile]
+        DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
+                                    file_names=file_names, local_folder=traffic_folder)
+
+        # ----- download accounting files -----
+        accounting = "accounting"
+        accounting_folder = os.path.join(log_folder, accounting)
+
+        file_names = []
+        file_names.append(self.benign_server.atop_file)
+        file_names.append(self.target_server.atop_file)
+        for vulnerable_client in self.vulnerable_clients:
+            file_names.append(vulnerable_client.atop_file)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            file_names.append(non_vulnerable_client.atop_file)
+
+        DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
+                                    file_names=file_names, local_folder=accounting_folder)
+
+        # ----- download accounting files -----
+        syslog = "syslog"
+        syslog_folder = os.path.join(log_folder, syslog)
+        remote_folder = "/var/log/dataset_generation"
+        file_names = ["dataset_generation.log"]
+
+        DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=remote_folder,
+                                    file_names=file_names, local_folder=syslog_folder)
+
+        # ----- download timestamp files -----
+        # not yet implement ==> must implement this later
+
     def attack(self):
         if Creme.mirai:
             self.attack_mirai()
+
+    """
+    def run_mirai(self):
+        self.start_reproduce_benign_behavior()
+        self.start_collect_data()
+        self.attack_mirai()
+        self.stop_collect_data()
+
+        self.stop_reproduce_benign_behavior()
+        self.attacker_server.clean_mirai()
+
+        self.centralize_data()
+        self.centralize_time_files(is_mirai=True)
+
+        self.download_data_to_controller("mirai")
+
+    def run(self):
+        self.configure()
+
+        if Creme.mirai:
+            self.run_mirai()
+
+        # process data
+        # train ML
+        # evaluation
+    """
 
     def test_print_information(self):
         """
