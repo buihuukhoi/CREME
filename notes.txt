@@ -4,10 +4,10 @@ python manage.py migrate
 # apply some changes in the model
 python manage.py makemigrations application_name
 # apply changes to our database
-apply to our database
+python manage.py migrate
 
 # start web server
-python manage.py migrate
+python manage.py runserver
 
 # should install expect script
 apt -y install expect
