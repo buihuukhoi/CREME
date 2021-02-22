@@ -1,10 +1,8 @@
 #!/bin/bash
 
-sudo apt-get install expect -y
-
 # create virtual environment
-sudo apt-get install python3.6-venv python3.6-dev
-python3.6 -m venv venv_CREME
+virtualenv --python=python3.6 venv_CREME
+
 # active venv
 source venv_CREME/bin/activate
 
@@ -18,6 +16,8 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py makemigrations CREMEapplication
 python manage.py migrate
+
+chmod -R 775 ./
 
 # create supper user
 # runserver
