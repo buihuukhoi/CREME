@@ -36,15 +36,43 @@ class Creme:
         Creme.end_point_dos = end_point_dos
 
     def configure(self):
+        stage = 1
+        ProgressHelper.update_stage(stage, f"Controller is configuring {self.dls.hostname}", 5, new_stage=True)
         self.dls.configure()
+        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.dls.hostname}", 5,
+                                    finished_task=True, override_pre_message=True)
+
+        ProgressHelper.update_stage(stage, f"Controller is configuring {self.target_server.hostname}", 5)
         self.target_server.configure()
+        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.target_server.hostname}", 5,
+                                    finished_task=True, override_pre_message=True)
+
+        ProgressHelper.update_stage(stage, f"Controller is configuring {self.benign_server.hostname}", 5)
         self.benign_server.configure()
+        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.benign_server.hostname}", 5,
+                                    finished_task=True, override_pre_message=True)
+
         for vulnerable_client in self.vulnerable_clients:
+            ProgressHelper.update_stage(stage, f"Controller is configuring {vulnerable_client.hostname}", 5)
             vulnerable_client.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {vulnerable_client.hostname}", 5,
+                                        finished_task=True, override_pre_message=True)
+
         for non_vulnerable_client in self.non_vulnerable_clients:
+            ProgressHelper.update_stage(stage, f"Controller is configuring {non_vulnerable_client.hostname}", 5)
             non_vulnerable_client.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {non_vulnerable_client.hostname}", 5,
+                                        finished_task=True, override_pre_message=True)
+
+        ProgressHelper.update_stage(stage, f"Controller is configuring {self.attacker_server.hostname}", 5)
         self.attacker_server.configure()
+        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.attacker_server.hostname}", 5,
+                                    finished_task=True, override_pre_message=True)
+
+        ProgressHelper.update_stage(stage, f"Controller is configuring {self.malicious_client.hostname}", 5)
         self.malicious_client.configure()
+        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
+                                    finished_task=True, override_pre_message=True, finished_stage=True)
 
     # ---------- data collection ----------
     def start_collect_data(self):
