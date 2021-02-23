@@ -11,12 +11,12 @@ setInterval(function(){
         }
     };
 
-    ajaxRequest.open("GET", "http://localhost:8000/api/progressdata/", true);
+    ajaxRequest.open("GET", "http://127.0.0.1:8000/api/progressdata/", true);
     ajaxRequest.send();
 }, 1000);
 
 function processJson(data){
-    document.getElementById("progress").innerHTML = "Scenario: " + data.scenario;
+    document.getElementById("scenario").innerHTML = "Scenario: " + data.scenario;
     change("status1", data.stage_1_status);
     document.getElementById("detail1").innerHTML = data.stage_1_detail;
     change("status2", data.stage_2_status);

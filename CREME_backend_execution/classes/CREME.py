@@ -1,5 +1,5 @@
 from .machines import *
-from .helper import DownloadDataHelper
+from .helper import DownloadDataHelper, ProgressHelper
 
 
 class Creme:
@@ -204,6 +204,62 @@ class Creme:
         print("disk_wipe: {0}".format(self.disk_wipe))
         print("end_point_dos: {0}".format(self.end_point_dos))
         print("===============================")
+
+        # ProgressHelper.update_scenario("TEST")
+
+        stage = 1
+        message = "test message"
+        size = 5
+        finished_task = False
+        override_pre_message = False
+        finished_stage = False
+        new_stage = False
+        ProgressHelper.update_stage(stage, message, size, finished_task, override_pre_message, finished_stage,
+                                          True)
+        ProgressHelper.update_stage(stage, 'finished 1 ' + message, size, True, True, finished_stage,
+                                          new_stage)
+        ProgressHelper.update_stage(stage, 'Finished 1 ' + message, size, True, False, True,
+                                          new_stage)
+
+        stage = 2
+        ProgressHelper.update_stage(stage, message, size, finished_task, override_pre_message, finished_stage,
+                                          True)
+        ProgressHelper.update_stage(stage, 'finished 2 ' + message, size, True, True, finished_stage,
+                                          new_stage)
+        ProgressHelper.update_stage(stage, 'Finished 2 ' + message, size, True, False, True,
+                                          new_stage)
+
+        stage = 3
+        ProgressHelper.update_stage(stage, message, size, finished_task, override_pre_message, finished_stage,
+                                          True)
+        ProgressHelper.update_stage(stage, 'finished 3 ' + message, size, True, True, finished_stage,
+                                          new_stage)
+        ProgressHelper.update_stage(stage, 'Finished 3 ' + message, size, True, False, True,
+                                          new_stage)
+
+        stage = 4
+        ProgressHelper.update_stage(stage, message, size, finished_task, override_pre_message, finished_stage,
+                                          True)
+        ProgressHelper.update_stage(stage, 'finished 4 ' + message, size, True, True, finished_stage,
+                                          new_stage)
+        ProgressHelper.update_stage(stage, 'Finished 4' + message, size, True, False, True,
+                                          new_stage)
+
+        stage = 2
+        ProgressHelper.update_stage(stage, message, size, finished_task, override_pre_message, finished_stage,
+                                          True)
+        ProgressHelper.update_stage(stage, 'finished 2 ' + message, size, True, True, finished_stage,
+                                          new_stage)
+        ProgressHelper.update_stage(stage, 'Finished 2 ' + message, size, True, False, True,
+                                          new_stage)
+
+        stage = 3
+        ProgressHelper.update_stage(stage, message, size, finished_task, override_pre_message, finished_stage,
+                                          True)
+        ProgressHelper.update_stage(stage, 'finished 3 ' + message, size, True, True, finished_stage,
+                                          new_stage)
+        ProgressHelper.update_stage(stage, 'Finished 3' + message, size, True, False, False,
+                                          new_stage)
 
         # self.dls.configure_base()
 
