@@ -2,3 +2,5 @@ Django~=2.2.4
 djangorestframework
 python-interface
 paramiko
+celery
+redis
