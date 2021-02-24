@@ -292,6 +292,7 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
     def configure(self):
         self.configure_base()
         self.configure_data_collection()
+        self.configure_benign_services()
         if Creme.mirai:
             self.configure_mirai()
         if Creme.ransomware:
@@ -307,7 +308,14 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         super().configure_base()
 
     def configure_data_collection(self):
-        super().configure_data_collection()
+        if self.rsyslog_apache:
+            rsyslog_file = "rsyslog_apache.conf"
+        else:
+            rsyslog_file = "rsyslog_no_apache.conf"
+        filename_path = "configuration/./TargetServer_data_collection.sh"
+        parameters = [self.ip, self.username, self.password, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, self.dls.ip, rsyslog_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_benign_services(self):
         filename_path = "configuration/./Server_benign_services.sh"
