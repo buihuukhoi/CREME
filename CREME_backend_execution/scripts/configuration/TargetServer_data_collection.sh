@@ -24,9 +24,19 @@ send "$password\r"
 
 # install and setting rsyslog client for syslog collection
 expect "*:~# "
+send "apt update\r"
+expect "*:~# "
+send "apt install software-properties-common -y\r"
+expect "*:~# "
+send "add-apt-repository ppa:adiscon/v8-stable -y\r"
+expect "*:~# "
+send "apt update\r"
+
+expect "*:~# "
 send "service rsyslog stop\r"
 expect "*:~# "
 send "apt purge rsyslog -y\r"
+
 expect "*:~# "
 send "apt update\r"
 expect "*:~# "
