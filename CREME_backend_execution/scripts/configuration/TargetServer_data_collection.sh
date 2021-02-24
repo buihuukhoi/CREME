@@ -51,6 +51,8 @@ send "yes\r"
 expect " password: "
 send "$controller_pass\r"
 expect "*:~# "
+send "sed -i \"s/dataloggerserver_ip/$datalogger_ip/g\" /etc/rsyslog.conf\r"
+expect "*:~# "
 send "service rsyslog restart\r"
 
 # configure Port Mirroring for Network Packets colection
