@@ -1,5 +1,5 @@
-from .machines import *
 from .helper import DownloadDataHelper, ProgressHelper
+import os
 
 
 class Creme:
@@ -142,12 +142,13 @@ class Creme:
         self.attacker_server.mirai_wait_for_finished_ddos()
 
     # ---------- download data to controller ----------
-    def download_data_to_controller(self, scenario_log_folder):
+    def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False):
         """
         using to download data from the data logger server to controller, and save it to scenario_log_folder.
         :param scenario_log_folder: a folder of specific scenario insides the logs folder.
+        :param contain_continuum_log: whether the attack scenario should collect log of apache continuum server or not
         """
-        log_folder = Machine.controller_path
+        log_folder = self.dls.controller_path
         tmp_folder_names = ["CREME", "CREME_backend_execution", "logs", scenario_log_folder]
         for folder in tmp_folder_names:
             log_folder = os.path.join(log_folder, folder)
@@ -156,7 +157,7 @@ class Creme:
         traffic = "traffic"
         traffic_folder = os.path.join(log_folder, traffic)
 
-        file_names = [self.dls.tcpFile]
+        file_names = [self.dls.tcp_file]
         DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
                                     file_names=file_names, local_folder=traffic_folder)
 
@@ -175,7 +176,7 @@ class Creme:
         DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
                                     file_names=file_names, local_folder=accounting_folder)
 
-        # ----- download accounting files -----
+        # ----- download syslog files -----
         syslog = "syslog"
         syslog_folder = os.path.join(log_folder, syslog)
         remote_folder = "/var/log/dataset_generation"
@@ -183,6 +184,16 @@ class Creme:
 
         DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=remote_folder,
                                     file_names=file_names, local_folder=syslog_folder)
+
+        if contain_continuum_log:  # download apache continuum's log
+            syslog = "syslog"
+            syslog_folder = os.path.join(log_folder, syslog)
+            file_names = []
+            file_names.append('{0}_continuum.log'.format(self.benign_server.hostname))
+            file_names.append('{0}_continuum.log'.format(self.target_server.hostname))
+
+            DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
+                                        file_names=file_names, local_folder=syslog_folder)
 
         # ----- download timestamp files -----
         # not yet implement ==> must implement this later
