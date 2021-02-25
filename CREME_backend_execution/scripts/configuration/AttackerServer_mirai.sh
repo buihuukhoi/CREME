@@ -10,7 +10,7 @@ set controller_pass [lindex $argv 7]
 set controller_path [lindex $argv 8]
 set transfer_pids [lindex $argv 9]
 
-set cnc_config_path "CREME/scripts/prepared_files/mirai/cnc"
+set cnc_config_path "CREME/scripts/configuration/prepared_files/mirai/cnc"
 
 set timeout 120
 

@@ -74,6 +74,10 @@ class Creme:
         ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
                                     finished_task=True, override_pre_message=True, finished_stage=True)
 
+        # tmp solution, should be deal in the future
+        for vulnerable_client in self.vulnerable_clients:
+            vulnerable_client.tmp_noexec()
+
     # ---------- data collection ----------
     def start_collect_data(self):
         self.dls.start_collect_data()

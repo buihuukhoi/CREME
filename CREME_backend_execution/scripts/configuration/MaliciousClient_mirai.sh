@@ -12,7 +12,7 @@ set cnc_path [lindex $argv 8]
 set mirai_debug_path "Mirai-Source-Code/mirai/debug"
 set mirai_scan "mirai_scan"
 set mirai "mirai"
-set configure_path "CREME/scripts/configuration/prepared_files/malicious_client"
+#set configure_path "CREME/scripts/configuration/prepared_files/malicious_client"
 
 set timeout 120
 

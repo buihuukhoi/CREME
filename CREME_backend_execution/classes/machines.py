@@ -222,6 +222,11 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
         parameters = [self.ip, self.username, self.password, self.path, self.benign_pids_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def tmp_noexec(self):
+        filename_path = "configuration/./VulnerableClient_tmp_noexec.sh"
+        parameters = [self.ip, self.username, self.password, self.server.ip]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
 
 class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
                           implements(IConfigurationBenign), implements(IDataCollection),
@@ -241,6 +246,7 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
     def configure(self):
         self.configure_base()
         self.configure_data_collection()
+        self.configure_benign_services()
 
     def configure_base(self):
         super().configure_base()
