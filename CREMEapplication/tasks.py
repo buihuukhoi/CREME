@@ -5,11 +5,16 @@ from CREME_backend_execution.classes import machines
 from CREME_backend_execution.classes.CREME import Creme
 
 
-def update_running_testbed():
+def update_testbed_status(id_status):
+    """
+    use to update status of testbed
+    :param id_status: 1 off, 2 running, 3 finished
+    :return:
+    """
     testbeds = Testbed.objects.all()
     if testbeds:
         first_testbed = testbeds.first()
-        first_testbed.status = 2
+        first_testbed.status = id_status
         first_testbed.save()
 
 
@@ -80,13 +85,15 @@ def load_testbed_information():
     # ===> create a Creme object <===
     creme = Creme(dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients, attacker_server,
                   malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos)
+    creme.run()
     # creme.test_print_information()
-    creme.configure()
+    # creme.configure()
 
 
 @app.task
 def execute_toolchain():
-    update_running_testbed()
-    load_testbed_information()
     print("the toolchain is executing...............")
+    update_testbed_status(id_status=2)  # running
+    load_testbed_information()
+    update_testbed_status(id_status=3)  # finished
     pass
