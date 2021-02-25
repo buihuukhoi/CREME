@@ -177,11 +177,12 @@ class Creme:
                                     finished_task=True, finished_stage=True)
 
     # ---------- download data to controller ----------
-    def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False):
+    def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False, time_filenames=[]):
         """
         using to download data from the data logger server to controller, and save it to scenario_log_folder.
         :param scenario_log_folder: a folder of specific scenario insides the logs folder.
         :param contain_continuum_log: whether the attack scenario should collect log of apache continuum server or not
+        :param time_filenames: name of timestamp files
         """
         log_folder = self.dls.controller_path
         tmp_folder_names = ["CREME", "CREME_backend_execution", "logs", scenario_log_folder]
@@ -231,21 +232,25 @@ class Creme:
                                         file_names=file_names, local_folder=syslog_folder)
 
         # ----- download timestamp files -----
-        # not yet implement ==> must implement this later
+        times = "times"
+        times_folder = os.path.join(log_folder, times)
+
+        file_names = time_filenames
+        DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
+                                    file_names=file_names, local_folder=times_folder)
 
     def run_mirai(self):
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_mirai()
         self.stop_collect_data()
-
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_mirai()
 
         self.centralize_data()
         self.centralize_time_files(is_mirai=True)
-
-        self.download_data_to_controller("mirai")
+        file_names = ["time_4_start_DDoS.txt"]
+        self.download_data_to_controller("mirai", time_filenames=file_names)
 
     def run(self):
         self.configure()
