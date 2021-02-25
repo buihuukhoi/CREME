@@ -157,6 +157,7 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
     def configure(self):
         self.configure_base()
         self.configure_data_collection()
+        self.configure_benign_services()
         if Creme.mirai:
             self.configure_mirai()
         if Creme.ransomware:
