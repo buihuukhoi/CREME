@@ -57,8 +57,7 @@ def load_testbed_information():
     non_vulnerable_clients = []
     for info_nvc in info_list_nvc:
         non_vulnerable_client = machines.NonVulnerableClient(info_nvc.hostname, info_nvc.ip, info_nvc.username,
-                                                             info_nvc.password, info_nvc.path,
-                                                             server=benign_server)
+                                                             info_nvc.password, info_nvc.path, server=benign_server)
         non_vulnerable_clients.append(non_vulnerable_client)
 
     machines.TargetServer.vulnerable_clients = vulnerable_clients
@@ -67,19 +66,19 @@ def load_testbed_information():
     machines.BenignServer.non_vulnerable_clients = non_vulnerable_clients
 
     machines.AttackerServer.data_logger_server_ip = info_dls.ip
+    machines.AttackerServer.DNS_server_ip = target_server.ip
     attacker_server = machines.AttackerServer(info_as.hostname, info_as.ip, info_as.username, info_as.password,
                                               info_as.path, number_of_new_bots=info_as.number_of_new_bots,
                                               targeted_DDoS=info_ts.ip, DDoS_type=info_as.DDoS_type,
                                               DDoS_duration=info_as.DDoS_duration)
     machines.MaliciousClient.data_logger_server_ip = info_dls.ip
     machines.MaliciousClient.attacker_server = info_as
+    machines.MaliciousClient.DNS_server_ip = target_server.ip
     malicious_client = machines.MaliciousClient(info_mc.hostname, info_mc.ip, info_mc.username,
-                                                info_mc.password,
-                                                info_mc.path)
+                                                info_mc.password, info_mc.path)
 
     # ===> create a Creme object <===
-    creme = Creme(dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
-                  attacker_server,
+    creme = Creme(dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients, attacker_server,
                   malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos)
     # creme.test_print_information()
     creme.configure()

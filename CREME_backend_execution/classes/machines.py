@@ -423,6 +423,7 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
                      implements(IConfigurationAttack), implements(IMiraiAttackerServer),
                      implements(ICleaningAttackReproduction)):
     data_logger_server_ip = None
+    DNS_server_ip = None
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
                  cnc_pids_file="cnc_pids.txt", transfer_pids_file="transfer_pids.txt", number_of_new_bots="3",
@@ -452,7 +453,8 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
 
     def configure_base(self):
         filename_path = "configuration/./AttackerServer_base.sh"
-        parameters = [self.ip, self.username, self.password]
+        parameters = [self.ip, self.username, self.password, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, self.DNS_server_ip]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_data_collection(self):
@@ -539,6 +541,7 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
                       implements(IConfigurationAttack), implements(IMiraiMaliciousClient)):
     data_logger_server_ip = None
     attacker_server = None
+    DNS_server_ip = None
 
     def __init__(self, hostname, ip, username, password, path, mirai_pids_file="mirai_pids.txt"):
         super().__init__(hostname, ip, username, password, path)
@@ -562,7 +565,8 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
 
     def configure_base(self):
         filename_path = "configuration/./MaliciousClient_base.sh"
-        parameters = [self.ip, self.username, self.password]
+        parameters = [self.ip, self.username, self.password, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, self.DNS_server_ip]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_data_collection(self):
