@@ -487,7 +487,7 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
     def mirai_start_cnc_and_login(self):
         filename_path = "attacks/mirai/./AttackerServer_start_cnc_and_login.sh"
         parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.cnc_pids_file,
-                      self.targeted_DDoS, self.DDoS_type, self.DDoS_duration]
+                      self.num_of_new_bots, self.targeted_DDoS, self.DDoS_type, self.DDoS_duration]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def mirai_wait_for_finished_scan(self):

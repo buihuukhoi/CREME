@@ -133,13 +133,48 @@ class Creme:
 
     # ---------- attacks ----------
     def attack_mirai(self):
+        ProgressHelper.update_scenario("Mirai")
+        stage = 2
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is running CNC server and login to manage \
+                                    bots", 5, new_stage=True)
         self.attacker_server.mirai_start_cnc_and_login()
+
+        ProgressHelper.update_stage(stage, f"{self.malicious_client.hostname} is running MIRAI and scanning new target \
+                                    bots", 5)
         self.malicious_client.mirai_start_malicious()
+
         self.attacker_server.mirai_wait_for_finished_scan()
+        ProgressHelper.update_stage(stage, f"{self.malicious_client.hostname} found bots:", 5)
+        for vulnerable_client in self.vulnerable_clients:
+            ProgressHelper.update_stage(stage, f"hostname:{vulnerable_client.hostname}, ip:{vulnerable_client.ip}, \
+                                        username:{vulnerable_client.username}, password:{vulnerable_client.password}",
+                                        6, finished_task=True)
+
         self.malicious_client.mirai_stop_malicious()
+        ProgressHelper.update_stage(stage, f"Found account information of {self.attacker_server.num_of_new_bots} \
+                                    new target bots", 5, finished_task=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is transfering MIRAI to new bots", 5,
+                                    new_stage=True)
         self.attacker_server.mirai_transfer_and_start_malicious()
+
         self.attacker_server.mirai_wait_for_finished_transfer()
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} FINISHED transfering MIRAI to new bots", 5,
+                                    finished_task=True, override_pre_message=True)
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.num_of_new_bots} new bots were established", 5,
+                                    finished_task=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"Bots is starting to DDoS {self.target_server.hostname}", 5,
+                                    new_stage=True)
         self.attacker_server.mirai_wait_for_finished_ddos()
+        ProgressHelper.update_stage(stage, f"Bots FINISHED to DDoS {self.target_server.hostname}", 5,
+                                    finished_task=True, override_pre_message=True)
+        ProgressHelper.update_stage(stage, f"Bots FINISHED DDoS {self.target_server.hostname} using: \
+                                    DDoS Type: {self.attacker_server.DDoS_type}, Duration: \
+                                    {self.attacker_server.DDoS_duration} seconds", 5,
+                                    finished_task=True, finished_stage=True)
 
     # ---------- download data to controller ----------
     def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False):

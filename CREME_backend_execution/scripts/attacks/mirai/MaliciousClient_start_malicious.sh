@@ -32,7 +32,7 @@ send "nohup $path/./$malicious_file &\r"
 expect "output to 'nohup.out'"
 send "\r"
 
-expect "*:~# " 
+expect "*:~# "
 #send "ps -ef | grep '$path/./$malicious_file' | awk '{print \$2}' > $path/$pids_file\r"
 send "ps -ef | grep 'mirai.dbg' | awk '{print \$2}' > $path/$pids_file\r"
 
