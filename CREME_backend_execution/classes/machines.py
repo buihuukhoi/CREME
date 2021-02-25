@@ -129,7 +129,7 @@ class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDa
 
     def start_collect_data(self):
         filename_path = "data_collection/./start_atop.sh"
-        parameters = [self.ip, self.username, self.password, self.path, self.atop_file, self.interval,
+        parameters = [self.ip, self.username, self.password, self.path, self.atop_file, self.atop_interval,
                       self.atop_pids_file, self.controller_ip, self.controller_username, self.controller_password,
                       self.controller_path]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)

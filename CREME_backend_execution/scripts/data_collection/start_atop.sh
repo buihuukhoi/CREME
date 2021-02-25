@@ -55,10 +55,13 @@ send "\r"
 #send "\r"
 
 expect "*:~# "
+sleep 1
 send "ps -ef | grep './$startatop_file' | awk '{print \$2}' > $folder/$atop_pids_file\r"
 
+expect "*:~# "
+sleep 3
 #send "ps -ef | grep 'atop -a -w $folder/$atop_file $interval' | awk '{print \$2}' > $folder/$atop_pids_file\r"
-send "ps -ef | grep 'atop -a -w $folder' | awk '{print \$2}' > $folder/$atop_pids_file\r"
+send "ps -ef | grep 'atop -a -w $folder' | awk '{print \$2}' >> $folder/$atop_pids_file\r"
 
 
 expect "*:~# "

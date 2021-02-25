@@ -72,6 +72,14 @@ send "apt update\r"
 expect "*:~# "
 send "apt install atop -y\r"
 
+# update time
+expect "*:~# "
+send "service ntp stop\r"
+expect "*:~# "
+send "sudo ntpdate ntp.ubuntu.com\r"
+expect "*:~# "
+send "service ntp restart\r"
+
 # exit
 expect "*:~# "
 send "exit\r"

@@ -42,5 +42,13 @@ send "apt update && apt -y install tcpdump\r"
 expect "*:~# "
 send "apt update && apt install atop\r"
 
+# update time
+expect "*:~# "
+send "systemctl stop ntp\r"
+expect "*:~# "
+send "sudo ntpdate ntp.ubuntu.com\r"
+expect "*:~# "
+send "systemctl restart ntp\r"
+
 expect "*:~# "
 send "exit\r"
