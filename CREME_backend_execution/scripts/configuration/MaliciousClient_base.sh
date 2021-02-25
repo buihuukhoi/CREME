@@ -22,6 +22,8 @@ send "$password\r"
 
 # update time
 expect "*:~# "
+send "apt update\r"
+expect "*:~# "
 send "apt -y install ntp\r"
 expect "*:~# "
 send "apt -y install ntpdate\r"

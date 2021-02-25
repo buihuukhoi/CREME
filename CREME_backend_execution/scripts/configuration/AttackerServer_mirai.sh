@@ -10,7 +10,8 @@ set controller_pass [lindex $argv 7]
 set controller_path [lindex $argv 8]
 set transfer_pids [lindex $argv 9]
 
-set cnc_config_path "CREME/scripts/configuration/prepared_files/mirai/cnc"
+set cnc_config_path "CREME/CREME_backend_execution/scripts/configuration/prepared_files/mirai/cnc"
+set debug_path "Mirai-Source-Code/mirai/debug"
 
 set timeout 120
 
@@ -41,6 +42,8 @@ expect "*:~# "
 send "chmod +x $path/*\r"
 expect "*:~# "
 send "> $transfer_pids\r"
+expect "*:~# "
+send "rm $path/$debug_path/*.txt\r"
 
 # build Mirai-Source-Code
 # ?????????????????????????????????
