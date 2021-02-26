@@ -51,7 +51,7 @@ class DataLoggerServer(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, default="root")
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
     network_interface = models.CharField(max_length=255)
     atop_interval = models.IntegerField(default=1)  # second
@@ -61,7 +61,7 @@ class TargetServer(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, default="root")
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
@@ -69,7 +69,7 @@ class BenignServer(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, default="root")
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
@@ -77,7 +77,7 @@ class VulnerableClient(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, default="root")
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
@@ -85,7 +85,7 @@ class NonVulnerableClient(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, default="root")
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
@@ -93,8 +93,8 @@ class AttackerServer(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, default="root")
-    password = models.CharField(max_length=255)
-    path = models.CharField(max_length=255, default="/root")
+    password = models.CharField(max_length=255, default="qsefthuk")
+    path = models.CharField(max_length=255, default="/home/attacker-server/Desktop/reinstall")
     number_of_new_bots = models.IntegerField(default=3)
     DDoS_type = models.CharField(max_length=10, choices=DDOS_TYPE_CHOICES, default="udp")
     DDoS_duration = models.IntegerField(default=30, validators=[MaxValueValidator(1000000), MinValueValidator(10)])
@@ -104,7 +104,7 @@ class MaliciousClient(models.Model):
     hostname = models.CharField(max_length=255, unique=True)
     ip = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, default="root")
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
