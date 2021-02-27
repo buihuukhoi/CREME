@@ -8,7 +8,7 @@ from .CREME import Creme
 
 
 class Machine:
-    show_cmd = True  # a flag use to show cmd or execute cmd
+    show_cmd = False  # a flag use to show cmd or execute cmd
 
     # Controller's information
     controller_hostname = None

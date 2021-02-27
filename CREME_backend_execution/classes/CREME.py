@@ -240,6 +240,7 @@ class Creme:
                                     file_names=file_names, local_folder=times_folder)
 
     def run_mirai(self):
+        ProgressHelper.update_scenario("Mirai")
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_mirai()
