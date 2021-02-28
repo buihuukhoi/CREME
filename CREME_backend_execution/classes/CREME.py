@@ -35,6 +35,24 @@ class Creme:
         Creme.disk_wipe = disk_wipe
         Creme.end_point_dos = end_point_dos
 
+        # prepare to build mirai source code
+        if mirai:
+            mirai_o4_xxx = "(o4 == 1"  # default gateway
+            mirai_o4_xxx += " || o4 == " + attacker_server.ip.split(".")[-1]
+            mirai_o4_xxx += " || o4 == " + malicious_client.ip.split(".")[-1]
+            mirai_o4_xxx += " || o4 == " + target_server.ip.split(".")[-1]
+            mirai_o4_xxx += " || o4 == " + benign_server.ip.split(".")[-1]
+            mirai_o4_xxx += " || o4 == " + dls.ip.split(".")[-1]
+            mirai_o4_xxx += " || o4 == " + self.dls.controller_ip.split(".")[-1]
+            mirai_o4_xxx_1 = mirai_o4_xxx
+            mirai_o4_xxx_2 = mirai_o4_xxx
+            for vulnerable_client in vulnerable_clients:
+                mirai_o4_xxx_2 += " || o4 == " + vulnerable_client.ip.split(".")[-1]
+            mirai_o4_xxx_1 += ") ||"
+            mirai_o4_xxx_2 += ") ||"
+            self.attacker_server.mirai_o4_xxx_1 = mirai_o4_xxx_1
+            self.attacker_server.mirai_o4_xxx_2 = mirai_o4_xxx_2
+
     def configure(self):
         stage = 1
         ProgressHelper.update_stage(stage, f"Controller is configuring {self.dls.hostname}", 5, new_stage=True)

