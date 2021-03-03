@@ -74,10 +74,11 @@ class IDataCentralization(Interface):
         """
         pass
 
-    def centralize_time_files(self, data_logger_client):
+    def centralize_time_files(self, data_logger_client, time_files):
         """
         using to centralize time files from the data logger client to the data logger server
         :param data_logger_client: the machine which you want to centralize time files from
+        :param time_files: name of time files you want to get from the remote machine
         """
         pass
 
