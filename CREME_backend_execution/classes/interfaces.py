@@ -74,10 +74,10 @@ class IDataCentralization(Interface):
         """
         pass
 
-    def mirai_centralize_time_files(self, data_logger_client):
+    def centralize_time_files(self, data_logger_client):
         """
-        using to centralize time file of mirai scenario from the data logger client to the data logger server
-        :param data_logger_client: the machine which we want to centralize time files from
+        using to centralize time files from the data logger client to the data logger server
+        :param data_logger_client: the machine which you want to centralize time files from
         """
         pass
 

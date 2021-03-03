@@ -127,13 +127,13 @@ class Creme:
         self.dls.centralize_data(self.target_server, contain_continuum_log)
         self.dls.centralize_data(self.benign_server, contain_continuum_log)
 
-    def centralize_time_files(self, is_mirai=False):
+    def centralize_time_files(self, remote_machine, time_files):
         """
         using to centralize time files from the data logger client to the data logger server
-        :param is_mirai: whether the scenario is mirai or not
+        :param remote_machine: which machine you want to get from
+        :param time_files: name of time files you want to get from the remote machine
         """
-        if is_mirai:
-            self.dls.mirai_centralize_time_files(self.attacker_server)
+        self.dls.centralize_time_files(remote_machine, time_files)
         # should implement for other scenario *******************************************************
 
     # ---------- benign behavior reproduction ----------
@@ -258,7 +258,8 @@ class Creme:
                                     file_names=file_names, local_folder=times_folder)
 
     def run_mirai(self):
-        ProgressHelper.update_scenario("Mirai")
+        scenario = "mirai"
+        ProgressHelper.update_scenario(scenario)
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_mirai()
@@ -267,9 +268,9 @@ class Creme:
         self.attacker_server.clean_mirai()
 
         self.centralize_data()
-        self.centralize_time_files(is_mirai=True)
         file_names = ["time_4_start_DDoS.txt"]
-        self.download_data_to_controller("mirai", time_filenames=file_names)
+        self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
+        self.download_data_to_controller(scenario, time_filenames=file_names)
 
     def run(self):
         self.configure()

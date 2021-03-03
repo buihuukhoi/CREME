@@ -95,8 +95,7 @@ class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigur
             new_log = '{0}_continuum.log'.format(data_logger_client.hostname)
             self.download_log_data(data_logger_client, remote_path, remote_log, new_log)
 
-    def mirai_centralize_time_files(self, data_logger_client):
-        time_files = ["time_4_start_DDoS.txt"]
+    def centralize_time_files(self, data_logger_client, time_files):
         for time_file in time_files:
             self.download_time_file(data_logger_client, time_file)
 
