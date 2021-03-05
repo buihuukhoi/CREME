@@ -1,4 +1,4 @@
-from .helper import DownloadDataHelper, ProgressHelper
+from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper
 import os
 
 
@@ -257,6 +257,7 @@ class Creme:
         DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
                                     file_names=file_names, local_folder=times_folder)
 
+    # ---------- run scenario ----------
     def run_mirai(self):
         scenario = "mirai"
         ProgressHelper.update_scenario(scenario)
@@ -272,6 +273,86 @@ class Creme:
         self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
         self.download_data_to_controller(scenario, time_filenames=file_names)
 
+    # ---------- process data ----------
+    def process_data_mirai(self, log_folder) -> str:
+        """
+        this function use to create labeling_file that contain information to label accounting and traffic data
+        """
+        folder_times = os.path.join(log_folder, "times")
+        t1, t2, t3, t4, t5 = ProcessDataHelper.get_time_stamps_mirai(folder_times, self.attacker_server.DDoS_duration)
+        t = [t1, t2, t2, t3, t3, t4, t4, t5]
+
+        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
+        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
+        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+
+        src_ips_1 = ['192.168.1.103']
+        des_ips_1 = ['192.168.1.111', '192.168.1.112', '192.168.1.113']
+        normal_ips_1 = ['192.168.1.211', '192.168.1.212', '192.168.1.213', '192.168.1.11',
+                        '192.168.1.21']
+        normal_hostnames_1 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'target-server-1',
+                              'benign-server-1']
+        abnormal_hostnames_1 = ["vul-client-1", "vul-client-2", "vul-client-3"]
+
+        src_ips_2 = ['192.168.1.102']
+        des_ips_2 = ['192.168.1.111', '192.168.1.112', '192.168.1.113']
+        normal_ips_2 = ['192.168.1.211', '192.168.1.212', '192.168.1.213', '192.168.1.11',
+                        '192.168.1.21']
+        normal_hostnames_2 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'target-server-1',
+                              'benign-server-1']
+        abnormal_hostnames_2 = ["vul-client-1", "vul-client-2", "vul-client-3"]
+
+        src_ips_3 = ['192.168.1.111', '192.168.1.112', '192.168.1.113']
+        des_ips_3 = ['192.168.1.11']
+        normal_ips_3 = ['192.168.1.211', '192.168.1.212', '192.168.1.213', '192.168.1.21']
+        # normal_hostnames_3 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'non-vul-client-4',
+        #                      'benign-server-1', 'vul-client-1', 'vul-client-2', 'vul-client-3']
+        # abnormal_hostnames_3 = ['target-server-1']
+        normal_hostnames_3 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'benign-server-1']
+        abnormal_hostnames_3 = ['vul-client-1', 'vul-client-2', 'vul-client-3', 'target-server-1']
+
+        src_ips = [src_ips_1, src_ips_2, src_ips_3]
+        des_ips = [des_ips_1, des_ips_2, des_ips_3]
+        normal_ips = [normal_ips_1, normal_ips_2, normal_ips_3]
+        normal_hostnames = [normal_hostnames_1, normal_hostnames_2, normal_hostnames_3]
+        abnormal_hostnames = [abnormal_hostnames_1, abnormal_hostnames_2, abnormal_hostnames_3]
+        drop_cmd_list = ['kworker']
+
+        labeling_file_path = os.path.join(log_folder, "labeling_file_path.txt")
+
+        ProcessDataHelper.make_labeling_file(labeling_file_path, tactic_names, technique_names,
+                                             sub_technique_names, t, src_ips, des_ips, normal_ips, normal_hostnames,
+                                             abnormal_hostnames, drop_cmd_list)
+        return labeling_file_path
+
+    def process_data(self):
+        big_list = []
+        traffic_files = []
+        atop_files = []
+        log_folder = "CREME_backend_execution/logs"
+        if Creme.mirai:
+            scenario = "mirai"
+            log_folder_mirai = os.path.join(log_folder, scenario)
+            labeling_file_path = self.process_data_mirai(log_folder_mirai)
+            accounting_folder = "accounting"
+            traffic_file = os.path.join("traffic", self.dls.tcp_file)
+            information = [labeling_file_path, log_folder_mirai, accounting_folder, traffic_file]
+
+            big_list.append(information)
+            traffic_files.append("label_traffic_mirai.csv")
+            atop_files.append("label_atop_mirai.csv")
+
+        big_list = []
+        folder_traffic = "logs/label_traffic"
+        final_name_traffic = "label_traffic.csv"
+        folder_atop = "logs/accounting_label"
+        final_name_atop = "label_accounting.csv"
+        time_window_traffic = 1  # second
+
+        ProcessDataHelper.handleAccountingAndPacketAllScenario(big_list, folder_traffic, traffic_files,
+                                                               final_name_traffic, folder_atop, atop_files,
+                                                               final_name_atop, time_window_traffic)
+
     def run(self):
         self.configure()
 
@@ -279,6 +360,7 @@ class Creme:
             self.run_mirai()
 
         # process data
+        self.process_data()
         # train ML
         # evaluation
 
