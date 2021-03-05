@@ -4,3 +4,5 @@ python-interface
 paramiko
 celery
 redis
+pandas
+python-dateutil
