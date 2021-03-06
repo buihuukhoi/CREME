@@ -134,7 +134,7 @@ class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDa
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def stop_collect_data(self):
-        filename_path = "./kill_pids.sh"
+        filename_path = "data_collection/./stop_atop.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.atop_pids_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 

@@ -46,23 +46,11 @@ send "nohup $folder/./$startatop_file $folder $atop_file $interval &\r"
 expect "output to 'nohup.out'"
 send "\r"
 
-# Start capturing
-#expect "*:~# "
-#sleep 1
-#atop -w /root/atop.raw 5 10
-#send "nohup atop -a -w $folder/$atop_file $interval &\r"
-#expect "output to 'nohup.out'"
-#send "\r"
-
 expect "*:~# "
-sleep 1
 send "ps -ef | grep './$startatop_file' | awk '{print \$2}' > $folder/$atop_pids_file\r"
 
-expect "*:~# "
-sleep 3
-#send "ps -ef | grep 'atop -a -w $folder/$atop_file $interval' | awk '{print \$2}' > $folder/$atop_pids_file\r"
-send "ps -ef | grep 'atop -a -w $folder' | awk '{print \$2}' >> $folder/$atop_pids_file\r"
-
+#expect "*:~# "
+#send "ps -ef | grep 'atop -a -w $folder' | awk '{print \$2}' >> $folder/$atop_pids_file\r"
 
 expect "*:~# "
 send "exit\r"
