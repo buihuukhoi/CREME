@@ -279,8 +279,9 @@ class Creme:
         this function use to create labeling_file that contain information to label accounting and traffic data
         """
         folder_times = os.path.join(log_folder, "times")
-        t1, t2, t3, t4, t5 = ProcessDataHelper.get_time_stamps_mirai(folder_times, self.attacker_server.DDoS_duration)
-        t = [t1, t2, t2, t3, t3, t4, t4, t5]
+        t1, t2, t3, t4 = ProcessDataHelper.get_time_stamps_mirai(folder_times, self.attacker_server.DDoS_duration)
+        # t = [t1, t2, t2, t3, t3, t4, t4, t5]
+        t = [t1, t2, t2, t3, t3, t4]
 
         tactic_names = ['Initial Access', 'Command and Control', 'Impact']
         technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
@@ -342,10 +343,9 @@ class Creme:
             traffic_files.append("label_traffic_mirai.csv")
             atop_files.append("label_atop_mirai.csv")
 
-        big_list = []
-        folder_traffic = "logs/label_traffic"
+        folder_traffic = os.path.join(log_folder, "label_traffic")
         final_name_traffic = "label_traffic.csv"
-        folder_atop = "logs/accounting_label"
+        folder_atop = os.path.join(log_folder, "label_accounting")
         final_name_atop = "label_accounting.csv"
         time_window_traffic = 1  # second
 

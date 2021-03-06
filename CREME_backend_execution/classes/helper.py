@@ -151,17 +151,17 @@ class ProcessDataHelper:
     @staticmethod
     def make_labeling_file(labeling_file_path, tactic_names, technique_names, sub_technique_names, t, src_ips, des_ips,
                            normal_ips, normal_hostnames, abnormal_hostnames, drop_cmd_list):
-        t1, t2, t3, t4, t5, t6, t7, t8 = map(t)
+        t1, t2, t3, t4, t5, t6 = map(float, t)
 
         # if attack_scenario == MIRAI:
         #     t1 = XXX + 1
 
         my_list = []
-        my_list.append([tactic_names[0], technique_names[0], sub_technique_names[0], t1, t4 + 1, src_ips[0], des_ips[0],
+        my_list.append([tactic_names[0], technique_names[0], sub_technique_names[0], t1, t2 + 1, src_ips[0], des_ips[0],
                         normal_ips[0], normal_hostnames[0], abnormal_hostnames[0], drop_cmd_list])
-        my_list.append([tactic_names[1], technique_names[1], sub_technique_names[1], t5, t6 + 1, src_ips[1], des_ips[1],
+        my_list.append([tactic_names[1], technique_names[1], sub_technique_names[1], t3, t4 + 1, src_ips[1], des_ips[1],
                         normal_ips[1], normal_hostnames[1], abnormal_hostnames[1], drop_cmd_list])
-        my_list.append([tactic_names[2], technique_names[2], sub_technique_names[2], t7, t8 + 1, src_ips[2], des_ips[2],
+        my_list.append([tactic_names[2], technique_names[2], sub_technique_names[2], t5, t6 + 1, src_ips[2], des_ips[2],
                         normal_ips[2], normal_hostnames[2], abnormal_hostnames[2], drop_cmd_list])
         with open(labeling_file_path, "w+") as fw:
             json.dump(my_list, fw)
@@ -178,9 +178,10 @@ class ProcessDataHelper:
             t2 = int(f2.readline())
         with open(time_4_start_DDoS, 'rt') as f3:
             t3 = int(f3.readline())
-            t4 = t3
-        t5 = t4 + int(dur) + 10  # 10 to avoid problems if there is some delay
-        return t1, t2, t3, t4, t5
+            #t4 = t3
+        t5 = t3 + int(dur) + 10  # 10 to avoid problems if there is some delay
+        # return t1, t2, t3, t4, t5
+        return t1, t2, t3, t5
 
     @staticmethod
     def load_dataset_traffic(folder, filenames, finalname, one_hot_fields=[], removed_fields=[], replace_strings=dict(),
@@ -388,7 +389,6 @@ class ProcessDataHelper:
         # output_file_atop = "label_atop.csv"
         # output_file_traffic = "label_traffic.csv"
         accounting_extraction_file = "CREME_backend_execution/scripts/Preprocessing/Accounting/./accounting_extraction.sh "
-
         cmd = '{0} {1} {2} {3} {4}'.format(accounting_extraction_file, labeling_file_path, accounting_folder,
                                            accounting_result_path, output_file_atop)
         os.system(cmd)
