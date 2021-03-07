@@ -40,5 +40,6 @@ cd argus-clients-3.0.8.2
 chmod +x configure
 ./configure
 sudo make install
+sudo make install
 
 cd -
