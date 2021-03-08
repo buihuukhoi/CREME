@@ -287,30 +287,58 @@ class Creme:
         technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
         sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
 
-        src_ips_1 = ['192.168.1.103']
-        des_ips_1 = ['192.168.1.111', '192.168.1.112', '192.168.1.113']
-        normal_ips_1 = ['192.168.1.211', '192.168.1.212', '192.168.1.213', '192.168.1.11',
-                        '192.168.1.21']
-        normal_hostnames_1 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'target-server-1',
-                              'benign-server-1']
-        abnormal_hostnames_1 = ["vul-client-1", "vul-client-2", "vul-client-3"]
+        src_ips_1 = []
+        des_ips_1 = []
+        normal_ips_1 = []
+        abnormal_hostnames_1 = []
+        normal_hostnames_1 = []
 
-        src_ips_2 = ['192.168.1.102']
-        des_ips_2 = ['192.168.1.111', '192.168.1.112', '192.168.1.113']
-        normal_ips_2 = ['192.168.1.211', '192.168.1.212', '192.168.1.213', '192.168.1.11',
-                        '192.168.1.21']
-        normal_hostnames_2 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'target-server-1',
-                              'benign-server-1']
-        abnormal_hostnames_2 = ["vul-client-1", "vul-client-2", "vul-client-3"]
+        src_ips_1.append(self.malicious_client.ip)
+        for vulnerable_client in self.vulnerable_clients:
+            des_ips_1.append(vulnerable_client.ip)
+            abnormal_hostnames_1.append(vulnerable_client.hostname)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            normal_ips_1.append(non_vulnerable_client.ip)
+            normal_hostnames_1.append(non_vulnerable_client.hostname)
+        normal_ips_1.append(self.target_server.ip)
+        normal_hostnames_1.append(self.target_server.hostname)
+        normal_ips_1.append(self.benign_server.ip)
+        normal_hostnames_1.append(self.benign_server.hostname)
 
-        src_ips_3 = ['192.168.1.111', '192.168.1.112', '192.168.1.113']
-        des_ips_3 = ['192.168.1.11']
-        normal_ips_3 = ['192.168.1.211', '192.168.1.212', '192.168.1.213', '192.168.1.21']
-        # normal_hostnames_3 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'non-vul-client-4',
-        #                      'benign-server-1', 'vul-client-1', 'vul-client-2', 'vul-client-3']
-        # abnormal_hostnames_3 = ['target-server-1']
-        normal_hostnames_3 = ['non-vul-client-1', 'non-vul-client-2', 'non-vul-client-3', 'benign-server-1']
-        abnormal_hostnames_3 = ['vul-client-1', 'vul-client-2', 'vul-client-3', 'target-server-1']
+        src_ips_2 = []
+        des_ips_2 = []
+        normal_ips_2 = []
+        abnormal_hostnames_2 = []
+        normal_hostnames_2 = []
+
+        src_ips_2.append(self.attacker_server.ip)
+        for vulnerable_client in self.vulnerable_clients:
+            des_ips_2.append(vulnerable_client.ip)
+            abnormal_hostnames_2.append(vulnerable_client.hostname)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            normal_ips_2.append(non_vulnerable_client.ip)
+            normal_hostnames_2.append(non_vulnerable_client.hostname)
+        normal_ips_2.append(self.target_server.ip)
+        normal_hostnames_2.append(self.target_server.hostname)
+        normal_ips_2.append(self.benign_server.ip)
+        normal_hostnames_2.append(self.benign_server.hostname)
+
+        src_ips_3 = []
+        des_ips_3 = []
+        normal_ips_3 = []
+        abnormal_hostnames_3 = []
+        normal_hostnames_3 = []
+
+        for vulnerable_client in self.vulnerable_clients:
+            src_ips_3.append(vulnerable_client.ip)
+            abnormal_hostnames_3.append(vulnerable_client.hostname)
+        des_ips_3.append(self.target_server.ip)
+        abnormal_hostnames_3.append(self.target_server.hostname)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            normal_ips_3.append(non_vulnerable_client.ip)
+            normal_hostnames_3.append(non_vulnerable_client.hostname)
+        normal_ips_3.append(self.benign_server.ip)
+        normal_hostnames_3.append(self.benign_server.hostname)
 
         src_ips = [src_ips_1, src_ips_2, src_ips_3]
         des_ips = [des_ips_1, des_ips_2, des_ips_3]
