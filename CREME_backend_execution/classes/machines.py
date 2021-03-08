@@ -35,13 +35,14 @@ class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigur
 
     """
     def __init__(self, hostname, ip, username, password, path, network_interface, tcp_file="traffic.pcap",
-                 tcp_pids_file="tcp_pids.txt", atop_interval=1):
+                 tcp_pids_file="tcp_pids.txt", atop_interval=1, time_window_traffic=1):
         super().__init__(hostname, ip, username, password, path)
         self.path = path
         self.network_interface = network_interface
         self.tcp_file = tcp_file
         self.tcp_pids_file = tcp_pids_file
         self.atop_interval = atop_interval
+        self.time_window_traffic = time_window_traffic
 
     def configure(self):
         self.configure_base()

@@ -375,11 +375,11 @@ class Creme:
         final_name_traffic = "label_traffic.csv"
         folder_atop = os.path.join(log_folder, "label_accounting")
         final_name_atop = "label_accounting.csv"
-        time_window_traffic = 1  # second
+        time_window_traffic = self.dls.time_window_traffic  # second
 
-        ProcessDataHelper.handleAccountingAndPacketAllScenario(big_list, folder_traffic, traffic_files,
-                                                               final_name_traffic, folder_atop, atop_files,
-                                                               final_name_atop, time_window_traffic)
+        ProcessDataHelper.handle_accounting_packet_all_scenario(big_list, folder_traffic, traffic_files,
+                                                                final_name_traffic, folder_atop, atop_files,
+                                                                final_name_atop, time_window_traffic)
 
     def run(self):
         self.configure()

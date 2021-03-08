@@ -185,7 +185,7 @@ class ProcessDataHelper:
 
     @staticmethod
     def load_dataset_traffic(folder, filenames, finalname, one_hot_fields=[], removed_fields=[], replace_strings=dict(),
-                    remove_rows_with_str=dict()):
+                             remove_rows_with_str=dict()):
         df = pd.DataFrame()
         for tmp_filename in filenames:
             filename = os.path.join(folder, tmp_filename)
@@ -296,8 +296,8 @@ class ProcessDataHelper:
         # Helper.MLModel(folder, train_filename, test_filename)
 
     @staticmethod
-    def load_dataset_accounting(folder, filenames, finalname, one_hot_fields=[], removed_fields=[], replace_strings=dict(),
-                    remove_rows_with_str=dict()):
+    def load_dataset_accounting(folder, filenames, finalname, one_hot_fields=[], removed_fields=[],
+                                replace_strings=dict(), remove_rows_with_str=dict()):
         df = pd.DataFrame()
         for tmp_filename in filenames:
             filename = os.path.join(folder, tmp_filename)
@@ -376,9 +376,9 @@ class ProcessDataHelper:
         # Helper.MLModel(folder, train_filename, test_filename)
 
     @staticmethod
-    def handleAccountingAndPacket2(labeling_file_path, output_file_atop, output_file_traffic, log_folder,
-                                   accounting_folder, traffic_file, accounting_result_path, traffic_result_path,
-                                   time_window_traffic):
+    def handle_accounting_and_packet_2(labeling_file_path, output_file_atop, output_file_traffic, log_folder,
+                                       accounting_folder, traffic_file, accounting_result_path, traffic_result_path,
+                                       time_window_traffic):
         # maybe you need to change that
         accounting_folder = os.path.join(log_folder, accounting_folder)  # Logs/Mirai/Original/Accounting_1/
         traffic_file = os.path.join(log_folder, traffic_file)
@@ -398,8 +398,8 @@ class ProcessDataHelper:
         os.system(cmd)
 
     @staticmethod
-    def handleAccountingAndPacketAllScenario(biglist, folder_traffic, file_traffic, finalname_traffic, folder_atop,
-                                             file_atop, finalname_atop, time_window_traffic):
+    def handle_accounting_packet_all_scenario(biglist, folder_traffic, file_traffic, finalname_traffic, folder_atop,
+                                              file_atop, finalname_atop, time_window_traffic):
         for i, information in enumerate(biglist):
             labeling_file_path = information[0]
             output_file_atop = file_atop[i]
@@ -410,10 +410,10 @@ class ProcessDataHelper:
             accounting_result_path = folder_atop
             traffic_result_path = folder_traffic
 
-            ProcessDataHelper.handleAccountingAndPacket2(labeling_file_path, output_file_atop, output_file_traffic,
-                                                         log_folder, accounting_folder, traffic_file,
-                                                         accounting_result_path, traffic_result_path,
-                                                         time_window_traffic)
+            ProcessDataHelper.handle_accounting_and_packet_2(labeling_file_path, output_file_atop, output_file_traffic,
+                                                             log_folder, accounting_folder, traffic_file,
+                                                             accounting_result_path, traffic_result_path,
+                                                             time_window_traffic)
 
         ProcessDataHelper.execute_traffic(folder_traffic, file_traffic, finalname_traffic)
         ProcessDataHelper.execute_accounting(folder_atop, file_atop, finalname_atop)
