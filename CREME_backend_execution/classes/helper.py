@@ -379,6 +379,19 @@ class ProcessDataHelper:
     def handle_accounting_and_packet_2(labeling_file_path, output_file_atop, output_file_traffic, log_folder,
                                        accounting_folder, traffic_file, accounting_result_path, traffic_result_path,
                                        time_window_traffic):
+        """
+        this function uses to process accounting and packet traffic for each scenario
+        :param labeling_file_path: contains information to label data for each scenario
+        :param output_file_atop: the output of atop after finishing process data
+        :param output_file_traffic: the output of traffic after finishing process data
+        :param log_folder: the log folder of the scenario
+        :param accounting_folder: accounting_folder is inside log_folder
+        :param traffic_file: traffic (pcap) file of the scenario
+        :param accounting_result_path: folder uses to store output_file_atop
+        :param traffic_result_path: folder uses to store output_file_traffic
+        :param time_window_traffic: use to to split traffic flow to sub-flow
+        :return:
+        """
         # maybe you need to change that
         accounting_folder = os.path.join(log_folder, accounting_folder)  # Logs/Mirai/Original/Accounting_1/
         traffic_file = os.path.join(log_folder, traffic_file)
@@ -400,6 +413,20 @@ class ProcessDataHelper:
     @staticmethod
     def handle_accounting_packet_all_scenario(biglist, folder_traffic, file_traffic, finalname_traffic, folder_atop,
                                               file_atop, finalname_atop, time_window_traffic):
+        """
+        this function uses to process accounting and packet data of all scenarios
+        :param biglist: list of information of scenarios; list=[[labeling_file_path, log_folder_scenario,
+        accounting_folder, traffic_file],...[labeling_file_path, log_folder_scenario,
+        accounting_folder, traffic_file]]
+        :param folder_traffic: folder for storing result of traffic
+        :param file_traffic: list of label traffic files of scenarios
+        :param finalname_traffic: the final output file of traffic
+        :param folder_atop: folder for storing result of atop
+        :param file_atop: list of label atop files of scenarios
+        :param finalname_atop: the final output file of atop
+        :param time_window_traffic: use to to split traffic flow to sub-flow
+        :return:
+        """
         for i, information in enumerate(biglist):
             labeling_file_path = information[0]
             output_file_atop = file_atop[i]
