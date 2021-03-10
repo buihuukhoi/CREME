@@ -274,15 +274,17 @@ class Creme:
         self.download_data_to_controller(scenario, time_filenames=file_names)
 
     # ---------- process data ----------
-    def process_data_mirai(self, log_folder) -> str:
+    def process_data_mirai(self, log_folder):
         """
-        this function use to create labeling_file that contain information to label accounting and traffic data
+        this function use to create labeling_file that contain information to label accounting and traffic data,
+        also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and label syslog
         """
         folder_times = os.path.join(log_folder, "times")
         t1, t2, t3, t4 = ProcessDataHelper.get_time_stamps_mirai(folder_times, self.attacker_server.DDoS_duration)
         # t = [t1, t2, t2, t3, t3, t4, t4, t5]
         t = [t1, t2, t2, t3, t3, t4]
 
+        labels = [1, 1, 1]  # only for syslog
         tactic_names = ['Initial Access', 'Command and Control', 'Impact']
         technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
         sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
@@ -352,17 +354,34 @@ class Creme:
         ProcessDataHelper.make_labeling_file(labeling_file_path, tactic_names, technique_names,
                                              sub_technique_names, t, src_ips, des_ips, normal_ips, normal_hostnames,
                                              abnormal_hostnames, drop_cmd_list)
-        return labeling_file_path
+
+        timestamps_syslog = [[t1, t2], [t2, t3], [t3, t4]]
+
+        return labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactic_names,\
+            technique_names, sub_technique_names
 
     def process_data(self):
         big_list = []
         traffic_files = []
         atop_files = []
         log_folder = "CREME_backend_execution/logs"
+
+        # syslog
+        input_files = ['dataset_generation_mirai.log', 'dataset_generation_second.log', 'dataset_generation_third.log',
+                       'dataset_generation_fourth.log', 'dataset_generation_fifth.log']
+        scenarios_timestamps = []
+        scenarios_abnormal_hostnames = []
+        scenarios_normal_hostnames = []
+        scenarios_labels = []
+        scenarios_tactics = []
+        scenarios_techniques = []
+        scenarios_sub_techniques = []
+
         if Creme.mirai:
             scenario = "mirai"
             log_folder_mirai = os.path.join(log_folder, scenario)
-            labeling_file_path = self.process_data_mirai(log_folder_mirai)
+            labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactics,\
+                techniques, sub_techniques = self.process_data_mirai(log_folder_mirai)
             accounting_folder = "accounting"
             traffic_file = os.path.join("traffic", self.dls.tcp_file)
             information = [labeling_file_path, log_folder_mirai, accounting_folder, traffic_file]
@@ -370,6 +389,20 @@ class Creme:
             big_list.append(information)
             traffic_files.append("label_traffic_mirai.csv")
             atop_files.append("label_atop_mirai.csv")
+
+            # syslog
+            syslog_file = os.path.join(log_folder_mirai, "syslog")
+            syslog_file = os.path.join(syslog_file, "dataset_generation.log")
+            input_files.append(syslog_file)
+            scenarios_timestamps.append(timestamps_syslog)
+            scenarios_abnormal_hostnames.append(abnormal_hostnames)
+            scenarios_normal_hostnames.append(normal_hostnames)
+
+            scenarios_labels.append(labels)
+            scenarios_tactics.append(tactics)
+            scenarios_techniques.append(techniques)
+            scenarios_sub_techniques.append(sub_techniques)
+
 
         folder_traffic = os.path.join(log_folder, "label_traffic")
         final_name_traffic = "label_traffic.csv"
@@ -380,6 +413,14 @@ class Creme:
         ProcessDataHelper.handle_accounting_packet_all_scenario(big_list, folder_traffic, traffic_files,
                                                                 final_name_traffic, folder_atop, atop_files,
                                                                 final_name_atop, time_window_traffic)
+
+        dls_hostname = self.dls.hostname
+        result_path_syslog = os.path.join(log_folder, "label_syslog")
+        final_name_syslog = "label_syslog.csv"
+        ProcessDataHelper.handle_syslog(input_files, scenarios_timestamps, scenarios_abnormal_hostnames,
+                                        scenarios_normal_hostnames, scenarios_labels, scenarios_tactics,
+                                        scenarios_techniques, scenarios_sub_techniques, dls_hostname,
+                                        result_path_syslog, final_name_syslog)
 
     def run(self):
         self.configure()

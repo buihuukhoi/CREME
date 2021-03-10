@@ -2,7 +2,9 @@ import os
 import paramiko
 import pandas as pd
 import json
+from dateutil.parser import parse
 from CREMEapplication.models import ProgressData
+from . import Drain
 
 
 class ScriptHelper:
@@ -444,3 +446,209 @@ class ProcessDataHelper:
 
         ProcessDataHelper.execute_traffic(folder_traffic, file_traffic, finalname_traffic)
         ProcessDataHelper.execute_accounting(folder_atop, file_atop, finalname_atop)
+
+    # ----- Handle Syslog -----
+    @staticmethod
+    def filter_syslog(input_file, t_start, t_end, dls_hostname):
+        """
+        this function filter syslog from input_file from t_start to t_end times, remove logs from dls_hostname, and
+        separate the log into apache_log and normal syslog.
+        """
+        with open(input_file, 'rt') as f:
+            lines = f.readlines()
+
+        return_lines = []
+        return_lines_apache = []
+
+        apache_access = 'apache-access'
+
+        for line in lines:
+            fields = line.split(' ')
+            if len(fields) < 2:
+                continue
+            time_string = fields[0]
+            hostname = fields[1]
+
+            if hostname != dls_hostname:
+                dateTime = parse(time_string)
+                # timestamp = (int)(dateTime.strftime("%s"))
+                timestamp = (int)(dateTime.timestamp())
+
+                if (int)(t_start) <= timestamp <= (int)(t_end):
+                    component = fields[2]
+                    if component == apache_access:
+                        return_lines_apache.append(line)
+
+                    else:
+                        return_lines.append(line)
+
+        return return_lines, return_lines_apache
+
+    @staticmethod
+    def parse_syslog(input_files, input_dir='Logs/Mirai/Original/Syslog_1', output_dir='Logs/Mirai/Result/'):
+        # input_dir = 'Logs/Mirai/Original/Syslog_1'  # The input directory of log file
+        # output_dir = 'Logs/Mirai/Result/'  # The output directory of parsing results
+
+        benchmark_settings = {
+            'Linux': {
+                # 'log_file': '{0}.log'.format(host),
+                'log_file': input_files[0],
+                'log_format': '<Time> <HostName> <Component>(\[<PID_or_IP>\])?: <Content>',
+                # 'log_format': '<Time> <HostName> <Component>(\[<PID>\])?: <Content>',
+                #        'log_format': '<Month> <Date> <Time> <Level> <Component>(\[<PID>\])?: <Content>',
+                # 'regex': [r'(\d+\.){3}\d+', r'\d{2}:\d{2}:\d{2}'],
+                'regex': [r'(\d+\.){3}\d+', r'\d{2}:\d{2}:\d{2}', r'[A-Za-z0-9]+9E:', r'<[0-9]+\.[A-Z0-9]+\@.*>',
+                          r'[A-Z0-9]{10,}', r'[0-9]+\.$'],
+                'st': 0.2,
+                # 'st': 0.39,
+                'depth': 6
+            },
+            'Apache': {
+                'log_file': input_files[1],
+                # 'log_format': '<Time> <HostName> <Component> <SourceIP> - - \[<Time_Apache>\] <Content>',
+                'log_format': '<Time> <HostName> <Component> <PID_or_IP> - - \[<Time_Apache>\] <Content>',
+                #        'log_format': '<Month> <Date> <Time> <Level> <Component>(\[<PID>\])?: <Content>',
+                'regex': [],
+                'st': 0.2,
+                'depth': 4
+            },
+        }
+
+        output_files = []
+        for dataset, setting in benchmark_settings.items():
+            print('\n=== Evaluation on %s ===' % dataset)
+            indir = os.path.join(input_dir, os.path.dirname(setting['log_file']))
+            log_file = os.path.basename(setting['log_file'])
+
+            parser = Drain.LogParser(log_format=setting['log_format'], indir=indir, outdir=output_dir,
+                                     rex=setting['regex'],
+                                     depth=setting['depth'], st=setting['st'])
+            parser.parse(log_file)
+
+            output_files.append([setting['log_file'] + "_structured.csv", setting['log_file'] + "_templates.csv"])
+        return output_files
+
+    @staticmethod
+    def get_all_component_event_ids(abnormal_group, normal_group, t_start, t_end,):
+        filtered_normal_group = normal_group[((t_start <= normal_group['Timestamp'].astype(int)) &
+                                              (normal_group['Timestamp'].astype(int) < t_end))]
+        normal_component_event_ids = filtered_normal_group['ComponentEventId']
+
+        return list(set(normal_component_event_ids))
+
+    @staticmethod
+    def label_filtered_syslog(df, t, white_list_1, white_list_2, white_list_3, labels, tactics,
+                              techniques, sub_techniques):
+        # print('Begin label 0: {0}'.format(len(df[df['Label'] == 0])))
+        # print('Begin label 1: {0}'.format(len(df[df['Label'] == 1])))
+        t1, t2, t3, t4, t5, t6 = map(float, t)
+        df.loc[(t1 <= df['Timestamp'].astype(int)) & (df['Timestamp'].astype(int) < t2) & (
+            ~df['ComponentEventId'].isin(white_list_1)), ['Label', 'Tactic', 'Technique', 'SubTechnique']] = \
+            labels[0], tactics[0], techniques[0], sub_techniques[0]
+        df.loc[(t3 <= df['Timestamp'].astype(int)) & (df['Timestamp'].astype(int) < t4) & (
+            ~df['ComponentEventId'].isin(white_list_2)), ['Label', 'Tactic', 'Technique', 'SubTechnique']] = \
+            labels[1], tactics[1], techniques[1], sub_techniques[1]
+        df.loc[(t5 <= df['Timestamp'].astype(int)) & (df['Timestamp'].astype(int) <= t6) & (
+            ~df['ComponentEventId'].isin(white_list_3)), ['Label', 'Tactic', 'Technique', 'SubTechnique']] = \
+            labels[2], tactics[2], techniques[2], sub_techniques[2]
+
+    @staticmethod
+    def handle_syslog(input_files, scenarios_timestamps, scenarios_abnormal_hostnames, scenarios_normal_hostnames,
+                      scenarios_labels, scenarios_tactics, scenarios_techniques, scenarios_sub_techniques, dls_hostname,
+                      result_path, output_file):
+        filtered_lines = []
+        filtered_lines_apache = []
+        remove_files = []
+        for i in range(len(input_files)):
+            input_file = input_files[i]
+            stage_timestamps = scenarios_timestamps[i]
+            tmp_filtered_lines, tmp_filtered_lines_apache = \
+                ProcessDataHelper.filter_syslog(input_file, stage_timestamps[0][0], stage_timestamps[-1][1],
+                                                dls_hostname)
+            filtered_lines.extend(tmp_filtered_lines)
+            filtered_lines_apache.extend(tmp_filtered_lines_apache)
+
+        filtered_syslog = "filtered_dataset_generation.log"
+        filtered_syslog_apache = "filtered_dataset_generation_apache.log"
+        # write to new files
+        filtered_syslog_path = os.path.join(result_path, filtered_syslog)
+        filtered_syslog_apache_path = os.path.join(result_path, filtered_syslog_apache)
+        with open(filtered_syslog_path, 'w+') as fw:
+            fw.write("".join(filtered_lines))
+        with open(filtered_syslog_apache_path, 'w+') as fw:
+            fw.write("".join(filtered_lines_apache))
+        remove_files.append(filtered_syslog_path)
+        remove_files.append(filtered_syslog_apache_path)
+
+        # parse logs
+        tmp_output_files = ProcessDataHelper.parse_syslog([filtered_syslog, filtered_syslog_apache],
+                                                          input_dir=result_path, output_dir=result_path)
+        for tmp_file in tmp_output_files:
+            remove_files.append(os.path.join(result_path, tmp_file))
+
+        # merge syslog and apache log
+        filtered_syslog_structured = os.path.join(result_path, tmp_output_files[0][0])
+        filtered_syslog_structured_apache = os.path.join(result_path, tmp_output_files[1][0])
+
+        df_syslog = pd.read_csv(filtered_syslog_structured)
+        df_apache = pd.read_csv(filtered_syslog_structured_apache)
+        del df_apache['Time_Apache']
+        df = df_syslog.append(df_apache, ignore_index=True)
+
+        # get diff services to label data
+        # syslog_structured = os.path.join(result_path, "{0}_structured.csv".format(filtered_syslog))
+        syslog_structured = "syslog_structured.csv"
+
+        # load csv file to pandas
+        # df = pd.read_csv(syslog_structured)
+        # convert time to timestamp for filtering
+        df['Timestamp'] = df['Time'].apply(lambda x: parse(x).timestamp())
+        df = df.sort_values('Timestamp')
+        del df['LineId']
+        df = df.reset_index(drop=True)
+        df.index = df.index.set_names(['Index'])
+        tmp_output = os.path.join(result_path, syslog_structured)
+        df.to_csv(tmp_output, encoding='utf-8', index=True)
+        remove_files.append(tmp_output)
+
+        # concatenate "Component" and "EventId" to new column and delete that column late
+        df["ComponentEventId"] = df["Component"].astype(str) + "-" + df["EventId"].astype(str)
+        # set default value for: label=0 Tactic=Normal Technique=Normal Sub-Technique=Normal
+        df['Label'], df['Tactic'], df['Technique'], df['SubTechnique'] = [0, 'Normal', "Normal", "Normal"]
+
+        # label
+        for i in range(len(scenarios_timestamps)):  # each scenario
+            white_list = []
+            # stage
+            for j in range(len(scenarios_timestamps[i])):  # each stage
+                abnormal_hostnames = scenarios_abnormal_hostnames[i][j]
+                normal_hostnames = scenarios_normal_hostnames[i][j]
+                abnormal_df = df[(df['HostName'].isin(abnormal_hostnames))]
+                normal_df = df[(df['HostName'].isin(normal_hostnames))]
+                t_start = scenarios_timestamps[i][j][0]
+                t_end = scenarios_timestamps[i][j][1]
+                tmp_white_list = ProcessDataHelper.get_all_component_event_ids(abnormal_df, normal_df, t_start, t_end)
+                white_list.extend(tmp_white_list)
+
+            labels = scenarios_labels[i]
+            tactics = scenarios_tactics[i]
+            techniques = scenarios_techniques[i]
+            sub_techniques = scenarios_sub_techniques[i]
+
+            t = [scenarios_timestamps[i][0][0], scenarios_timestamps[i][0][1], scenarios_timestamps[i][1][0],
+                 scenarios_timestamps[i][1][1], scenarios_timestamps[i][2][0], scenarios_timestamps[i][2][1]]
+            # label
+            ProcessDataHelper.label_filtered_syslog(df, t, white_list, white_list, white_list, labels, tactics,
+                                                    techniques, sub_techniques)
+            # print('label 0: {0}'.format(len(df[df['Label'] == 0])))
+            # print('label 1: {0}'.format(len(df[df['Label'] == 1])))
+            # print('\n')
+
+        del df['ComponentEventId']
+        tmp_output = os.path.join(result_path, output_file)
+        df.to_csv(tmp_output, encoding='utf-8', index=False)
+        remove_files.append(tmp_output)
+
+        # remove temporary files
+        for remove_file in remove_files:
+            os.system("rm {0}".format(remove_file))
