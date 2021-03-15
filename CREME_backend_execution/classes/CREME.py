@@ -367,8 +367,7 @@ class Creme:
         log_folder = "CREME_backend_execution/logs"
 
         # syslog
-        input_files = ['dataset_generation_mirai.log', 'dataset_generation_second.log', 'dataset_generation_third.log',
-                       'dataset_generation_fourth.log', 'dataset_generation_fifth.log']
+        input_files = []
         scenarios_timestamps = []
         scenarios_abnormal_hostnames = []
         scenarios_normal_hostnames = []
