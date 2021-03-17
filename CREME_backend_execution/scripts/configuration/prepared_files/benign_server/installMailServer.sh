@@ -138,25 +138,25 @@ expect -c "
 set timeout 3
 spawn openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem
 
-expect \"Country Name (2 letter code) \[AU\]:\"
+expect \"Country Name (2 letter code) [AU]:\"
 send \"TW\r\"
 
-expect \"State or Province Name (full name) \[Some-State\]:\"
+expect \"State or Province Name (full name) [Some-State]:\"
 send \"Taiwan\r\"
 
-expect \"Locality Name (eg, city) \[\]:\"
+expect \"Locality Name (eg, city) []:\"
 send \"Hsinchu\r\"
 
-expect \"Organization Name (eg, company) \[Internet Widgits Pty Ltd\]:\"
+expect \"Organization Name (eg, company) [Internet Widgits Pty Ltd]:\"
 send \"NCTU\r\"
 
-expect \"Organizational Unit Name (eg, section) \[\]:\"
+expect \"Organizational Unit Name (eg, section) []:\"
 send \"High Speed Network Lab\r\"
 
-expect \"Common Name (e.g. server FQDN or YOUR name) \[\]:\"
+expect \"Common Name (e.g. server FQDN or YOUR name) []:\"
 send \"mail.$domainname\r\"
 
-expect \"Email Address \[\]:\"
+expect \"Email Address []:\"
 send \"\r\"
 
 expect eof

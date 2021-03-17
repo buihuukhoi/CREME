@@ -34,7 +34,7 @@ send \"\r\"
 expect \"Other []:\"
 send \"\r\"
 
-expect \"Is the information correct? \[Y/n\]\"
+expect \"Is the information correct? [Y/n]\"
 send \"y\r\"
 
 expect eof
