@@ -110,7 +110,7 @@ expect -c "
 set timeout 100
 spawn apt-get install -y phpmyadmin
 
-expect \"*** php5.conf (Y/I/N/O/D/Z) [default=N] ? \"
+expect \"*** php5.conf (Y/I/N/O/D/Z) \[default=N\] ? \"
 send \"\r\"
 
 expect eof
