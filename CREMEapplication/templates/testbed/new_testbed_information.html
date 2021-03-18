@@ -1,15 +1,27 @@
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-
-<div>
-    <h1><a href="/">CREME</a></h1>
-    <h2>New Testbed: information of machines</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {% for title, form in dict_machines.items %}
-            <h3>{{ title }}</h3>
-            {{ form.as_p }}
-            <br>
-        {% endfor %}
-        <button type="submit" class="save btn btn-default">Save</button>
-    </form>
-</div>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <script>
+            {% if messages %}
+                {% for message in messages %}
+                    alert('{{message}}')
+                {% endfor %}
+            {% endif %}
+        </script>
+    </head>
+    <body>
+        <div>
+            <h1><a href="/">CREME</a></h1>
+            <h2>New Testbed: information of machines</h2>
+            <form method="POST" class="post-form">{% csrf_token %}
+                {% for title, form in dict_machines.items %}
+                    <h3>{{ title }}</h3>
+                    {{ form.as_p }}
+                    <br>
+                {% endfor %}
+                <button type="submit" class="save btn btn-default">Save</button>
+            </form>
+        </div>
+    </body>
+</html>
