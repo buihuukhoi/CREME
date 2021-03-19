@@ -75,7 +75,7 @@ class ProgressHelper:
         progress_data.save()
 
     @staticmethod
-    def clean_attack_stages():
+    def clean_stages(start_stage, end_stage):
         """
         use to clean attack stages when moving to other attack scenario.
         it is called by update_stage() function
@@ -85,7 +85,7 @@ class ProgressHelper:
 
         off_status = 1
         off_detail = "None"
-        for i in range(2, 5):
+        for i in range(start_stage, end_stage + 1):
             status_field = ProgressHelper.status_fields[i]
             detail_field = ProgressHelper.detail_fields[i]
             setattr(progress_data, status_field, off_status)
@@ -127,8 +127,11 @@ class ProgressHelper:
         """
         use to update status and detail of stages on the dashboard
         """
+        if new_stage and stage == 1:
+            ProgressHelper.clean_stages(1, 7)
+
         if new_stage and stage == 2:
-            ProgressHelper.clean_attack_stages()
+            ProgressHelper.clean_stages(2, 4)
 
         ProgressHelper.update_messages(message, size, finished_task, override_pre_message, finished_stage, new_stage)
         detail = ""

@@ -50,8 +50,6 @@ def create_progress_data_if_not_exist():
         ProgressData.objects.create()
 
 
-
-
 def validate_ips(hostname_ip_map):
     errors = []
     all_valid = True
