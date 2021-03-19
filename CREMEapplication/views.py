@@ -11,6 +11,7 @@ from rest_framework import viewsets
 from .tasks import execute_toolchain
 from django.contrib import messages
 import os
+import socket
 
 
 # Create your views here.
@@ -49,6 +50,8 @@ def create_progress_data_if_not_exist():
         ProgressData.objects.create()
 
 
+
+
 def validate_ips(hostname_ip_map):
     errors = []
     all_valid = True
@@ -57,7 +60,15 @@ def validate_ips(hostname_ip_map):
             all_valid = False
             errors.append("({0}) {1} is not a valid IP address".format(hostname, ip))
         else:
-            HOST_UP = True if os.system("ping -W 1 -c 1 " + ip) is 0 else False
+            HOST_UP = False
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            result = sock.connect_ex((ip, 22))
+            if result == 0:
+                HOST_UP = True
+            else:
+                HOST_UP = False
+            sock.close()
+
             if not HOST_UP:
                 all_valid = False
                 errors.append("Cannot connect with {0} ({1})".format(ip, hostname))
