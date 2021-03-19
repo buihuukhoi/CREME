@@ -514,7 +514,7 @@ class ProcessDataHelper:
             },
         }
 
-        output_files = []
+        lisf_of_output_files = []
         for dataset, setting in benchmark_settings.items():
             print('\n=== Evaluation on %s ===' % dataset)
             indir = os.path.join(input_dir, os.path.dirname(setting['log_file']))
@@ -525,8 +525,8 @@ class ProcessDataHelper:
                                      depth=setting['depth'], st=setting['st'])
             parser.parse(log_file)
 
-            output_files.append([setting['log_file'] + "_structured.csv", setting['log_file'] + "_templates.csv"])
-        return output_files
+            lisf_of_output_files.append([setting['log_file'] + "_structured.csv", setting['log_file'] + "_templates.csv"])
+        return lisf_of_output_files
 
     @staticmethod
     def get_all_component_event_ids(abnormal_group, normal_group, t_start, t_end,):
@@ -581,14 +581,16 @@ class ProcessDataHelper:
         remove_files.append(filtered_syslog_apache_path)
 
         # parse logs
-        tmp_output_files = ProcessDataHelper.parse_syslog([filtered_syslog, filtered_syslog_apache],
+        # tmp_output_files is a list 2d
+        tmp_list_of_output_files = ProcessDataHelper.parse_syslog([filtered_syslog, filtered_syslog_apache],
                                                           input_dir=result_path, output_dir=result_path)
-        for tmp_file in tmp_output_files:
-            remove_files.append(os.path.join(result_path, tmp_file))
+        for tmp_output_files in tmp_list_of_output_files:
+            for tmp_file in tmp_output_files:
+                remove_files.append(os.path.join(result_path, tmp_file))
 
         # merge syslog and apache log
-        filtered_syslog_structured = os.path.join(result_path, tmp_output_files[0][0])
-        filtered_syslog_structured_apache = os.path.join(result_path, tmp_output_files[1][0])
+        filtered_syslog_structured = os.path.join(result_path, tmp_list_of_output_files[0][0])
+        filtered_syslog_structured_apache = os.path.join(result_path, tmp_list_of_output_files[1][0])
 
         df_syslog = pd.read_csv(filtered_syslog_structured)
         df_apache = pd.read_csv(filtered_syslog_structured_apache)
@@ -647,7 +649,6 @@ class ProcessDataHelper:
         del df['ComponentEventId']
         tmp_output = os.path.join(result_path, output_file)
         df.to_csv(tmp_output, encoding='utf-8', index=False)
-        remove_files.append(tmp_output)
 
         # remove temporary files
         for remove_file in remove_files:
