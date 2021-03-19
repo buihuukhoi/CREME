@@ -61,7 +61,7 @@ class ProgressHelper:
     status_fields = {1: "stage_1_status", 2: "stage_2_status", 3: "stage_3_status", 4: "stage_4_status",
                      5: "stage_5_status", 6: "stage_6_status", 7: "stage_7_status"}
     detail_fields = {1: "stage_1_detail", 2: "stage_2_detail", 3: "stage_3_detail", 4: "stage_4_detail",
-                     5: "stage_5_detail", 7: "stage_6_detail", 7: "stage_7_detail"}
+                     5: "stage_5_detail", 6: "stage_6_detail", 7: "stage_7_detail"}
     messages = []
 
     @staticmethod
