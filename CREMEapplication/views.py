@@ -49,18 +49,18 @@ def create_progress_data_if_not_exist():
         ProgressData.objects.create()
 
 
-def validate_ips(ips):
+def validate_ips(hostname_ip_map):
     errors = []
     all_valid = True
-    for ip in ips:
+    for hostname, ip in hostname_ip_map.items():
         if ' ' in ip:
             all_valid = False
-            errors.append("({0}) is not a valid IP address".format(ip))
+            errors.append("({0}) {1} is not a valid IP address".format(hostname, ip))
         else:
-            HOST_UP = True if os.system("ping -c 1 " + ip) is 0 else False
+            HOST_UP = True if os.system("ping -W 1 -c 1 " + ip) is 0 else False
             if not HOST_UP:
                 all_valid = False
-                errors.append("Cannot connect with ({0})".format(ip))
+                errors.append("Cannot connect with {0} ({1})".format(ip, hostname))
     return all_valid, errors
 
 
@@ -124,77 +124,6 @@ def new_testbed_information(request):
     num_of_malicious_client = testbed.number_of_malicious_client
 
     if request.method == "POST":
-        dict_machines = dict()
-        dict_machines['Controller'] = ControllerForm(request.POST, prefix='c')
-        dict_machines['Data Logger Server'] = DataLoggerServerForm(request.POST, prefix='dls')
-        dict_machines['Target Server'] = TargetServerForm(request.POST, prefix='ts')
-        dict_machines['Benign Server'] = BenignServerForm(request.POST, prefix='bs')
-        for i in range(num_of_vulnerable_client):
-            dict_machines['Vulnerable Client {0}'.format(i + 1)] = VulnerableClientForm(request.POST,
-                                                                                        prefix='vc{0}'.format(i + 1))
-        for i in range(num_of_non_vulnerable_client):
-            dict_machines['Non-Vulnerable Client {0}'.format(i + 1)] =\
-                NonVulnerableClientForm(request.POST, prefix='nvc{0}'.format(i + 1))
-        dict_machines['Attacker Server'] = AttackerServerForm(request.POST, prefix='as')
-        dict_machines['Malicious Client'] = MaliciousClientForm(request.POST, prefix='mc')
-
-        forms = []
-        ips = []
-
-        form_c = ControllerForm(request.POST, prefix='c')
-        if form_c.is_valid():
-            form = form_c.save(commit=False)
-            forms.append(form)
-
-        form_dls = DataLoggerServerForm(request.POST, prefix='dls')
-        if form_dls.is_valid():
-            form = form_dls.save(commit=False)
-            forms.append(form)
-
-        form_ts = TargetServerForm(request.POST, prefix='ts')
-        if form_ts.is_valid():
-            form = form_ts.save(commit=False)
-            forms.append(form)
-
-        form_bs = BenignServerForm(request.POST, prefix='bs')
-        if form_bs.is_valid():
-            form = form_bs.save(commit=False)
-            forms.append(form)
-
-        for i in range(num_of_vulnerable_client):
-            form_vc = VulnerableClientForm(request.POST, prefix='vc{0}'.format(i+1))
-            if form_vc.is_valid():
-                form = form_vc.save(commit=False)
-                forms.append(form)
-
-        for i in range(num_of_non_vulnerable_client):
-            form_nvc = NonVulnerableClientForm(request.POST, prefix='nvc{0}'.format(i+1))
-            if form_nvc.is_valid():
-                form = form_nvc.save(commit=False)
-                forms.append(form)
-
-        form_as = AttackerServerForm(request.POST, prefix='as')
-        if form_as.is_valid():
-            attacker_server = form_as.save(commit=False)
-            attacker_server.number_of_new_bots = num_of_vulnerable_client
-            forms.append(attacker_server)
-
-        form_mc = MaliciousClientForm(request.POST, prefix='mc')
-        if form_mc.is_valid():
-            form = form_mc.save(commit=False)
-            forms.append(form)
-
-        # get ips to check validation
-        for form in forms:
-            ips.append(form.ip)
-
-        # validate ip addresses
-        all_valid, errors = validate_ips(ips)
-        if not all_valid:
-            for error in errors:
-                messages.error(request, error)
-            return render(request, 'testbed/new_testbed_information.html', {'dict_machines': dict_machines})
-
         # clear all existing objects
         Controller.objects.all().delete()
         DataLoggerServer.objects.all().delete()
@@ -205,9 +134,81 @@ def new_testbed_information(request):
         AttackerServer.objects.all().delete()
         MaliciousClient.objects.all().delete()
 
-        # save forms if valid
-        for form in forms:
-            form.save()
+        dict_hostname_ip = {}
+
+        form_c = ControllerForm(request.POST, prefix='c')
+        if form_c.is_valid():
+            form_c = form_c.save(commit=False)
+            dict_hostname_ip[form_c.hostname] = form_c.ip
+            form_c.save()
+
+        form_dls = DataLoggerServerForm(request.POST, prefix='dls')
+        if form_dls.is_valid():
+            form_dls = form_dls.save(commit=False)
+            dict_hostname_ip[form_dls.hostname] = form_dls.ip
+            form_dls.save()
+
+        form_ts = TargetServerForm(request.POST, prefix='ts')
+        if form_ts.is_valid():
+            form_ts = form_ts.save(commit=False)
+            dict_hostname_ip[form_ts.hostname] = form_ts.ip
+            form_ts.save()
+
+        form_bs = BenignServerForm(request.POST, prefix='bs')
+        if form_bs.is_valid():
+            form_bs = form_bs.save(commit=False)
+            dict_hostname_ip[form_bs.hostname] = form_bs.ip
+            form_bs.save()
+
+        for i in range(num_of_vulnerable_client):
+            form_vc = VulnerableClientForm(request.POST, prefix='vc{0}'.format(i+1))
+            if form_vc.is_valid():
+                form_vc = form_vc.save(commit=False)
+                dict_hostname_ip[form_vc.hostname] = form_vc.ip
+                form_vc.save()
+
+        for i in range(num_of_non_vulnerable_client):
+            form_nvc = NonVulnerableClientForm(request.POST, prefix='nvc{0}'.format(i+1))
+            if form_nvc.is_valid():
+                form_nvc = form_nvc.save(commit=False)
+                dict_hostname_ip[form_nvc.hostname] = form_nvc.ip
+                form_nvc.save()
+
+        form_as = AttackerServerForm(request.POST, prefix='as')
+        if form_as.is_valid():
+            attacker_server = form_as.save(commit=False)
+            attacker_server.number_of_new_bots = num_of_vulnerable_client
+            dict_hostname_ip[attacker_server.hostname] = attacker_server.ip
+            attacker_server.save()
+
+        form_mc = MaliciousClientForm(request.POST, prefix='mc')
+        if form_mc.is_valid():
+            form_mc = form_mc.save(commit=False)
+            dict_hostname_ip[form_mc.hostname] = form_mc.ip
+            form_mc.save()
+
+        # validate ip addresses
+        all_valid, errors = validate_ips(dict_hostname_ip)
+        if not all_valid:
+            for error in errors:
+                messages.error(request, error)
+
+            dict_machines = dict()
+            dict_machines['Controller'] = ControllerForm(request.POST, prefix='c')
+            dict_machines['Data Logger Server'] = DataLoggerServerForm(request.POST, prefix='dls')
+            dict_machines['Target Server'] = TargetServerForm(request.POST, prefix='ts')
+            dict_machines['Benign Server'] = BenignServerForm(request.POST, prefix='bs')
+            for i in range(num_of_vulnerable_client):
+                dict_machines['Vulnerable Client {0}'.format(i + 1)] = VulnerableClientForm(request.POST,
+                                                                                            prefix='vc{0}'.format(
+                                                                                                i + 1))
+            for i in range(num_of_non_vulnerable_client):
+                dict_machines['Non-Vulnerable Client {0}'.format(i + 1)] = \
+                    NonVulnerableClientForm(request.POST, prefix='nvc{0}'.format(i + 1))
+            dict_machines['Attacker Server'] = AttackerServerForm(request.POST, prefix='as')
+            dict_machines['Malicious Client'] = MaliciousClientForm(request.POST, prefix='mc')
+
+            return render(request, 'testbed/new_testbed_information.html', {'dict_machines': dict_machines})
 
         create_progress_data_if_not_exist()
 

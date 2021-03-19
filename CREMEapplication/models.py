@@ -40,16 +40,16 @@ class Testbed(models.Model):
 
 
 class Controller(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     path = models.CharField(max_length=255)
 
 
 class DataLoggerServer(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
@@ -58,40 +58,40 @@ class DataLoggerServer(models.Model):
 
 
 class TargetServer(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
 class BenignServer(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
 class VulnerableClient(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
 class NonVulnerableClient(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
 class AttackerServer(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/home/attacker-server/Desktop/reinstall")
@@ -101,8 +101,8 @@ class AttackerServer(models.Model):
 
 
 class MaliciousClient(models.Model):
-    hostname = models.CharField(max_length=255, unique=True)
-    ip = models.CharField(max_length=255, unique=True)
+    hostname = models.CharField(max_length=255)
+    ip = models.CharField(max_length=255)
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
