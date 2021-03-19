@@ -37,7 +37,7 @@ class Creme:
 
         # prepare to build mirai source code
         if mirai:
-            mirai_o4_xxx = "(o4 == 1"  # default gateway
+            mirai_o4_xxx = "(o4 == 1 || o4 == 2 || o4 == 3"  # default gateway
             mirai_o4_xxx += " || o4 == " + attacker_server.ip.split(".")[-1]
             mirai_o4_xxx += " || o4 == " + malicious_client.ip.split(".")[-1]
             mirai_o4_xxx += " || o4 == " + target_server.ip.split(".")[-1]
