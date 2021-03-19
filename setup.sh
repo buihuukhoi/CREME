@@ -17,7 +17,8 @@ python manage.py migrate
 python manage.py makemigrations CREMEapplication
 python manage.py migrate
 
-chmod -R 775 ./
+#chmod -R 775 ./
+chmod -R 775 ./CREMEapplication/scripts
 
 # create supper user
 # runserver
