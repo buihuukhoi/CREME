@@ -419,8 +419,10 @@ class Creme:
         ProcessDataHelper.handle_accounting_packet_all_scenario(big_list, folder_traffic, traffic_files,
                                                                 final_name_traffic, folder_atop, atop_files,
                                                                 final_name_atop, time_window_traffic)
-        # balance data for atop (accounting)
-        final_name_atop = ProcessDataHelper.balance_data(folder_atop, final_name_atop)
+        # balance data and filter features
+        ProcessDataHelper.balance_data(folder_atop, final_name_atop)
+        ProcessDataHelper.filter_features(folder_atop, final_name_atop, 0.1)
+        ProcessDataHelper.filter_features(folder_traffic, final_name_traffic, 0.04)
         ProgressHelper.update_stage(stage, f"Finished processing the accounting and network packet data sources", 5,
                                     finished_task=True, override_pre_message=True)
 
@@ -432,6 +434,8 @@ class Creme:
                                         scenarios_normal_hostnames, scenarios_labels, scenarios_tactics,
                                         scenarios_techniques, scenarios_sub_techniques, dls_hostname,
                                         result_path_syslog, final_name_syslog)
+        # filter features
+        ProcessDataHelper.filter_features(result_path_syslog, final_name_syslog, 0.1)
         ProgressHelper.update_stage(stage, f"Finished processing the syslog data source", 5,
                                     finished_task=True, override_pre_message=True, finished_stage=True)
 

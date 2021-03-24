@@ -658,7 +658,7 @@ class ProcessDataHelper:
             os.system("rm {0}".format(remove_file))
 
     @staticmethod
-    def balance_data(folder: str, input_file: str, balanced_label_zero=True) -> str:
+    def balance_data(folder: str, input_file: str, balanced_label_zero=True):
         """
         use to balance the label 0 and label 1 data in folder/input_file,
         store the balanced data to a output file and return that file name
@@ -686,6 +686,26 @@ class ProcessDataHelper:
             df = new_df_0.append(df_1)
             # print('len(df) after balance data: {0}'.format(len(df)))
 
-        output_file = "balanced_{0}".format(input_file)
-        df.to_csv(os.path.join(folder, output_file), encoding='utf-8', index=False)
-        return output_file
+        df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
+
+    @staticmethod
+    def filter_features(folder: str, filename: str, corr_threshold=0.1, label_field="Label"):
+        """
+        use to filter/remove features have correlation with Label less then the corr_threshold
+        in the folder/filename
+        """
+        tmp_filename = os.path.join(folder, filename)
+        df = pd.read_csv(tmp_filename)
+
+        # drop space character at the end of feature's name
+        column_names = df.columns.values
+        for i in range(len(column_names)):
+            column_names[i] = column_names[i].strip()
+        df.columns = column_names
+
+        test = df.corr()
+        removed_features = test.index[abs(test[label_field]) < corr_threshold].tolist()
+
+        # update features and re-save the file
+        df.drop(removed_features, axis=1, inplace=True)
+        df.to_csv(tmp_filename, encoding='utf-8', index=False)
