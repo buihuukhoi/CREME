@@ -419,6 +419,8 @@ class Creme:
         ProcessDataHelper.handle_accounting_packet_all_scenario(big_list, folder_traffic, traffic_files,
                                                                 final_name_traffic, folder_atop, atop_files,
                                                                 final_name_atop, time_window_traffic)
+        # balance data for atop (accounting)
+        final_name_atop = ProcessDataHelper.balance_data(folder_atop, final_name_atop)
         ProgressHelper.update_stage(stage, f"Finished processing the accounting and network packet data sources", 5,
                                     finished_task=True, override_pre_message=True)
 

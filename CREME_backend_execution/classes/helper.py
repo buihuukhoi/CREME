@@ -656,3 +656,36 @@ class ProcessDataHelper:
         # remove temporary files
         for remove_file in remove_files:
             os.system("rm {0}".format(remove_file))
+
+    @staticmethod
+    def balance_data(folder: str, input_file: str, balanced_label_zero=True) -> str:
+        """
+        use to balance the label 0 and label 1 data in folder/input_file,
+        store the balanced data to a output file and return that file name
+        """
+        df = pd.read_csv(os.path.join(folder, input_file))
+
+        # print(len(df.columns.values))
+
+        df_0 = df[df['Label'] == 0]
+        df_1 = df[df['Label'] == 1]
+        # print('len(df): {0}'.format(len(df)))
+        # print('label_0: {0}'.format(len(df_0)))
+        # print('label_1: {0}'.format(len(df_1)))
+
+        if balanced_label_zero:
+            df_0.drop_duplicates(keep='last', inplace=True)
+            num_of_label_0 = len(df_0)
+            num_of_label_1 = len(df_1)
+            new_df_0 = pd.DataFrame()
+            for i in range(num_of_label_1//num_of_label_0 + 1):
+                new_df_0 = new_df_0.append(df_0)
+            # print('len(df_0) after remove duplicate and append several times: {0}'.format(len(new_df_0)))
+            # print('len(df_1): {0}'.format(len(df_1)))
+
+            df = new_df_0.append(df_1)
+            # print('len(df) after balance data: {0}'.format(len(df)))
+
+        output_file = "balanced_{0}".format(input_file)
+        df.to_csv(os.path.join(folder, output_file), encoding='utf-8', index=False)
+        return output_file
