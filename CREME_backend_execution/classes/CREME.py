@@ -361,6 +361,9 @@ class Creme:
             technique_names, sub_technique_names
 
     def process_data(self):
+        stage = 5
+        ProgressHelper.update_stage(stage, f"Start processing data ...", 5, new_stage=True)
+
         big_list = []
         traffic_files = []
         atop_files = []
@@ -402,17 +405,19 @@ class Creme:
             scenarios_techniques.append(techniques)
             scenarios_sub_techniques.append(sub_techniques)
 
-
+        ProgressHelper.update_stage(stage, f"Processing the accounting and network packet data sources", 5)
         folder_traffic = os.path.join(log_folder, "label_traffic")
         final_name_traffic = "label_traffic.csv"
         folder_atop = os.path.join(log_folder, "label_accounting")
         final_name_atop = "label_accounting.csv"
         time_window_traffic = self.dls.time_window_traffic  # second
-
         ProcessDataHelper.handle_accounting_packet_all_scenario(big_list, folder_traffic, traffic_files,
                                                                 final_name_traffic, folder_atop, atop_files,
                                                                 final_name_atop, time_window_traffic)
+        ProgressHelper.update_stage(stage, f"Finished processing the accounting and network packet data sources", 5,
+                                    finished_task=True, override_pre_message=True)
 
+        ProgressHelper.update_stage(stage, f"Processing the syslog data source", 5)
         dls_hostname = self.dls.hostname
         result_path_syslog = os.path.join(log_folder, "label_syslog")
         final_name_syslog = "label_syslog.csv"
@@ -420,6 +425,8 @@ class Creme:
                                         scenarios_normal_hostnames, scenarios_labels, scenarios_tactics,
                                         scenarios_techniques, scenarios_sub_techniques, dls_hostname,
                                         result_path_syslog, final_name_syslog)
+        ProgressHelper.update_stage(stage, f"Finished processing the syslog data source", 5,
+                                    finished_task=True, override_pre_message=True, finished_stage=True)
 
     def run(self):
         self.configure()
