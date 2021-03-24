@@ -380,6 +380,8 @@ class Creme:
         scenarios_sub_techniques = []
 
         if Creme.mirai:
+            ProgressHelper.update_stage(stage, f"Processing the data of Mirai scenario", 5)
+
             scenario = "mirai"
             log_folder_mirai = os.path.join(log_folder, scenario)
             labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactics,\
@@ -404,6 +406,9 @@ class Creme:
             scenarios_tactics.append(tactics)
             scenarios_techniques.append(techniques)
             scenarios_sub_techniques.append(sub_techniques)
+
+            ProgressHelper.update_stage(stage, f"Finished processing the data of Mirai scenario", 5,
+                                        finished_task=True, override_pre_message=True)
 
         ProgressHelper.update_stage(stage, f"Processing the accounting and network packet data sources", 5)
         folder_traffic = os.path.join(log_folder, "label_traffic")
