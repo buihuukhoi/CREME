@@ -1,4 +1,4 @@
-from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper
+from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper
 import os
 
 
@@ -8,6 +8,9 @@ class Creme:
     resource_hijacking = True
     disk_wipe = True
     end_point_dos = True
+
+    # models_name should update to let users select at the website *************
+    models_name = ["decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost"]
 
     def __init__(self, dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
                  attacker_server, malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos):
@@ -439,6 +442,33 @@ class Creme:
         ProgressHelper.update_stage(stage, f"Finished processing the syslog data source", 5,
                                     finished_task=True, override_pre_message=True, finished_stage=True)
 
+        data_sources = []
+        data_sources.append({"name": "accounting", "folder": folder_atop, "file": final_name_atop})
+        data_sources.append({"name": "traffic", "folder": folder_traffic, "file": final_name_traffic})
+        data_sources.append({"name": "syslog", "folder": result_path_syslog, "file": final_name_syslog})
+
+        return data_sources
+
+    # ---------- train ML ----------
+    def train_ML_accuracy(self, data_sources):
+        output_folder = os.path.join("CREME_backend_execution", "evaluation_results")
+        output_folder = os.path.join(output_folder, "accuracy")
+        # models_name should update to let users select at the website *************
+        models_name = Creme.models_name
+        for data_source in data_sources:
+            name = data_source["name"]
+            folder = data_source["folder"]
+            file = data_source["file"]
+            output_folder, output_file = TrainMLHelper.accuracy(name, folder, file, output_folder, models_name)
+
+    def train_ML(self, data_sources):
+        # accuracy
+        self.train_ML_accuracy(data_sources)
+
+        # efficiency
+        # coverage
+        pass
+
     def run(self):
         self.configure()
 
@@ -446,8 +476,11 @@ class Creme:
             self.run_mirai()
 
         # process data
-        self.process_data()
+        data_sources = self.process_data()
+
         # train ML
+        self.train_ML(data_sources)
+
         # evaluation
 
     def test_print_information(self):

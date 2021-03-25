@@ -5,6 +5,16 @@ import json
 from dateutil.parser import parse
 from CREMEapplication.models import ProgressData
 from . import Drain
+import csv
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import ExtraTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from xgboost import XGBClassifier
+from sklearn import preprocessing
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import cross_validate
 
 
 class ScriptHelper:
@@ -709,3 +719,85 @@ class ProcessDataHelper:
         # update features and re-save the file
         df.drop(removed_features, axis=1, inplace=True)
         df.to_csv(tmp_filename, encoding='utf-8', index=False)
+
+
+class TrainMLHelper:
+    @staticmethod
+    def accuracy(data_source, input_folder, input_file, output_folder, models_name=[], num_of_folds=5,
+                 standard_scale=True):
+        """
+        use to train ML models and get accuracy score.
+        return output_folder, output_file if successful
+        otherwise return None None
+        """
+
+        def define_models(models_name):
+            models = dict()
+            if 'decision_tree' in models_name:
+                models['decision_tree'] = DecisionTreeClassifier()
+            if 'naive_bayes' in models_name:
+                models['naive_bayes'] = GaussianNB()
+            if 'extra_tree' in models_name:
+                models['extra_tree'] = ExtraTreeClassifier()
+            if 'knn' in models_name:
+                models['knn'] = KNeighborsClassifier()
+            if 'random_forest' in models_name:
+                models['random_forest'] = RandomForestClassifier()
+            if 'XGBoost' in models_name:
+                models['XGBoost'] = XGBClassifier()
+            # print('Defined %d models' % len(models))
+            return models
+
+        filename = os.path.join(input_folder, input_file)
+        df = pd.read_csv(filename)
+
+        csv_output_file = 'accuracy_for_{0}.csv'.format(data_source)
+        label_field = 'Label'
+
+        X = df.loc[:, df.columns != label_field]
+        y = df.loc[:, df.columns == label_field]
+        # features_train = X.columns.values
+
+        if standard_scale:  # standard scale
+            scaler = preprocessing.StandardScaler()
+        else:  # Min Max scale
+            scaler = preprocessing.MinMaxScaler()
+        scaler = scaler.fit(X)
+        tmp_df = scaler.transform(X)
+        X = pd.DataFrame(tmp_df)
+
+        if num_of_folds < 2:
+            num_of_folds = 2
+        cv = StratifiedKFold(n_splits=num_of_folds, shuffle=True, random_state=1)
+        scoring = ['accuracy', 'f1', 'precision', 'recall']
+
+        result = dict()
+        csv_columns = ['ML_algorithms', 'fit_time', 'score_time', 'test_accuracy', 'test_f1', 'test_precision', 'test_recall']
+        csv_rows = []
+
+        # get models and train
+        models = define_models(models_name)
+        for name, model in models.items():
+            # print('training model {} ...........................'.format(name))
+            # scores = cross_validate(model, X, y, scoring=scoring, cv=cv, return_train_score=True)
+            scores = cross_validate(model, X, y, scoring=scoring, cv=cv)
+            csv_row = dict()
+            csv_row['ML_algorithms'] = name
+            for key in scores.keys():
+                csv_row[key] = round(sum(scores[key]) / len(scores[key]), 4)
+                # print('{0}: {1}'.format(key, sum(scores[key]) / len(scores[key])))
+            csv_rows.append(csv_row)
+
+        # try to save results
+        try:
+            with open(os.path.join(output_folder, csv_output_file), 'w+', newline='') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=csv_columns)
+                writer.writeheader()
+                for data in csv_rows:
+                    writer.writerow(data)
+        except IOError:
+            print("I/O error")
+            output_folder = None
+            csv_output_file = None
+
+        return output_folder, csv_output_file

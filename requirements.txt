@@ -6,3 +6,5 @@ celery
 redis
 pandas
 python-dateutil
+sklearn
+xgboost
