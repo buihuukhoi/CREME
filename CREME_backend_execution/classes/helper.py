@@ -15,6 +15,8 @@ from xgboost import XGBClassifier
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_validate
+from sklearn.feature_selection import RFECV
+import matplotlib.pyplot as plt
 
 
 class ScriptHelper:
@@ -767,11 +769,10 @@ class TrainMLHelper:
         X = pd.DataFrame(tmp_df)
 
         if num_of_folds < 2:
-            num_of_folds = 2
+            num_of_folds = 5
         cv = StratifiedKFold(n_splits=num_of_folds, shuffle=True, random_state=1)
         scoring = ['accuracy', 'f1', 'precision', 'recall']
 
-        result = dict()
         csv_columns = ['ML_algorithms', 'fit_time', 'score_time', 'test_accuracy', 'test_f1', 'test_precision', 'test_recall']
         csv_rows = []
 
@@ -801,3 +802,109 @@ class TrainMLHelper:
             csv_output_file = None
 
         return output_folder, csv_output_file
+
+    @staticmethod
+    def efficiency(input_folder, input_file, num_of_folds=5, standard_scale=True):
+        # ----- train model -----
+        filename = os.path.join(input_folder, input_file)
+        df = pd.read_csv(filename)
+
+        label_field = 'Label'
+
+        X = df.loc[:, df.columns != label_field]
+        y = df.loc[:, df.columns == label_field]
+        # features_train = X.columns.values
+        # print(len(list(features_train)))
+
+        if standard_scale:  # standard scale
+            scaler = preprocessing.StandardScaler()
+        else:  # Min Max scale
+            scaler = preprocessing.MinMaxScaler()
+        scaler = scaler.fit(X)
+        tmp_df = scaler.transform(X)
+        X = pd.DataFrame(tmp_df)
+
+        # if you want use other models, change at here
+        model = XGBClassifier()
+
+        if num_of_folds < 2:
+            num_of_folds = 5
+        # cv = KFold(n_splits=5, random_state=1, shuffle=True)
+        cv = StratifiedKFold(n_splits=num_of_folds, shuffle=True, random_state=1)
+
+        rfecv = RFECV(estimator=model, scoring='accuracy', cv=cv)
+        rfecv.fit(X, y)
+
+        # print('Optimal number of features: %d' % rfecv.n_features_)
+
+        return rfecv
+
+
+class EvaluationHelper:
+    @staticmethod
+    def generate_existing_efficiency(output_folder, output_file):
+        """
+        use to generate existing efficiency from pre-calculate existing datasets.
+        Because calculating efficiency for existing datasets will take a lot of time
+        """
+        filename = os.path.join(output_folder, output_file)
+
+        csv_columns = ["dataset", "total_features", "important_feature", "score"]
+
+        csv_rows = []
+        csv_rows.append(
+            {"dataset": "Ton-IoT-Windows", "total_features": 124, "important_feature": 1, "score": round(1 / 124, 3)})
+        csv_rows.append(
+            {"dataset": "UNSW-NB15", "total_features": 202, "important_feature": 30, "score": round(30 / 202, 3)})
+        csv_rows.append(
+            {"dataset": "Ton-IoT-Network", "total_features": 227, "important_feature": 37, "score": round(37 / 227, 3)})
+        csv_rows.append(
+            {"dataset": "CICIDS", "total_features": 78, "important_feature": 18, "score": round(18 / 78, 3)})
+        csv_rows.append({"dataset": "Bot-IoT", "total_features": 20, "important_feature": 5, "score": round(5 / 20, 3)})
+        csv_rows.append(
+            {"dataset": "Kyoto 2006 +", "total_features": 26, "important_feature": 17, "score": round(17 / 26, 3)})
+
+        # try to save results
+        try:
+            with open(filename, 'w+', newline='') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=csv_columns)
+                writer.writeheader()
+                for data in csv_rows:
+                    writer.writerow(data)
+        except IOError:
+            print("I/O error")
+            output_folder = None
+            output_file = None
+
+        return output_folder, output_file
+
+    @staticmethod
+    def find_important_features(rfecv, threshold) -> (int, int):
+        grid_scores = rfecv.grid_scores_
+        total_features = len(grid_scores)
+        important_features = total_features
+        maximum = max(grid_scores)
+        acceptable_accuracy = maximum - threshold
+        for index, accuracy in enumerate(grid_scores):
+            if accuracy >= acceptable_accuracy:
+                important_features = index + 1
+                break
+        return total_features, important_features
+
+    @staticmethod
+    def efficiency(data_source, rfecv, eff_folder, eff_file, threshold=0.0001):
+        total_features, important_features = EvaluationHelper.find_important_features(rfecv, threshold)
+        eff_file_path = os.path.join(eff_folder, eff_file)
+        df_eff = pd.read_csv(eff_file_path)
+        new_row = ["CREME-{0}".format(data_source), total_features, important_features,
+                   round(important_features / total_features, 3)]
+        df_eff.loc[len(df_eff)] = new_row
+        df_eff.to_csv(eff_file_path, index=False)
+
+        figure_output_file = "{0}_efficiency.png".format(data_source)
+        figure_output_file = os.path.join(eff_folder, figure_output_file)
+        plt.figure()
+        plt.xlabel("number of features selected")
+        plt.ylabel('cross validation score')
+        plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
+        plt.savefig(figure_output_file)

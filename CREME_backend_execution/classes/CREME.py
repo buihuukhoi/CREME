@@ -1,4 +1,4 @@
-from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper
+from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper, EvaluationHelper
 import os
 
 
@@ -461,11 +461,40 @@ class Creme:
             file = data_source["file"]
             output_folder, output_file = TrainMLHelper.accuracy(name, folder, file, output_folder, models_name)
 
+    def train_ML_efficiency(self, data_sources):
+        result = dict()
+        for data_source in data_sources:
+            name = data_source["name"]
+            folder = data_source["folder"]
+            file = data_source["file"]
+            rfecv = TrainMLHelper.efficiency(folder, file)
+            result[name] = rfecv
+
+        return result
+
     def train_ML(self, data_sources):
         # accuracy
         self.train_ML_accuracy(data_sources)
 
         # efficiency
+        eff_result = self.train_ML_efficiency(data_sources)
+
+        return eff_result
+
+    # ---------- evaluation ----------
+    def efficiency_evaluation(self, eff_result):
+        eff_folder = os.path.join("CREME_backend_execution", "evaluation_results")
+        eff_folder = os.path.join(eff_folder, "efficiency")
+        eff_file = "efficiency.csv"
+        eff_folder, eff_file = EvaluationHelper.generate_existing_efficiency(eff_folder, eff_file)
+        if eff_folder is not None and eff_file is not None:
+            for data_source, rfecv in eff_result.items():
+                EvaluationHelper.efficiency(data_source, rfecv, eff_folder, eff_file)
+
+    def evaluation(self, eff_result):
+        # efficiency
+        self.efficiency_evaluation(eff_result)
+
         # coverage
         pass
 
@@ -479,9 +508,10 @@ class Creme:
         data_sources = self.process_data()
 
         # train ML
-        self.train_ML(data_sources)
+        eff_result = self.train_ML(data_sources)
 
         # evaluation
+        self.evaluation(eff_result)
 
     def test_print_information(self):
         """
