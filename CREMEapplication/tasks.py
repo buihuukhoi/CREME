@@ -1,6 +1,6 @@
 from CREME.celery import app
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, \
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel
 from CREME_backend_execution.classes import machines
 from CREME_backend_execution.classes.CREME import Creme
 
@@ -35,6 +35,21 @@ def load_testbed_information():
     resource_hijacking = info_attack_scenario.resource_hijacking
     disk_wipe = info_attack_scenario.disk_wipe
     end_point_dos = info_attack_scenario.end_point_dos
+
+    models_name = []
+    info_machine_learning_model = MachineLearningModel.objects.all().first()
+    if info_machine_learning_model.decision_tree:
+        models_name.append("decision_tree")
+    if info_machine_learning_model.naive_bayes:
+        models_name.append("naive_bayes")
+    if info_machine_learning_model.extra_tree:
+        models_name.append("extra_tree")
+    if info_machine_learning_model.knn:
+        models_name.append("knn")
+    if info_machine_learning_model.random_forest:
+        models_name.append("random_forest")
+    if info_machine_learning_model.XGBoost:
+        models_name.append("XGBoost")
 
     # ===> prepare machine's information for a Creme object <===
     machines.Machine.controller_hostname = info_controller.hostname
@@ -83,6 +98,7 @@ def load_testbed_information():
                                                 info_mc.password, info_mc.path)
 
     # ===> create a Creme object <===
+    Creme.models_name = models_name[:]
     creme = Creme(dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients, attacker_server,
                   malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos)
     creme.run()

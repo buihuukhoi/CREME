@@ -9,7 +9,6 @@ class Creme:
     disk_wipe = True
     end_point_dos = True
 
-    # models_name should update to let users select at the website *************
     models_name = ["decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost"]
 
     def __init__(self, dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
