@@ -841,6 +841,7 @@ class TrainMLHelper:
 
 
 class EvaluationHelper:
+    # ----- efficiency -----
     @staticmethod
     def generate_existing_efficiency(output_folder, output_file):
         """
@@ -908,3 +909,57 @@ class EvaluationHelper:
         plt.ylabel('cross validation score')
         plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
         plt.savefig(figure_output_file)
+
+    # ----- coverage -----
+    @staticmethod
+    def generate_existing_coverage(output_folder, output_file, weights):
+        """
+        use to generate existing coverage for existing datasets with corresponding weights.
+        """
+        # weights = {"attack_types": 4 / 10 / 20, "attack_scenarios": 2 / 10 / 20, "data_sources": 1 / 10 / 6,
+        #            "labeled_data": 1 / 10 / 6, "feature_set": 1 / 10 / 6, "metadata": 1 / 10}
+        filename = os.path.join(output_folder, output_file)
+
+        csv_columns = ["dataset", "attack_types", "attack_scenarios", "data_sources", "labeled_data", "feature_set",
+                       "metadata", "score"]
+
+        csv_rows = []
+        csv_rows.append({"dataset": "IoT-NID", "attack_types": 5, "attack_scenarios": 1, "data_sources": 1,
+                         "labeled_data": 1, "feature_set": 0, "metadata": 1})
+        csv_rows.append({"dataset": "NGIDS-DS", "attack_types": 7, "attack_scenarios": 0, "data_sources": 2,
+                         "labeled_data": 1, "feature_set": 1, "metadata": 1})
+        csv_rows.append({"dataset": "Kyoto 2006 +", "attack_types": 8, "attack_scenarios": 0, "data_sources": 1,
+                         "labeled_data": 1, "feature_set": 1, "metadata": 1})
+        csv_rows.append({"dataset": "CICIDS", "attack_types": 8, "attack_scenarios": 0, "data_sources": 1,
+                         "labeled_data": 1, "feature_set": 1, "metadata": 1})
+        csv_rows.append({"dataset": "BoT-IoT", "attack_types": 7, "attack_scenarios": 2, "data_sources": 1,
+                         "labeled_data": 1, "feature_set": 1, "metadata": 1})
+        csv_rows.append({"dataset": "UNSW-NB15", "attack_types": 10, "attack_scenarios": 0, "data_sources": 1,
+                         "labeled_data": 1, "feature_set": 1, "metadata": 1})
+        csv_rows.append({"dataset": "IoT-23", "attack_types": 7, "attack_scenarios": 10, "data_sources": 1,
+                         "labeled_data": 1, "feature_set": 0, "metadata": 1})
+        csv_rows.append({"dataset": "NDSec-1", "attack_types": 9, "attack_scenarios": 3, "data_sources": 2,
+                         "labeled_data": 1, "feature_set": 1, "metadata": 1})
+        csv_rows.append({"dataset": "Ton-IoT", "attack_types": 9, "attack_scenarios": 0, "data_sources": 3,
+                         "labeled_data": 3, "feature_set": 3, "metadata": 1})
+
+        for row in csv_rows:  # dataset
+            score = 0
+            for key, value in row.items():
+                if weights.__contains__(key):
+                    score += value * weights[key]
+            row["score"] = round(score, 3)
+
+        # try to save results
+        try:
+            with open(filename, 'w+', newline='') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=csv_columns)
+                writer.writeheader()
+                for data in csv_rows:
+                    writer.writerow(data)
+        except IOError:
+            print("I/O error")
+            output_folder = None
+            output_file = None
+
+        return output_folder, output_file

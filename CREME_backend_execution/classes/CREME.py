@@ -11,6 +11,10 @@ class Creme:
 
     models_name = ["decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost"]
 
+    # should update to allow users define weights on the website
+    weights = {"attack_types": 4 / 10 / 20, "attack_scenarios": 2 / 10 / 20, "data_sources": 1 / 10 / 6,
+               "labeled_data": 1 / 10 / 6, "feature_set": 1 / 10 / 6, "metadata": 1 / 10}
+
     def __init__(self, dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
                  attacker_server, malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos):
         # self.stage = 0
@@ -490,12 +494,23 @@ class Creme:
             for data_source, rfecv in eff_result.items():
                 EvaluationHelper.efficiency(data_source, rfecv, eff_folder, eff_file)
 
+    def coverage_evaluation(self, cov_result):
+        cov_folder = os.path.join("CREME_backend_execution", "evaluation_results")
+        cov_folder = os.path.join(cov_folder, "coverage")
+        cov_file = "coverage.csv"
+        weights = Creme.weights
+        cov_folder, cov_file = EvaluationHelper.generate_existing_efficiency(cov_folder, cov_file, weights)
+
+        # calculate CREME's coverage *******************************
+        pass
+
     def evaluation(self, eff_result):
         # efficiency
         self.efficiency_evaluation(eff_result)
 
         # coverage
-        pass
+        cov_result = None
+        self.coverage_evaluation(cov_result)
 
     def run(self):
         self.configure()
