@@ -116,6 +116,13 @@ class AttackScenario(models.Model):
     end_point_dos = models.BooleanField(default=True)
 
 
+class MachineLearningModel(models.Model):
+    decision_tree = models.BooleanField(default=True)
+    naive_bayes = models.BooleanField(default=True)
+    extra_tree = models.BooleanField(default=True)
+    knn = models.BooleanField(default=True)
+    random_forest = models.BooleanField(default=True)
+    XGBoost = models.BooleanField(default=True)
 
 
 

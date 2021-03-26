@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, \
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel
 from .forms import TestbedForm, ControllerForm, DataLoggerServerForm, TargetServerForm, BenignServerForm, \
-    VulnerableClientForm, NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm
+    VulnerableClientForm, NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm, \
+    MachineLearningModelForm
 from django.shortcuts import redirect
 
 from .serializers import ProgressDataSerializer
@@ -85,6 +86,7 @@ def new_testbed(request):
     if request.method == "POST":
         form_testbed = TestbedForm(request.POST)
         form_attack_scenario = AttackScenarioForm(request.POST)
+        form_machine_learning_model = MachineLearningModelForm(request.POST)
 
         if form_testbed.is_valid():
             testbeds = Testbed.objects.all()
@@ -100,20 +102,57 @@ def new_testbed(request):
             testbed.number_of_malicious_client = 1
             testbed.save()
 
+        scenario_valid = False  # at least one scenario must be selected
         if form_attack_scenario.is_valid():
+            # must select at least one attack scenario
+            for field_name in form_attack_scenario.fields:
+                value = form_attack_scenario.cleaned_data[field_name]
+                scenario_valid = scenario_valid or value
             attack_scenarios = AttackScenario.objects.all()
-            if attack_scenarios:  # update first object if it exists, otherwise --> create new one
+            # update first object if it exists, otherwise --> create new one
+            if attack_scenarios:
                 first_attack_scenario = attack_scenarios.first()
                 form_attack_scenario = AttackScenarioForm(request.POST, instance=first_attack_scenario)
             form_attack_scenario.save()
 
+        ml_model_valid = False  # at least one ml model must be selected
+        if form_machine_learning_model.is_valid():
+            # must select at least one ml model
+            for field_name in form_machine_learning_model.fields:
+                value = form_machine_learning_model.cleaned_data[field_name]
+                ml_model_valid = ml_model_valid or value
+            machine_learning_models = MachineLearningModel.objects.all()
+            # update first object if it exists, otherwise --> create new one
+            if machine_learning_models:
+                first_machine_learning_model = machine_learning_models.first()
+                form_machine_learning_model = MachineLearningModelForm(request.POST,
+                                                                       instance=first_machine_learning_model)
+            form_machine_learning_model.save()
+
+        # if not valid --> re-fill the form
+        if not scenario_valid or not ml_model_valid:
+            if not scenario_valid:
+                error = "Must select at least one attack scenario"
+                messages.error(request, error)
+            if not ml_model_valid:
+                error = "Must select at least one machine learning model"
+                messages.error(request, error)
+
+            dict_forms = dict()
+            dict_forms['Number of machines:'] = TestbedForm(request.POST)
+            dict_forms['Scenario:'] = AttackScenarioForm(request.POST)
+            dict_forms['Machine Learning model:'] = MachineLearningModelForm(request.POST)
+
+            return render(request, 'testbed/new_testbed.html', {'dict_forms': dict_forms})
+
         return redirect(NEW_TESTBED_INFORMATION)
 
     else:
-        form_testbed = TestbedForm()
-        form_attack_scenario = AttackScenarioForm()
-    return render(request, 'testbed/new_testbed.html', {'form_testbed': form_testbed,
-                                                        'form_attack_scenario': form_attack_scenario})
+        dict_forms = dict()
+        dict_forms['Number of machines:'] = TestbedForm()
+        dict_forms['Scenario:'] = AttackScenarioForm()
+        dict_forms['Machine Learning model:'] = MachineLearningModelForm()
+    return render(request, 'testbed/new_testbed.html', {'dict_forms': dict_forms})
 
 
 def new_testbed_information(request):

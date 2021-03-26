@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient,\
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, MachineLearningModel
 
 
 class TestbedForm(forms.ModelForm):
@@ -23,64 +23,60 @@ class TestbedForm(forms.ModelForm):
 
 
 class ControllerForm(forms.ModelForm):
-
     class Meta:
         model = Controller
         fields = ('hostname', 'ip', 'username', 'password', 'path')
 
 
 class DataLoggerServerForm(forms.ModelForm):
-
     class Meta:
         model = DataLoggerServer
         fields = ('hostname', 'ip', 'username', 'password', 'path', 'network_interface', 'atop_interval')
 
 
 class TargetServerForm(forms.ModelForm):
-
     class Meta:
         model = TargetServer
         fields = ('hostname', 'ip', 'username', 'password', 'path')
 
 
 class BenignServerForm(forms.ModelForm):
-
     class Meta:
         model = BenignServer
         fields = ('hostname', 'ip', 'username', 'password', 'path')
 
 
 class VulnerableClientForm(forms.ModelForm):
-
     class Meta:
         model = VulnerableClient
         fields = ('hostname', 'ip', 'username', 'password', 'path')
 
 
 class NonVulnerableClientForm(forms.ModelForm):
-
     class Meta:
         model = NonVulnerableClient
         fields = ('hostname', 'ip', 'username', 'password', 'path')
 
 
 class AttackerServerForm(forms.ModelForm):
-
     class Meta:
         model = AttackerServer
         fields = ('hostname', 'ip', 'username', 'password', 'path', 'DDoS_type', 'DDoS_duration')
 
 
 class MaliciousClientForm(forms.ModelForm):
-
     class Meta:
         model = MaliciousClient
         fields = ('hostname', 'ip', 'username', 'password', 'path')
 
 
 class AttackScenarioForm(forms.ModelForm):
-
     class Meta:
         model = AttackScenario
         fields = ('mirai', 'ransomware', 'resource_hijacking', 'disk_wipe', 'end_point_dos')
 
+
+class MachineLearningModelForm(forms.ModelForm):
+    class Meta:
+        model = MachineLearningModel
+        fields = ("decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost")
