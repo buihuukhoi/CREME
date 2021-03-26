@@ -453,7 +453,7 @@ class Creme:
         return data_sources
 
     # ---------- train ML ----------
-    def train_ML_accuracy(self, data_sources):
+    def train_ML_accuracy(self, stage, data_sources):
         output_folder = os.path.join("CREME_backend_execution", "evaluation_results")
         output_folder = os.path.join(output_folder, "accuracy")
         # models_name should update to let users select at the website *************
@@ -462,37 +462,51 @@ class Creme:
             name = data_source["name"]
             folder = data_source["folder"]
             file = data_source["file"]
+            ProgressHelper.update_stage(stage, "Training {0}".format(name), 6)
             output_folder, output_file = TrainMLHelper.accuracy(name, folder, file, output_folder, models_name)
+            ProgressHelper.update_stage(stage, "Finished training {0}".format(name), 6,
+                                        finished_task=True, override_pre_message=True)
 
-    def train_ML_efficiency(self, data_sources):
+    def train_ML_efficiency(self, stage, data_sources):
         result = dict()
         for data_source in data_sources:
             name = data_source["name"]
             folder = data_source["folder"]
             file = data_source["file"]
+            ProgressHelper.update_stage(stage, "Training {0}".format(name), 6)
             rfecv = TrainMLHelper.efficiency(folder, file)
             result[name] = rfecv
+            ProgressHelper.update_stage(stage, "Finished training {0}".format(name), 6,
+                                        finished_task=True, override_pre_message=True)
 
         return result
 
     def train_ML(self, data_sources):
+        stage = 6
+        ProgressHelper.update_stage(stage, f"Start training models for Accuracy:", 5, new_stage=True)
         # accuracy
-        self.train_ML_accuracy(data_sources)
+        self.train_ML_accuracy(stage, data_sources)
 
+        ProgressHelper.update_stage(stage, f"Start training models for Efficiency:", 5)
         # efficiency
-        eff_result = self.train_ML_efficiency(data_sources)
+        eff_result = self.train_ML_efficiency(stage, data_sources)
+
+        ProgressHelper.update_stage(stage, f"Finished training models:", 5, finished_task=True, finished_stage=True)
 
         return eff_result
 
     # ---------- evaluation ----------
-    def efficiency_evaluation(self, eff_result):
+    def efficiency_evaluation(self, stage, eff_result):
         eff_folder = os.path.join("CREME_backend_execution", "evaluation_results")
         eff_folder = os.path.join(eff_folder, "efficiency")
         eff_file = "efficiency.csv"
         eff_folder, eff_file = EvaluationHelper.generate_existing_efficiency(eff_folder, eff_file)
         if eff_folder is not None and eff_file is not None:
             for data_source, rfecv in eff_result.items():
+                ProgressHelper.update_stage(stage, "{0}".format(data_source), 6)
                 EvaluationHelper.efficiency(data_source, rfecv, eff_folder, eff_file)
+                ProgressHelper.update_stage(stage, "Finished {0}".format(data_source), 6,
+                                            finished_task=True, override_pre_message=True)
 
     def coverage_evaluation(self, cov_result):
         cov_folder = os.path.join("CREME_backend_execution", "evaluation_results")
@@ -505,12 +519,16 @@ class Creme:
         pass
 
     def evaluation(self, eff_result):
+        stage = 7
+        ProgressHelper.update_stage(stage, f"Start Efficiency evaluation:", 5, new_stage=True)
         # efficiency
-        self.efficiency_evaluation(eff_result)
+        self.efficiency_evaluation(stage, eff_result)
 
+        ProgressHelper.update_stage(stage, f"Start Coverage evaluation:", 5)
         # coverage
         cov_result = None
         self.coverage_evaluation(cov_result)
+        ProgressHelper.update_stage(stage, f"Finished evaluation:", 5, finished_task=True, finished_stage=True)
 
     def run(self):
         self.configure()
