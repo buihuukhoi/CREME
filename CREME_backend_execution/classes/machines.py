@@ -490,8 +490,11 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         pass
 
     def configure_disk_wipe(self):
-        # ?????
-        pass
+        prepared_files = "CREME/CREME_backend_execution/scripts/configuration/prepared_files/disk_wipe/attacker_server"
+        filename_path = "configuration/./AttackerServer_disk_wipe.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, prepared_files]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_end_point_dos(self):
         # ?????
