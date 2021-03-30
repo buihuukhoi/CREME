@@ -61,16 +61,21 @@ def validate_ips(hostname_ip_map):
         else:
             HOST_UP = False
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            result = sock.connect_ex((ip, 22))
-            if result == 0:
-                HOST_UP = True
-            else:
-                HOST_UP = False
-            sock.close()
+            try:
+                sock.settimeout(1)
+                result = sock.connect_ex((ip, 22))
+                if result == 0:
+                    HOST_UP = True
+                else:
+                    HOST_UP = False
+            except socket.error as exc:
+                print("Caught exception socket.error : {0}".format(exc))
+            finally:
+                sock.close()
 
             if not HOST_UP:
                 all_valid = False
-                errors.append("Cannot connect with {0} ({1})".format(ip, hostname))
+                errors.append("Cannot connect with IP address {0} ({1})".format(ip, hostname))
     return all_valid, errors
 
 
