@@ -513,7 +513,7 @@ class Creme:
         cov_folder = os.path.join(cov_folder, "coverage")
         cov_file = "coverage.csv"
         weights = Creme.weights
-        cov_folder, cov_file = EvaluationHelper.generate_existing_efficiency(cov_folder, cov_file, weights)
+        cov_folder, cov_file = EvaluationHelper.generate_existing_coverage(cov_folder, cov_file, weights)
 
         # calculate CREME's coverage *******************************
         pass

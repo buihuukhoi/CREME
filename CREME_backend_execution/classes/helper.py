@@ -89,7 +89,7 @@ class ProgressHelper:
     @staticmethod
     def clean_stages(start_stage, end_stage):
         """
-        use to clean attack stages when moving to other attack scenario.
+        use to clean next stages when moving to a new stage.
         it is called by update_stage() function
         """
         progress_data_all = ProgressData.objects.all()
@@ -139,11 +139,8 @@ class ProgressHelper:
         """
         use to update status and detail of stages on the dashboard
         """
-        if new_stage and stage == 1:
-            ProgressHelper.clean_stages(1, 7)
-
-        if new_stage and stage == 2:
-            ProgressHelper.clean_stages(2, 4)
+        if new_stage:
+            ProgressHelper.clean_stages(stage, 7)
 
         ProgressHelper.update_messages(message, size, finished_task, override_pre_message, finished_stage, new_stage)
         detail = ""
@@ -250,9 +247,9 @@ class ProcessDataHelper:
         # print('*******************************************************')
         # print(df.dtypes)
 
-        print(len(df.columns.values))
-        print(df.dtypes)
-        print(df.isnull().any())
+        # print(len(df.columns.values))
+        # print(df.dtypes)
+        # print(df.isnull().any())
 
         # preprocess_hex_value
         fields_with_hex_value = ['Sport', 'Dport']
@@ -269,9 +266,9 @@ class ProcessDataHelper:
         for field in fields_with_hex_value:
             df[field] = df[field].apply(lambda x: int(str(x), 0))
 
-        print(len(df.columns.values))
-        print(df.dtypes)
-        print(df.isnull().any())
+        # print(len(df.columns.values))
+        # print(df.dtypes)
+        # print(df.isnull().any())
 
         column_names = df.columns.values
         for i in range(len(column_names)):
@@ -568,6 +565,64 @@ class ProcessDataHelper:
             labels[2], tactics[2], techniques[2], sub_techniques[2]
 
     @staticmethod
+    def counting_vector(folder, input_file, output_file):
+        """
+        use to convert input_file(label_syslog.csv) to counting vector and save to output_file.
+        Return output_file if successful, otherwise --> return None
+        :param folder:
+        :param input_file:
+        :param output_file:
+        :return:
+        """
+        # all_df_count_vector = pd.DataFrame()
+        # df = pd.DataFrame()
+
+        filename = os.path.join(folder, input_file)
+
+        col_list = ['HostName', 'EventTemplate', 'Timestamp', 'Label']
+        one_hot_col_list = ['EventTemplate']
+        df = pd.read_csv(filename, usecols=col_list)
+
+        # print(len(df['Timestamp'].unique()))
+
+        df = pd.get_dummies(df, columns=one_hot_col_list)
+
+        hostnames = df['HostName'].unique()
+
+        df_count_vector = pd.DataFrame()
+
+        df_machines = []
+        unique_timestamps_machines = []
+        for hostname in hostnames:
+            df_machines.append(df[df['HostName'] == hostname])
+
+        for df_machine in df_machines:
+            unique_timestamps = list(set(df_machine['Timestamp']))
+            unique_timestamps_machines.append(unique_timestamps)
+
+        del_col_list = ['HostName', 'Timestamp']
+        for i in range(len(df_machines)):
+            df_machine = df_machines[i]
+            tmp_unique_timestamps = unique_timestamps_machines[i]
+            for tmp_timestamp in tmp_unique_timestamps:
+                tmp_df = df_machine[df_machine['Timestamp'] == tmp_timestamp]
+                tmp_df = tmp_df.drop(columns=del_col_list)
+
+                sum_one_hot = tmp_df.sum()
+                df_count_vector = df_count_vector.append(sum_one_hot.transpose(), ignore_index=True)
+
+        df_count_vector.loc[df_count_vector['Label'] > 0, 'Label'] = 1
+        # all_df_count_vector = all_df_count_vector.append(df_count_vector)
+
+        # try to save results
+        try:
+            full_output_file = os.path.join(folder, output_file)
+            df_count_vector.to_csv(full_output_file, encoding='utf-8', index=False)
+            return output_file
+        except IOError:
+            return None
+
+    @staticmethod
     def handle_syslog(input_files, scenarios_timestamps, scenarios_abnormal_hostnames, scenarios_normal_hostnames,
                       scenarios_labels, scenarios_tactics, scenarios_techniques, scenarios_sub_techniques, dls_hostname,
                       result_path, output_file):
@@ -662,13 +717,18 @@ class ProcessDataHelper:
             # print('\n')
 
         del df['ComponentEventId']
-        tmp_output = os.path.join(result_path, output_file)
-        df.to_csv(tmp_output, encoding='utf-8', index=False)
+        tmp_output = "{0}_{1}".format("original", output_file)
+        full_tmp_output = os.path.join(result_path, tmp_output)
+        df.to_csv(full_tmp_output, encoding='utf-8', index=False)
 
         # remove temporary files
         for remove_file in remove_files:
             os.system("rm {0}".format(remove_file))
 
+        output_file = ProcessDataHelper.counting_vector(result_path, tmp_output, output_file)
+        return output_file
+
+    # ----- Balance data and Filter features -----
     @staticmethod
     def balance_data(folder: str, input_file: str, balanced_label_zero=True):
         """
