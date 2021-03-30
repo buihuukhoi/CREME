@@ -444,6 +444,8 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         self.configure_data_collection()
         if Creme.mirai:
             self.configure_mirai()
+        if Creme.ransomware or Creme.resource_hijacking or Creme.disk_wipe or Creme.end_point_dos:
+            self.configure_pymetasploit()
         if Creme.ransomware:
             self.configure_ransomware()
         if Creme.resource_hijacking:
@@ -472,6 +474,11 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
                       self.controller_password, self.controller_path, self.transfer_pids_file, mirai_dns_xxx,
                       ip_o[0], ip_o[1], ip_o[2], '"' + self.mirai_o4_xxx_1 + '"', '"' + self.mirai_o4_xxx_2 + '"']
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def configure_pymetasploit(self):
+        filename_path = "configuration/./AttackerServer_pymetasploit.sh"
+        parameters = [self.ip, self.username, self.password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):

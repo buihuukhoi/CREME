@@ -40,6 +40,9 @@ class IConfigurationAttack(Interface):
     def configure_mirai(self):
         pass
 
+    def configure_pymetasploit(self):
+        pass
+
     def configure_ransomware(self):
         pass
 
