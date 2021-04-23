@@ -18,7 +18,7 @@ send "$password\r"
 
 # install metasploit
 expect "*:~# "
-send "sudo apt install curl\r"
+send "sudo apt install curl -y\r"
 expect "*:~# "
 send "curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall \r"
 expect "*:~# "
