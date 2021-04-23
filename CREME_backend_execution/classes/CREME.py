@@ -168,7 +168,7 @@ class Creme:
         self.malicious_client.mirai_start_malicious()
 
         self.attacker_server.mirai_wait_for_finished_scan()
-        ProgressHelper.update_stage(stage, f"{self.malicious_client.hostname} found bots:", 5)
+        ProgressHelper.update_stage(stage, f"{self.malicious_client.hostname} found bots:", 5, finished_task=True)
         for vulnerable_client in self.vulnerable_clients:
             ProgressHelper.update_stage(stage, f"hostname:{vulnerable_client.hostname}, ip:{vulnerable_client.ip}, \
                                         username:{vulnerable_client.username}, password:{vulnerable_client.password}",
