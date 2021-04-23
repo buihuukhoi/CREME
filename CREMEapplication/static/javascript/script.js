@@ -11,7 +11,8 @@ setInterval(function(){
         }
     };
 
-    ajaxRequest.open("GET", "http://127.0.0.1:8000/api/progressdata/", true);
+    my_domain = document.location.hostname;
+    ajaxRequest.open("GET", "http://" + my_domain + ":8000/api/progressdata/", true);
     ajaxRequest.send();
 }, 1000);
 
