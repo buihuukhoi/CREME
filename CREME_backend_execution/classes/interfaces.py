@@ -40,9 +40,6 @@ class IConfigurationAttack(Interface):
     def configure_mirai(self):
         pass
 
-    #def configure_pymetasploit(self):
-    #    pass
-
     def configure_ransomware(self):
         pass
 
@@ -54,6 +51,16 @@ class IConfigurationAttack(Interface):
 
     def configure_end_point_dos(self):
         pass
+
+
+class IConfigurationAttackerSide(Interface):
+    """
+    defining additional configurations for attacker side that should be implemented by attacker machines:
+    including AttackerServer, MaliciousClient
+    """
+
+    def configure_pymetasploit(self):
+       pass
 
 
 # ---------- data collection ----------

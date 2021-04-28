@@ -2,7 +2,7 @@ import os
 from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
     IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
-    ICleaningBenignReproduction, ICleaningAttackReproduction
+    ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -421,7 +421,7 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
                      implements(IConfigurationAttack), implements(IMiraiAttackerServer),
-                     implements(ICleaningAttackReproduction)):
+                     implements(ICleaningAttackReproduction), implements(IConfigurationAttackerSide)):
     data_logger_server_ip = None
     DNS_server_ip = None
     mirai_o4_xxx_1 = None
@@ -554,7 +554,8 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
 
 
 class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationCommon),
-                      implements(IConfigurationAttack), implements(IMiraiMaliciousClient)):
+                      implements(IConfigurationAttack), implements(IMiraiMaliciousClient),
+                      implements(IConfigurationAttackerSide)):
     data_logger_server_ip = None
     attacker_server = None
     DNS_server_ip = None
@@ -570,6 +571,8 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
         self.configure_data_collection()
         if Creme.mirai:
             self.configure_mirai()
+        if Creme.ransomware or Creme.resource_hijacking or Creme.disk_wipe or Creme.end_point_dos:
+            self.configure_pymetasploit()
         if Creme.ransomware:
             self.configure_ransomware()
         if Creme.resource_hijacking:
@@ -595,6 +598,9 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
         parameters = [self.ip, self.username, self.password, self.path, self.attacker_server.ip,
                       self.attacker_server.username, self.attacker_server.password, self.attacker_server.path]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def configure_pymetasploit(self):
+        pass
 
     def configure_ransomware(self):
         # ?????
