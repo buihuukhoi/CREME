@@ -201,7 +201,32 @@ class Creme:
                                     finished_task=True, finished_stage=True)
 
     def attack_disk_wipe(self):
-        pass
+        ProgressHelper.update_scenario("Disk_Wipe")
+        stage = 2
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is exploiting rails_secret_deserialization",
+                                    5, new_stage=True)
+        self.attacker_server.disk_wipe_first_stage()
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished exploiting rails_secret_deserialization",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing service_persistence",
+                                    5, new_stage=True)
+        self.attacker_server.disk_wipe_second_stage()
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing service_persistence",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing disk_wipe",
+                                    5, new_stage=True)
+        self.attacker_server.disk_wipe_third_stage()
+        # wait and record timestamp
+        timestamp_folder = os.path.join("CREME_backend_execution", "logs", "disk_wipe", "times")
+        timestamp_file = "time_stage_3_end.txt"
+        OtherHelper.wait_finishing(sleep_time=90, record_time=True, folder=timestamp_folder,
+                                   timestamp_file=timestamp_file)
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing disk_wipe",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
 
     # ---------- download data to controller ----------
     def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False, time_filenames=[]):
@@ -288,12 +313,6 @@ class Creme:
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_disk_wipe()
-        # wait and record timestamp
-        timestamp_folder = os.path.join("CREME_backend_execution", "logs", "disk_wipe", "times")
-        timestamp_file = "time_stage_3_end.txt"
-        OtherHelper.wait_finishing(sleep_time=90, record_time=True, folder=timestamp_folder,
-                                   timestamp_file=timestamp_file)
-
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_disk_wipe()

@@ -192,7 +192,13 @@ class IDiskWipeAttackerServer(Interface):
     def disk_wipe_start_metasploit(self):
         pass
 
-    def disk_wipe_start_attack(self):
+    def disk_wipe_first_stage(self):
+        pass
+
+    def disk_wipe_second_stage(self):
+        pass
+
+    def disk_wipe_third_stage(self):
         pass
 
 

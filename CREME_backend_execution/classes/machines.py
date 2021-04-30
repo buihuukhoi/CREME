@@ -440,7 +440,7 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         self.DDoS_type = DDoS_type
         self.DDoS_duration = DDoS_duration
         self.killed_pids_file = "killed_pids.txt"
-        self.flag_finish = "Creme_finish_attack_scenario"
+        # self.flag_finish = "Creme_finish_attack_scenario"
 
     def configure(self):
         self.configure_base()
@@ -560,9 +560,19 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
-    def disk_wipe_start_attack(self):
-        filename_path = "attacks/disk_wipe/./AttackerServer_start_attack.sh"
-        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack, self.flag_finish]
+    def disk_wipe_first_stage(self):
+        filename_path = "attacks/disk_wipe/./AttackerServer_first_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def disk_wipe_second_stage(self):
+        filename_path = "attacks/disk_wipe/./AttackerServer_second_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def disk_wipe_third_stage(self):
+        filename_path = "attacks/disk_wipe/./AttackerServer_third_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def stop_metasploit(self):
