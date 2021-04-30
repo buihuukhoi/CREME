@@ -89,7 +89,7 @@ def load_testbed_information():
     machines.AttackerServer.DNS_server_ip = target_server.ip
     attacker_server = machines.AttackerServer(info_as.hostname, info_as.ip, info_as.username, info_as.password,
                                               info_as.path, number_of_new_bots=info_as.number_of_new_bots,
-                                              targeted_DDoS=info_ts.ip, DDoS_type=info_as.DDoS_type,
+                                              targeted_attack=info_ts.ip, DDoS_type=info_as.DDoS_type,
                                               DDoS_duration=info_as.DDoS_duration)
     machines.MaliciousClient.data_logger_server_ip = info_dls.ip
     machines.MaliciousClient.attacker_server = info_as
