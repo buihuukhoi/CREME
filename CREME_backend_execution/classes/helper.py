@@ -17,6 +17,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_validate
 from sklearn.feature_selection import RFECV
 import matplotlib.pyplot as plt
+import time
 
 
 class ScriptHelper:
@@ -1023,3 +1024,13 @@ class EvaluationHelper:
             output_file = None
 
         return output_folder, output_file
+
+
+class OtherHelper:
+    @staticmethod
+    def wait_finishing(sleep_time, record_time=False, folder="", timestamp_file=""):
+        time.sleep(sleep_time)
+        if record_time:
+            output_time_file = os.path.join(folder, timestamp_file)
+            with open(output_time_file, "w+") as fw:
+                fw.write('%f' % time.time())

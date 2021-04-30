@@ -2,7 +2,7 @@ import os
 from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
     IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
-    ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide
+    ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -421,7 +421,8 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
                      implements(IConfigurationAttack), implements(IMiraiAttackerServer),
-                     implements(ICleaningAttackReproduction), implements(IConfigurationAttackerSide)):
+                     implements(ICleaningAttackReproduction), implements(IConfigurationAttackerSide),
+                     implements(IDiskWipeAttackerServer)):
     data_logger_server_ip = None
     DNS_server_ip = None
     mirai_o4_xxx_1 = None
@@ -429,15 +430,17 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
 
     def __init__(self, hostname, ip, username, password, path="/home/client1/Desktop/reinstall",
                  cnc_pids_file="cnc_pids.txt", transfer_pids_file="transfer_pids.txt", number_of_new_bots="3",
-                 targeted_DDoS="", DDoS_type="udp", DDoS_duration="30"):
+                 targeted_attack="", DDoS_type="udp", DDoS_duration="30"):
         super().__init__(hostname, ip, username, password, path)
         self.cnc_pids_file = cnc_pids_file
         self.transfer_pids_file = transfer_pids_file
         self.bot_input_files = []
         self.num_of_new_bots = number_of_new_bots
-        self.targeted_DDoS = targeted_DDoS
+        self.targeted_attack = targeted_attack
         self.DDoS_type = DDoS_type
         self.DDoS_duration = DDoS_duration
+        self.killed_pids_file = "killed_pids.txt"
+        self.flag_finish = "Creme_finish_attack_scenario"
 
     def configure(self):
         self.configure_base()
@@ -503,7 +506,7 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
     def mirai_start_cnc_and_login(self):
         filename_path = "attacks/mirai/./AttackerServer_start_cnc_and_login.sh"
         parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.cnc_pids_file,
-                      self.num_of_new_bots, self.targeted_DDoS, self.DDoS_type, self.DDoS_duration]
+                      self.num_of_new_bots, self.targeted_attack, self.DDoS_type, self.DDoS_duration]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def mirai_wait_for_finished_scan(self):
@@ -551,6 +554,24 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
     def clean_mirai(self):
         self.stop_malicious()
         self.stop_cnc_and_login()
+
+    def disk_wipe_start_metasploit(self):
+        filename_path = "attacks/disk_wipe/./AttackerServer_start_metasploit.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def disk_wipe_start_attack(self):
+        filename_path = "attacks/disk_wipe/./AttackerServer_start_attack.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack, self.flag_finish]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def stop_metasploit(self):
+        filename_path = "./kill_pids.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def clean_disk_wipe(self):
+        self.stop_metasploit()
 
 
 class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationCommon),

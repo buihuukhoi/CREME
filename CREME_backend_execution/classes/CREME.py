@@ -1,4 +1,4 @@
-from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper, EvaluationHelper
+from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper, EvaluationHelper, OtherHelper
 import os
 
 
@@ -200,6 +200,9 @@ class Creme:
                                     {self.attacker_server.DDoS_duration} seconds", 5,
                                     finished_task=True, finished_stage=True)
 
+    def attack_disk_wipe(self):
+        pass
+
     # ---------- download data to controller ----------
     def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False, time_filenames=[]):
         """
@@ -276,6 +279,28 @@ class Creme:
 
         self.centralize_data()
         file_names = ["time_4_start_DDoS.txt"]
+        self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
+        self.download_data_to_controller(scenario, time_filenames=file_names)
+
+    def run_disk_wipe(self):
+        scenario = "disk_wipe"
+        ProgressHelper.update_scenario(scenario)
+        self.start_reproduce_benign_behavior()
+        self.start_collect_data()
+        self.attack_disk_wipe()
+        # wait and record timestamp
+        timestamp_folder = os.path.join("CREME_backend_execution", "logs", "disk_wipe", "times")
+        timestamp_file = "time_stage_3_end.txt"
+        OtherHelper.wait_finishing(sleep_time=90, record_time=True, folder=timestamp_folder,
+                                   timestamp_file=timestamp_file)
+
+        self.stop_collect_data()
+        self.stop_reproduce_benign_behavior()
+        self.attacker_server.clean_disk_wipe()
+
+        self.centralize_data()
+        file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
+                      "time_stage_2_end.txt", "time_stage_3_start.txt"]
         self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
         self.download_data_to_controller(scenario, time_filenames=file_names)
 
@@ -535,6 +560,8 @@ class Creme:
 
         if Creme.mirai:
             self.run_mirai()
+        if Creme.disk_wipe:
+            self.run_disk_wipe()
 
         # process data
         data_sources = self.process_data()

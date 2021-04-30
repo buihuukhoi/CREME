@@ -185,6 +185,17 @@ class IMiraiMaliciousClient(Interface):
         pass
 
 
+class IDiskWipeAttackerServer(Interface):
+    """
+    defining actions of Disk Wipe attack for the attacker server
+    """
+    def disk_wipe_start_metasploit(self):
+        pass
+
+    def disk_wipe_start_attack(self):
+        pass
+
+
 # ---------- process cleaning ----------
 class ICleaningBenignReproduction(Interface):
     """
@@ -201,4 +212,7 @@ class ICleaningAttackReproduction(Interface):
     should be implemented by AttackerServer.
     """
     def clean_mirai(self):
+        pass
+
+    def clean_disk_wipe(self):
         pass

