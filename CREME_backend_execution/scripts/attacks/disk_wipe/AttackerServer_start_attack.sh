@@ -20,7 +20,7 @@ send "$password\r"
 
 
 expect "*:~# "
-send "python3 $path/WipeDisk.py $path $ip $target_server_ip $flag_finish"
+send "python3 $path/WipeDisk.py $path $ip $target_server_ip $flag_finish\r"
 
 expect "$flag_finish"
 send "\r"
