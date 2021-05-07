@@ -481,7 +481,7 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
 
     def configure_pymetasploit(self):
         filename_path = "configuration/./AttackerServer_pymetasploit.sh"
-        parameters = [self.ip, self.username, self.password]
+        parameters = [self.ip, self.username, self.password, self.path]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):
