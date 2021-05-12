@@ -202,6 +202,8 @@ class Creme:
 
     def attack_disk_wipe(self):
         ProgressHelper.update_scenario("Disk_Wipe")
+        self.attacker_server.disk_wipe_start_metasploit()
+
         stage = 2
         ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is exploiting rails_secret_deserialization",
                                     5, new_stage=True)
