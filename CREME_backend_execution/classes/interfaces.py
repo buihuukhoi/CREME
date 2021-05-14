@@ -202,6 +202,23 @@ class IDiskWipeAttackerServer(Interface):
         pass
 
 
+class IDataTheftAttackerServer(Interface):
+    """
+    defining actions of Data Theft attack for the attacker server
+    """
+    def data_theft_start_metasploit(self):
+        pass
+
+    def data_theft_first_stage(self):
+        pass
+
+    def data_theft_second_stage(self):
+        pass
+
+    def data_theft_third_stage(self):
+        pass
+
+
 # ---------- process cleaning ----------
 class ICleaningBenignReproduction(Interface):
     """
@@ -221,4 +238,7 @@ class ICleaningAttackReproduction(Interface):
         pass
 
     def clean_disk_wipe(self):
+        pass
+
+    def clean_data_theft(self):
         pass

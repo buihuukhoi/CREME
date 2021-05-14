@@ -2,7 +2,8 @@ import os
 from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
     IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
-    ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer
+    ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer,\
+    IDataTheftAttackerServer
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -422,7 +423,7 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
                      implements(IConfigurationAttack), implements(IMiraiAttackerServer),
                      implements(ICleaningAttackReproduction), implements(IConfigurationAttackerSide),
-                     implements(IDiskWipeAttackerServer)):
+                     implements(IDiskWipeAttackerServer), implements(IDataTheftAttackerServer)):
     data_logger_server_ip = None
     DNS_server_ip = None
     mirai_o4_xxx_1 = None
@@ -575,6 +576,20 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def data_theft_start_metasploit(self):
+        filename_path = "attacks/disk_wipe/./AttackerServer_start_metasploit.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def data_theft_first_stage(self):
+        pass
+
+    def data_theft_second_stage(self):
+        pass
+
+    def data_theft_third_stage(self):
+        pass
+
     def stop_metasploit(self):
         filename_path = "./kill_pids.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
@@ -582,6 +597,10 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
 
     def clean_disk_wipe(self):
         self.stop_metasploit()
+
+    def clean_data_theft(self):
+        # pass ???
+        pass
 
 
 class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationCommon),
