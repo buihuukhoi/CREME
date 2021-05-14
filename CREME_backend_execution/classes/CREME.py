@@ -356,8 +356,9 @@ class Creme:
     # ---------- process data ----------
     def process_data_mirai(self, log_folder):
         """
-        this function use to create labeling_file that contain information to label accounting and traffic data,
-        also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and label syslog
+        this function use to create labeling_file that contain information to label accounting and traffic data for
+        Mirai attack scenario, also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
+        label syslog
         """
         folder_times = os.path.join(log_folder, "times")
         t1, t2, t3, t4 = ProcessDataHelper.get_time_stamps_mirai(folder_times, self.attacker_server.DDoS_duration)
@@ -440,6 +441,70 @@ class Creme:
         return labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactic_names,\
             technique_names, sub_technique_names
 
+    def process_data_disk_wipe(self, log_folder):
+        """
+        this function use to create labeling_file that contain information to label accounting and traffic data for
+        Disk_Wipe attack scenario, also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
+        label syslog
+        """
+        folder_times = os.path.join(log_folder, "times")
+        t1, t2, t3, t4, t5, t6 = ProcessDataHelper.get_time_stamps(folder_times)
+        t = [t1, t2, t3, t4, t5, t6]
+
+        labels = [1, 1, 1]  # only for syslog
+        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
+        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
+        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+
+        src_ips_1 = []
+        des_ips_1 = []
+        normal_ips_1 = []
+        abnormal_hostnames_1 = []
+        normal_hostnames_1 = []
+
+        src_ips_1.append(self.attacker_server.ip)
+        des_ips_1.append(self.target_server.ip)
+        abnormal_hostnames_1.append(self.target_server.hostname)
+        normal_ips_1.append(self.benign_server.ip)
+        normal_hostnames_1.append(self.benign_server.hostname)
+        normal_ips_1.append(self.malicious_client.ip)
+        for vulnerable_client in self.vulnerable_clients:
+            normal_ips_1.append(vulnerable_client.ip)
+            normal_hostnames_1.append(vulnerable_client.hostname)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            normal_ips_1.append(non_vulnerable_client.ip)
+            normal_hostnames_1.append(non_vulnerable_client.hostname)
+
+        src_ips_2 = src_ips_1[:]
+        des_ips_2 = des_ips_1[:]
+        normal_ips_2 = normal_ips_1[:]
+        abnormal_hostnames_2 = abnormal_hostnames_1[:]
+        normal_hostnames_2 = normal_hostnames_1[:]
+
+        src_ips_3 = src_ips_1[:]
+        des_ips_3 = des_ips_1[:]
+        normal_ips_3 = normal_ips_1[:]
+        abnormal_hostnames_3 = abnormal_hostnames_1[:]
+        normal_hostnames_3 = normal_hostnames_1[:]
+
+        src_ips = [src_ips_1, src_ips_2, src_ips_3]
+        des_ips = [des_ips_1, des_ips_2, des_ips_3]
+        normal_ips = [normal_ips_1, normal_ips_2, normal_ips_3]
+        normal_hostnames = [normal_hostnames_1, normal_hostnames_2, normal_hostnames_3]
+        abnormal_hostnames = [abnormal_hostnames_1, abnormal_hostnames_2, abnormal_hostnames_3]
+        drop_cmd_list = ['kworker']
+
+        labeling_file_path = os.path.join(log_folder, "labeling_file_path.txt")
+
+        ProcessDataHelper.make_labeling_file(labeling_file_path, tactic_names, technique_names,
+                                             sub_technique_names, t, src_ips, des_ips, normal_ips, normal_hostnames,
+                                             abnormal_hostnames, drop_cmd_list)
+
+        timestamps_syslog = [[t1, t2], [t3, t4], [t5, t6]]
+
+        return labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactic_names, \
+            technique_names, sub_technique_names
+
     def process_data(self):
         stage = 5
         ProgressHelper.update_stage(stage, f"Start processing data ...", 5, new_stage=True)
@@ -488,6 +553,37 @@ class Creme:
             scenarios_sub_techniques.append(sub_techniques)
 
             ProgressHelper.update_stage(stage, f"Finished processing the data of Mirai scenario", 5,
+                                        finished_task=True, override_pre_message=True)
+
+        if Creme.disk_wipe:
+            ProgressHelper.update_stage(stage, f"Processing the data of Disk_Wipe scenario", 5)
+
+            scenario = "disk_wipe"
+            log_folder_disk_wipe = os.path.join(log_folder, scenario)
+            labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactics,\
+                techniques, sub_techniques = self.process_data_disk_wipe(log_folder_disk_wipe)
+            accounting_folder = "accounting"
+            traffic_file = os.path.join("traffic", self.dls.tcp_file)
+            information = [labeling_file_path, log_folder_disk_wipe, accounting_folder, traffic_file]
+
+            big_list.append(information)
+            traffic_files.append("label_traffic_disk_wipe.csv")
+            atop_files.append("label_atop_disk_wipe.csv")
+
+            # syslog
+            syslog_file = os.path.join(log_folder_disk_wipe, "syslog")
+            syslog_file = os.path.join(syslog_file, "dataset_generation.log")
+            input_files.append(syslog_file)
+            scenarios_timestamps.append(timestamps_syslog)
+            scenarios_abnormal_hostnames.append(abnormal_hostnames)
+            scenarios_normal_hostnames.append(normal_hostnames)
+
+            scenarios_labels.append(labels)
+            scenarios_tactics.append(tactics)
+            scenarios_techniques.append(techniques)
+            scenarios_sub_techniques.append(sub_techniques)
+
+            ProgressHelper.update_stage(stage, f"Finished processing the data of Disk_Wipe scenario", 5,
                                         finished_task=True, override_pre_message=True)
 
         ProgressHelper.update_stage(stage, f"Processing the accounting and network packet data sources", 5)

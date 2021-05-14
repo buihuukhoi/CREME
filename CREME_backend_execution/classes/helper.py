@@ -166,6 +166,9 @@ class ProcessDataHelper:
     @staticmethod
     def make_labeling_file(labeling_file_path, tactic_names, technique_names, sub_technique_names, t, src_ips, des_ips,
                            normal_ips, normal_hostnames, abnormal_hostnames, drop_cmd_list):
+        """
+        use to create a labeling file which is a parameter using to label data
+        """
         t1, t2, t3, t4, t5, t6 = map(float, t)
 
         # if attack_scenario == MIRAI:
@@ -197,6 +200,29 @@ class ProcessDataHelper:
         t5 = t3 + int(dur) + 10  # 10 to avoid problems if there is some delay
         # return t1, t2, t3, t4, t5
         return t1, t2, t3, t5
+
+    @staticmethod
+    def get_time_stamps(log_folder):
+        time_stage_1_start = os.path.join(log_folder, "time_stage_1_start.txt")
+        time_stage_1_end = os.path.join(log_folder, "time_stage_1_end.txt")
+        time_stage_2_start = os.path.join(log_folder, "time_stage_2_start.txt")
+        time_stage_2_end = os.path.join(log_folder, "time_stage_2_end.txt")
+        time_stage_3_start = os.path.join(log_folder, "time_stage_3_start.txt")
+        time_stage_3_end = os.path.join(log_folder, "time_stage_3_end.txt")
+
+        with open(time_stage_1_start, 'rt') as f:
+            t1 = float(f.readline())
+        with open(time_stage_1_end, 'rt') as f:
+            t2 = float(f.readline())
+        with open(time_stage_2_start, 'rt') as f:
+            t3 = float(f.readline())
+        with open(time_stage_2_end, 'rt') as f:
+            t4 = float(f.readline())
+        with open(time_stage_3_start, 'rt') as f:
+            t5 = float(f.readline())
+        with open(time_stage_3_end, 'rt') as f:
+            t6 = float(f.readline())
+        return t1, t2, t3, t4, t5, t6
 
     @staticmethod
     def load_dataset_traffic(folder, filenames, finalname, one_hot_fields=[], removed_fields=[], replace_strings=dict(),
