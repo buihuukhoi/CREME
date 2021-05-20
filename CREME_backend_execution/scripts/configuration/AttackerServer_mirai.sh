@@ -20,7 +20,7 @@ set cnc_config_path "CREME/CREME_backend_execution/scripts/configuration/prepare
 set debug_path "Mirai-Source-Code/mirai/debug"
 set mirai_path "Mirai-Source-Code/mirai"
 
-set timeout 120
+set timeout 10
 
 # SSH connection
 spawn /bin/bash $delKnownHosts
