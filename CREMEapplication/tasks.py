@@ -35,6 +35,8 @@ def load_testbed_information():
     resource_hijacking = info_attack_scenario.resource_hijacking
     disk_wipe = info_attack_scenario.disk_wipe
     end_point_dos = info_attack_scenario.end_point_dos
+    data_theft = info_attack_scenario.data_theft
+    rootkit_ransomware = info_attack_scenario.rootkit_ransomware
 
     models_name = []
     info_machine_learning_model = MachineLearningModel.objects.all().first()
@@ -100,7 +102,8 @@ def load_testbed_information():
     # ===> create a Creme object <===
     Creme.models_name = models_name[:]
     creme = Creme(dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients, attacker_server,
-                  malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos)
+                  malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos, data_theft,
+                  rootkit_ransomware)
     creme.run()
     # creme.test_print_information()
     # creme.configure()

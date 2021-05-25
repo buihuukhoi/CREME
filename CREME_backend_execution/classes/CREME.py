@@ -19,7 +19,8 @@ class Creme:
                "labeled_data": 1 / 10 / 6, "feature_set": 1 / 10 / 6, "metadata": 1 / 10}
 
     def __init__(self, dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
-                 attacker_server, malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos):
+                 attacker_server, malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos,
+                 data_theft, rootkit_ransomware):
         # self.stage = 0
         # self.status = 1
         # self.finishedTasks = []
@@ -43,6 +44,8 @@ class Creme:
         Creme.resource_hijacking = resource_hijacking
         Creme.disk_wipe = disk_wipe
         Creme.end_point_dos = end_point_dos
+        Creme.data_theft = data_theft
+        Creme.rootkit_ransomware = rootkit_ransomware
 
         # prepare to build mirai source code
         if mirai:

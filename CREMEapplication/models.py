@@ -114,6 +114,8 @@ class AttackScenario(models.Model):
     resource_hijacking = models.BooleanField(default=True)
     disk_wipe = models.BooleanField(default=True)
     end_point_dos = models.BooleanField(default=True)
+    data_theft = models.BooleanField(default=False)
+    rootkit_ransomware = models.BooleanField(default=False)
 
 
 class MachineLearningModel(models.Model):
