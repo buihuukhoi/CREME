@@ -336,6 +336,14 @@ class Creme:
         self.attacker_server.data_theft_second_stage()
         self.attacker_server.data_theft_third_stage()
 
+    def attack_rootkit_ransomware(self):
+        ProgressHelper.update_scenario("rootkit_ransomware")
+        self.attacker_server.rootkit_ransomware_start_metasploit()
+
+        self.attacker_server.rootkit_ransomware_first_stage()
+        self.attacker_server.rootkit_ransomware_second_stage()
+        self.attacker_server.rootkit_ransomware_third_stage()
+
     # ---------- download data to controller ----------
     def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False, time_filenames=[]):
         """
@@ -488,6 +496,23 @@ class Creme:
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_data_theft()
+
+        # change later
+        self.centralize_data()
+        file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
+                      "time_stage_2_end.txt", "time_stage_3_start.txt"]
+        self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
+        self.download_data_to_controller(scenario, time_filenames=file_names)
+
+    def run_rootkit_ransomware(self):
+        scenario = "rootkit_ransomware"
+        ProgressHelper.update_scenario(scenario)
+        self.start_reproduce_benign_behavior()
+        self.start_collect_data()
+        self.attack_rootkit_ransomware()
+        self.stop_collect_data()
+        self.stop_reproduce_benign_behavior()
+        self.attacker_server.clean_rootkit_ransomware()
 
         # change later
         self.centralize_data()
@@ -858,6 +883,8 @@ class Creme:
             self.run_end_point_dos()
         if Creme.data_theft:
             self.run_data_theft()
+        if Creme.rootkit_ransomware:
+            self.run_rootkit_ransomware()
 
         # process data
         data_sources = self.process_data()

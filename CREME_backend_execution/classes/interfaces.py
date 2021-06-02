@@ -55,6 +55,9 @@ class IConfigurationAttack(Interface):
     def configure_data_theft(self):
         pass
 
+    def configure_rootkit_ransomware(self):
+        pass
+
 
 class IConfigurationAttackerSide(Interface):
     """
@@ -273,6 +276,23 @@ class IDataTheftAttackerServer(Interface):
         pass
 
 
+class IRootkitRansomwareAttackerServer(Interface):
+    """
+    defining actions of Rootkit Ransomware attack for the attacker server
+    """
+    def rootkit_ransomware_start_metasploit(self):
+        pass
+
+    def rootkit_ransomware_first_stage(self):
+        pass
+
+    def rootkit_ransomware_second_stage(self):
+        pass
+
+    def rootkit_ransomware_third_stage(self):
+        pass
+
+
 # ---------- process cleaning ----------
 class ICleaningBenignReproduction(Interface):
     """
@@ -304,4 +324,7 @@ class ICleaningAttackReproduction(Interface):
         pass
 
     def clean_end_point_dos(self):
+        pass
+
+    def clean_rootkit_ransomware(self):
         pass
