@@ -202,6 +202,23 @@ class IDiskWipeAttackerServer(Interface):
         pass
 
 
+class IRansomwareAttackerServer(Interface):
+    """
+    defining actions of Ransomware attack for the attacker server
+    """
+    def ransomware_start_metasploit(self):
+        pass
+
+    def ransomware_first_stage(self):
+        pass
+
+    def ransomware_second_stage(self):
+        pass
+
+    def ransomware_third_stage(self):
+        pass
+
+
 class IDataTheftAttackerServer(Interface):
     """
     defining actions of Data Theft attack for the attacker server
@@ -241,4 +258,7 @@ class ICleaningAttackReproduction(Interface):
         pass
 
     def clean_data_theft(self):
+        pass
+
+    def clean_ransomware(self):
         pass

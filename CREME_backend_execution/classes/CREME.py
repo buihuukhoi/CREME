@@ -236,6 +236,38 @@ class Creme:
         ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing disk_wipe",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
+    def attack_ransomware(self):
+        ProgressHelper.update_scenario("Ransomware")
+        self.attacker_server.ransomware_start_metasploit()
+
+        stage = 2
+        ProgressHelper.update_stage(stage,
+                                    f"{self.attacker_server.hostname} is exploiting ?????",
+                                    5, new_stage=True)
+        self.attacker_server.ransomware_first_stage()
+        ProgressHelper.update_stage(stage,
+                                    f"{self.attacker_server.hostname} finished exploiting ?????",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing ?????",
+                                    5, new_stage=True)
+        self.attacker_server.ransomware_second_stage()
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing ?????",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing ?????",
+                                    5, new_stage=True)
+        self.attacker_server.ransomware_third_stage()
+        # wait and record timestamp
+        timestamp_folder = os.path.join("CREME_backend_execution", "logs", "ransomware", "times")
+        timestamp_file = "time_stage_3_end.txt"
+        OtherHelper.wait_finishing(sleep_time=90, record_time=True, folder=timestamp_folder,
+                                   timestamp_file=timestamp_file)
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing ?????",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
+
     def attack_data_theft(self):
         ProgressHelper.update_scenario("Data_Theft")
         self.attacker_server.data_theft_start_metasploit()
@@ -329,6 +361,22 @@ class Creme:
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_disk_wipe()
+        self.stop_collect_data()
+        self.stop_reproduce_benign_behavior()
+        self.attacker_server.clean_disk_wipe()
+
+        self.centralize_data()
+        file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
+                      "time_stage_2_end.txt", "time_stage_3_start.txt"]
+        self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
+        self.download_data_to_controller(scenario, time_filenames=file_names)
+
+    def run_ransomware(self):
+        scenario = "ransomware"
+        ProgressHelper.update_scenario(scenario)
+        self.start_reproduce_benign_behavior()
+        self.start_collect_data()
+        self.attack_ransomware()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_disk_wipe()
@@ -710,6 +758,8 @@ class Creme:
             self.run_mirai()
         if Creme.disk_wipe:
             self.run_disk_wipe()
+        if Creme.ransomware:
+            self.run_ransomware()
         # if Creme.data_theft:
         #     self.run_data_theft()
 

@@ -3,7 +3,7 @@ from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
     IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
     ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer,\
-    IDataTheftAttackerServer
+    IRansomwareAttackerServer, IDataTheftAttackerServer
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -423,7 +423,8 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
                      implements(IConfigurationAttack), implements(IMiraiAttackerServer),
                      implements(ICleaningAttackReproduction), implements(IConfigurationAttackerSide),
-                     implements(IDiskWipeAttackerServer), implements(IDataTheftAttackerServer)):
+                     implements(IDiskWipeAttackerServer), implements(IRansomwareAttackerServer),
+                     implements(IDataTheftAttackerServer)):
     data_logger_server_ip = None
     DNS_server_ip = None
     mirai_o4_xxx_1 = None
@@ -486,8 +487,11 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):
-        # ?????
-        pass
+        prepared_files = "CREME/CREME_backend_execution/scripts/configuration/prepared_files/ransomware/attacker_server"
+        filename_path = "configuration/./AttackerServer_ransomware.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, prepared_files]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_resource_hijacking(self):
         # ?????
@@ -576,8 +580,28 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def ransomware_start_metasploit(self):
+        filename_path = "attacks/ransomware/./AttackerServer_start_metasploit.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def ransomware_first_stage(self):
+        filename_path = "attacks/ransomware/./AttackerServer_first_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def ransomware_second_stage(self):
+        filename_path = "attacks/ransomware/./AttackerServer_second_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def ransomware_third_stage(self):
+        filename_path = "attacks/ransomware/./AttackerServer_third_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
     def data_theft_start_metasploit(self):
-        filename_path = "attacks/disk_wipe/./AttackerServer_start_metasploit.sh"
+        filename_path = "attacks/data_theft/./AttackerServer_start_metasploit.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
@@ -596,6 +620,9 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def clean_disk_wipe(self):
+        self.stop_metasploit()
+
+    def clean_ransomware(self):
         self.stop_metasploit()
 
     def clean_data_theft(self):
