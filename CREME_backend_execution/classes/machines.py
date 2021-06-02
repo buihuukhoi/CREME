@@ -3,7 +3,7 @@ from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
     IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
     ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer,\
-    IRansomwareAttackerServer, IResourceHijackingAttackerServer, IDataTheftAttackerServer
+    IRansomwareAttackerServer, IResourceHijackingAttackerServer, IEndPointDosAttackerServer, IDataTheftAttackerServer
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -424,7 +424,8 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
                      implements(IConfigurationAttack), implements(IMiraiAttackerServer),
                      implements(ICleaningAttackReproduction), implements(IConfigurationAttackerSide),
                      implements(IDiskWipeAttackerServer), implements(IRansomwareAttackerServer),
-                     implements(IResourceHijackingAttackerServer), implements(IDataTheftAttackerServer)):
+                     implements(IResourceHijackingAttackerServer), implements(IEndPointDosAttackerServer),
+                     implements(IDataTheftAttackerServer)):
     data_logger_server_ip = None
     DNS_server_ip = None
     mirai_o4_xxx_1 = None
@@ -508,8 +509,11 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_end_point_dos(self):
-        # ?????
-        pass
+        prepared_files = "CREME/CREME_backend_execution/scripts/configuration/prepared_files/end_point_dos/attacker_server"
+        filename_path = "configuration/./AttackerServer_end_point_dos.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, prepared_files]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def mirai_start_cnc_and_login(self):
         filename_path = "attacks/mirai/./AttackerServer_start_cnc_and_login.sh"
@@ -623,6 +627,26 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def end_point_dos_start_metasploit(self):
+        filename_path = "attacks/end_point_dos/./AttackerServer_start_metasploit.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def end_point_dos_first_stage(self):
+        filename_path = "attacks/end_point_dos/./AttackerServer_first_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def end_point_dos_second_stage(self):
+        filename_path = "attacks/end_point_dos/./AttackerServer_second_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def end_point_dos_third_stage(self):
+        filename_path = "attacks/end_point_dos/./AttackerServer_third_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
     def data_theft_start_metasploit(self):
         filename_path = "attacks/data_theft/./AttackerServer_start_metasploit.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
@@ -649,6 +673,9 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         self.stop_metasploit()
 
     def clean_resource_hijacking(self):
+        self.stop_metasploit()
+
+    def clean_end_point_dos(self):
         self.stop_metasploit()
 
     def clean_data_theft(self):

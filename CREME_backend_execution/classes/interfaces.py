@@ -236,6 +236,23 @@ class IResourceHijackingAttackerServer(Interface):
         pass
 
 
+class IEndPointDosAttackerServer(Interface):
+    """
+    defining actions of End Point Dos attack for the attacker server
+    """
+    def end_point_dos_start_metasploit(self):
+        pass
+
+    def end_point_dos_first_stage(self):
+        pass
+
+    def end_point_dos_second_stage(self):
+        pass
+
+    def end_point_dos_third_stage(self):
+        pass
+
+
 class IDataTheftAttackerServer(Interface):
     """
     defining actions of Data Theft attack for the attacker server
@@ -281,4 +298,7 @@ class ICleaningAttackReproduction(Interface):
         pass
 
     def clean_resource_hijacking(self):
+        pass
+
+    def clean_end_point_dos(self):
         pass
