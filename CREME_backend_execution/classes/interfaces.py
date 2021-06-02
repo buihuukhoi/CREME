@@ -52,6 +52,9 @@ class IConfigurationAttack(Interface):
     def configure_end_point_dos(self):
         pass
 
+    def configure_data_theft(self):
+        pass
+
 
 class IConfigurationAttackerSide(Interface):
     """

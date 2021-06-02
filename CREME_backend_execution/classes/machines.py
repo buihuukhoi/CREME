@@ -207,6 +207,9 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
     def configure_end_point_dos(self):
         pass
 
+    def configure_data_theft(self):
+        pass
+
     def start_benign_behaviors(self):
         filename_path = "configuration/./Client_start_benign_behaviors.sh"
         parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.ftp_folder,
@@ -366,6 +369,9 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         # ?????
         pass
 
+    def configure_data_theft(self):
+        pass
+
 
 class BenignServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
                    implements(IConfigurationBenign), implements(IDataCollection)):
@@ -515,6 +521,13 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
                       self.controller_password, self.controller_path, prepared_files]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def configure_data_theft(self):
+        prepared_files = "CREME/CREME_backend_execution/scripts/configuration/prepared_files/data_theft/attacker_server"
+        filename_path = "configuration/./AttackerServer_data_theft.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, prepared_files]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
     def mirai_start_cnc_and_login(self):
         filename_path = "attacks/mirai/./AttackerServer_start_cnc_and_login.sh"
         parameters = [self.hostname, self.ip, self.username, self.password, self.path, self.cnc_pids_file,
@@ -653,13 +666,19 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def data_theft_first_stage(self):
-        pass
+        filename_path = "attacks/data_theft/./AttackerServer_first_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def data_theft_second_stage(self):
-        pass
+        filename_path = "attacks/data_theft/./AttackerServer_second_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def data_theft_third_stage(self):
-        pass
+        filename_path = "attacks/data_theft/./AttackerServer_third_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def stop_metasploit(self):
         filename_path = "./kill_pids.sh"
@@ -746,6 +765,9 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
 
     def configure_end_point_dos(self):
         # ?????
+        pass
+
+    def configure_data_theft(self):
         pass
 
     def mirai_start_malicious(self):

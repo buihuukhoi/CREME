@@ -855,9 +855,9 @@ class Creme:
         if Creme.resource_hijacking:
             self.run_resource_hijacking()
         if Creme.end_point_dos:
-            self.end_point_dos()
-        # if Creme.data_theft:
-        #     self.run_data_theft()
+            self.run_end_point_dos()
+        if Creme.data_theft:
+            self.run_data_theft()
 
         # process data
         data_sources = self.process_data()
