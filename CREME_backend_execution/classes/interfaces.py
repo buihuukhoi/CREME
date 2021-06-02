@@ -219,6 +219,23 @@ class IRansomwareAttackerServer(Interface):
         pass
 
 
+class IResourceHijackingAttackerServer(Interface):
+    """
+    defining actions of Resource Hijacking attack for the attacker server
+    """
+    def resource_hijacking_start_metasploit(self):
+        pass
+
+    def resource_hijacking_first_stage(self):
+        pass
+
+    def resource_hijacking_second_stage(self):
+        pass
+
+    def resource_hijacking_third_stage(self):
+        pass
+
+
 class IDataTheftAttackerServer(Interface):
     """
     defining actions of Data Theft attack for the attacker server
@@ -261,4 +278,7 @@ class ICleaningAttackReproduction(Interface):
         pass
 
     def clean_ransomware(self):
+        pass
+
+    def clean_resource_hijacking(self):
         pass

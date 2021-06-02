@@ -3,7 +3,7 @@ from interface import implements
 from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAttack, IConfigurationBenign,\
     IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
     ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer,\
-    IRansomwareAttackerServer, IDataTheftAttackerServer
+    IRansomwareAttackerServer, IResourceHijackingAttackerServer, IDataTheftAttackerServer
 from .helper import ScriptHelper
 from .CREME import Creme
 
@@ -424,7 +424,7 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
                      implements(IConfigurationAttack), implements(IMiraiAttackerServer),
                      implements(ICleaningAttackReproduction), implements(IConfigurationAttackerSide),
                      implements(IDiskWipeAttackerServer), implements(IRansomwareAttackerServer),
-                     implements(IDataTheftAttackerServer)):
+                     implements(IResourceHijackingAttackerServer), implements(IDataTheftAttackerServer)):
     data_logger_server_ip = None
     DNS_server_ip = None
     mirai_o4_xxx_1 = None
@@ -494,8 +494,11 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_resource_hijacking(self):
-        # ?????
-        pass
+        prepared_files = "CREME/CREME_backend_execution/scripts/configuration/prepared_files/resource_hijacking/attacker_server"
+        filename_path = "configuration/./AttackerServer_resource_hijacking.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.controller_ip, self.controller_username,
+                      self.controller_password, self.controller_path, prepared_files]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_disk_wipe(self):
         prepared_files = "CREME/CREME_backend_execution/scripts/configuration/prepared_files/disk_wipe/attacker_server"
@@ -600,6 +603,26 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
+    def resource_hijacking_start_metasploit(self):
+        filename_path = "attacks/resource_hijacking/./AttackerServer_start_metasploit.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def resource_hijacking_first_stage(self):
+        filename_path = "attacks/resource_hijacking/./AttackerServer_first_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def resource_hijacking_second_stage(self):
+        filename_path = "attacks/resource_hijacking/./AttackerServer_second_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def resource_hijacking_third_stage(self):
+        filename_path = "attacks/resource_hijacking/./AttackerServer_third_stage.sh"
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
     def data_theft_start_metasploit(self):
         filename_path = "attacks/data_theft/./AttackerServer_start_metasploit.sh"
         parameters = [self.ip, self.username, self.password, self.path, self.killed_pids_file]
@@ -623,6 +646,9 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         self.stop_metasploit()
 
     def clean_ransomware(self):
+        self.stop_metasploit()
+
+    def clean_resource_hijacking(self):
         self.stop_metasploit()
 
     def clean_data_theft(self):
