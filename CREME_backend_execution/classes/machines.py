@@ -170,6 +170,10 @@ class VulnerableClient(DataLoggerClient, implements(IConfiguration), implements(
             self.configure_disk_wipe()
         if Creme.end_point_dos:
             self.configure_end_point_dos()
+        if Creme.data_theft:
+            self.configure_data_theft()
+        if Creme.rootkit_ransomware:
+            self.configure_rootkit_ransomware()
 
     def configure_base(self):
         super().configure_base()
@@ -318,6 +322,10 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
             self.configure_disk_wipe()
         if Creme.end_point_dos:
             self.configure_end_point_dos()
+        if Creme.data_theft:
+            self.configure_data_theft()
+        if Creme.rootkit_ransomware:
+            self.configure_rootkit_ransomware()
 
     def configure_base(self):
         super().configure_base()
@@ -473,6 +481,10 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
             self.configure_disk_wipe()
         if Creme.end_point_dos:
             self.configure_end_point_dos()
+        if Creme.data_theft:
+            self.configure_data_theft()
+        if Creme.rootkit_ransomware:
+            self.configure_rootkit_ransomware()
 
     def configure_base(self):
         filename_path = "configuration/./AttackerServer_base.sh"
@@ -768,6 +780,10 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
             self.configure_disk_wipe()
         if Creme.end_point_dos:
             self.configure_end_point_dos()
+        if Creme.data_theft:
+            self.configure_data_theft()
+        if Creme.rootkit_ransomware:
+            self.configure_rootkit_ransomware()
 
     def configure_base(self):
         filename_path = "configuration/./MaliciousClient_base.sh"
