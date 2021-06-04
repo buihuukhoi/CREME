@@ -332,9 +332,33 @@ class Creme:
         ProgressHelper.update_scenario("Data_Theft")
         self.attacker_server.data_theft_start_metasploit()
 
+        stage = 2
+        ProgressHelper.update_stage(stage,
+                                    f"{self.attacker_server.hostname} is exploiting unreal_ircd_3281_backdoor",
+                                    5, new_stage=True)
         self.attacker_server.data_theft_first_stage()
+        ProgressHelper.update_stage(stage,
+                                    f"{self.attacker_server.hostname} finished exploiting unreal_ircd_3281_backdoor",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing docker_daemon_privilege_escalation",
+                                    5, new_stage=True)
         self.attacker_server.data_theft_second_stage()
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing docker_daemon_privilege_escalation",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
+
+        stage += 1
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing data_theft",
+                                    5, new_stage=True)
         self.attacker_server.data_theft_third_stage()
+        # wait and record timestamp
+        timestamp_folder = os.path.join("CREME_backend_execution", "logs", "data_theft", "times")
+        timestamp_file = "time_stage_3_end.txt"
+        OtherHelper.wait_finishing(sleep_time=90, record_time=True, folder=timestamp_folder,
+                                   timestamp_file=timestamp_file)
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing data_theft",
+                                    5, finished_task=True, override_pre_message=True, finished_stage=True)
 
     def attack_rootkit_ransomware(self):
         ProgressHelper.update_scenario("rootkit_ransomware")
@@ -875,12 +899,12 @@ class Creme:
             self.run_mirai()
         if Creme.disk_wipe:
             self.run_disk_wipe()
-        if Creme.ransomware:
-            self.run_ransomware()
-        if Creme.resource_hijacking:
-            self.run_resource_hijacking()
-        if Creme.end_point_dos:
-            self.run_end_point_dos()
+        # if Creme.ransomware:
+        #     self.run_ransomware()
+        # if Creme.resource_hijacking:
+        #     self.run_resource_hijacking()
+        # if Creme.end_point_dos:
+        #     self.run_end_point_dos()
         if Creme.data_theft:
             self.run_data_theft()
         if Creme.rootkit_ransomware:

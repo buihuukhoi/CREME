@@ -471,8 +471,10 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         self.configure_data_collection()
         if Creme.mirai:
             self.configure_mirai()
-        if Creme.ransomware or Creme.resource_hijacking or Creme.disk_wipe or Creme.end_point_dos:
+        if Creme.ransomware or Creme.resource_hijacking or Creme.disk_wipe or Creme.end_point_dos or \
+                Creme.data_theft or Creme.rootkit_ransomware:
             self.configure_pymetasploit()
+            self.configure_apache2()
         if Creme.ransomware:
             self.configure_ransomware()
         if Creme.resource_hijacking:
@@ -510,6 +512,11 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
     def configure_pymetasploit(self):
         filename_path = "configuration/./AttackerServer_pymetasploit.sh"
         parameters = [self.ip, self.username, self.password, self.path]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def configure_apache2(self):
+        filename_path = "configuration/./AttackerServer_apache2.sh"
+        parameters = [self.ip, self.username, self.password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_ransomware(self):
@@ -770,8 +777,10 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
         self.configure_data_collection()
         if Creme.mirai:
             self.configure_mirai()
-        if Creme.ransomware or Creme.resource_hijacking or Creme.disk_wipe or Creme.end_point_dos:
+        if Creme.ransomware or Creme.resource_hijacking or Creme.disk_wipe or Creme.end_point_dos or \
+                Creme.data_theft or Creme.rootkit_ransomware:
             self.configure_pymetasploit()
+            self.configure_apache2()
         if Creme.ransomware:
             self.configure_ransomware()
         if Creme.resource_hijacking:
@@ -803,6 +812,9 @@ class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigura
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_pymetasploit(self):
+        pass
+
+    def configure_apache2(self):
         pass
 
     def configure_ransomware(self):

