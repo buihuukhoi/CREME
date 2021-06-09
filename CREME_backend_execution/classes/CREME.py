@@ -633,20 +633,15 @@ class Creme:
         return labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactic_names,\
             technique_names, sub_technique_names
 
-    def process_data_disk_wipe(self, log_folder):
+    def process_data_general_scenario(self, log_folder, labels, tactic_names, technique_names, sub_technique_names):
         """
         this function use to create labeling_file that contain information to label accounting and traffic data for
-        Disk_Wipe attack scenario, also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
+        general attack scenarios (excepting Mirai), also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
         label syslog
         """
         folder_times = os.path.join(log_folder, "times")
         t1, t2, t3, t4, t5, t6 = ProcessDataHelper.get_time_stamps(folder_times)
         t = [t1, t2, t3, t4, t5, t6]
-
-        labels = [1, 1, 1]  # only for syslog
-        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
-        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
-        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
 
         src_ips_1 = []
         des_ips_1 = []
@@ -696,6 +691,33 @@ class Creme:
 
         return labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactic_names, \
             technique_names, sub_technique_names
+
+    def process_data_disk_wipe(self, log_folder):
+        """
+        this function use to create labeling_file that contain information to label accounting and traffic data for
+        Disk_Wipe attack scenario, also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
+        label syslog
+        """
+        labels = [1, 1, 1]  # only for syslog
+        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
+        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
+        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+
+        return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names, sub_technique_names)
+
+    def process_data_data_theft(self, log_folder):
+        """
+        this function use to create labeling_file that contain information to label accounting and traffic data for
+        Data_Theft attack scenario, also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
+        label syslog
+        """
+        labels = [1, 1, 1]  # only for syslog
+        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
+        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
+        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+
+        return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
+                                                  sub_technique_names)
 
     def process_data(self):
         stage = 5
@@ -776,6 +798,37 @@ class Creme:
             scenarios_sub_techniques.append(sub_techniques)
 
             ProgressHelper.update_stage(stage, f"Finished processing the data of Disk_Wipe scenario", 5,
+                                        finished_task=True, override_pre_message=True)
+
+        if Creme.data_theft:
+            ProgressHelper.update_stage(stage, f"Processing the data of Data_Theft scenario", 5)
+
+            scenario = "data_theft"
+            log_folder_data_theft = os.path.join(log_folder, scenario)
+            labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactics,\
+                techniques, sub_techniques = self.process_data_data_theft(log_folder_data_theft)
+            accounting_folder = "accounting"
+            traffic_file = os.path.join("traffic", self.dls.tcp_file)
+            information = [labeling_file_path, log_folder_data_theft, accounting_folder, traffic_file]
+
+            big_list.append(information)
+            traffic_files.append("label_traffic_data_theft.csv")
+            atop_files.append("label_atop_data_theft.csv")
+
+            # syslog
+            syslog_file = os.path.join(log_folder_data_theft, "syslog")
+            syslog_file = os.path.join(syslog_file, "dataset_generation.log")
+            input_files.append(syslog_file)
+            scenarios_timestamps.append(timestamps_syslog)
+            scenarios_abnormal_hostnames.append(abnormal_hostnames)
+            scenarios_normal_hostnames.append(normal_hostnames)
+
+            scenarios_labels.append(labels)
+            scenarios_tactics.append(tactics)
+            scenarios_techniques.append(techniques)
+            scenarios_sub_techniques.append(sub_techniques)
+
+            ProgressHelper.update_stage(stage, f"Finished processing the data of data_theft scenario", 5,
                                         finished_task=True, override_pre_message=True)
 
         ProgressHelper.update_stage(stage, f"Processing the accounting and network packet data sources", 5)
