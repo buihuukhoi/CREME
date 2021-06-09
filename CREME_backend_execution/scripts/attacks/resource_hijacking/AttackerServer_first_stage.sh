@@ -19,7 +19,7 @@ send "$password\r"
 
 
 expect "*:~# "
-send "python3 $path/FirstStage.py $path $ip $target_server_ip\r"
+send "python3 $path/resource_hijacking_FirstStage.py $path $ip $target_server_ip\r"
 
 expect "*:~# "
 send "exit\r"
