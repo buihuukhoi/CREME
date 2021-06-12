@@ -7,6 +7,7 @@ from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAtta
     IRootkitRansomwareAttackerServer
 from .helper import ScriptHelper, OtherHelper
 from .CREME import Creme
+import time
 
 
 class Machine:
@@ -392,9 +393,13 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         filename_path = "./reboot.sh"
         parameters = [self.ip, self.username, self.password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+        time.sleep(30)
 
     def wait_machine_up(self):
         OtherHelper.wait_machine_up(self.ip)
+
+    def clean_mirai(self):
+        pass
 
     def clean_disk_wipe(self):
         self.reboot()
