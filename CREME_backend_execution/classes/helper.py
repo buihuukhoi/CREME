@@ -18,6 +18,7 @@ from sklearn.model_selection import cross_validate
 from sklearn.feature_selection import RFECV
 import matplotlib.pyplot as plt
 import time
+import socket
 
 
 class ScriptHelper:
@@ -1060,3 +1061,21 @@ class OtherHelper:
             output_time_file = os.path.join(folder, timestamp_file)
             with open(output_time_file, "w+") as fw:
                 fw.write('%f' % time.time())
+
+    @staticmethod
+    def wait_machine_up(ip):
+        host_up = False
+        while not host_up:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+                sock.settimeout(1)
+                result = sock.connect_ex((ip, 22))
+                if result == 0:
+                    host_up = True
+                else:
+                    host_up = False
+            except socket.error as exc:
+                print("Caught exception socket.error : {0}".format(exc))
+            finally:
+                sock.close()
+            time.sleep(1)

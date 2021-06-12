@@ -480,6 +480,7 @@ class Creme:
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_disk_wipe()
+        self.target_server.clean_disk_wipe()
 
         self.centralize_data()
         file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
@@ -495,7 +496,8 @@ class Creme:
         self.attack_ransomware()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
-        self.attacker_server.clean_disk_wipe()
+        self.attacker_server.clean_ransomware()
+        self.target_server.clean_ransomware()
 
         self.centralize_data()
         file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
@@ -512,6 +514,7 @@ class Creme:
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_resource_hijacking()
+        self.target_server.clean_resource_hijacking()
 
         self.centralize_data()
         file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
@@ -528,6 +531,7 @@ class Creme:
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_end_point_dos()
+        self.target_server.clean_end_point_dos()
 
         self.centralize_data()
         file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
@@ -544,6 +548,7 @@ class Creme:
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_data_theft()
+        self.target_server.clean_data_theft()
 
         # change later
         self.centralize_data()
@@ -561,6 +566,7 @@ class Creme:
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
         self.attacker_server.clean_rootkit_ransomware()
+        self.target_server.clean_rootkit_ransomware()
 
         # change later
         self.centralize_data()

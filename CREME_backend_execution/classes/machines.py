@@ -5,7 +5,7 @@ from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAtta
     ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer,\
     IRansomwareAttackerServer, IResourceHijackingAttackerServer, IEndPointDosAttackerServer, IDataTheftAttackerServer,\
     IRootkitRansomwareAttackerServer
-from .helper import ScriptHelper
+from .helper import ScriptHelper, OtherHelper
 from .CREME import Creme
 
 
@@ -297,7 +297,8 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
 
 
 class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                   implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection)):
+                   implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection),
+                   implements(ICleaningAttackReproduction)):
     vulnerable_clients = None
     non_vulnerable_clients = None
 
@@ -386,6 +387,38 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def configure_rootkit_ransomware(self):
         pass
+
+    def reboot(self):
+        filename_path = "./reboot.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def wait_machine_up(self):
+        OtherHelper.wait_machine_up(self.ip)
+
+    def clean_disk_wipe(self):
+        self.reboot()
+        self.wait_machine_up()
+
+    def clean_ransomware(self):
+        self.reboot()
+        self.wait_machine_up()
+
+    def clean_resource_hijacking(self):
+        self.reboot()
+        self.wait_machine_up()
+
+    def clean_end_point_dos(self):
+        self.reboot()
+        self.wait_machine_up()
+
+    def clean_data_theft(self):
+        self.reboot()
+        self.wait_machine_up()
+
+    def clean_rootkit_ransomware(self):
+        self.reboot()
+        self.wait_machine_up()
 
 
 class BenignServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
