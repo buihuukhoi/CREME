@@ -751,12 +751,10 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         self.stop_metasploit()
 
     def clean_data_theft(self):
-        # pass ???
-        pass
+        self.stop_metasploit()
 
     def clean_rootkit_ransomware(self):
-        # pass ???
-        pass
+        self.stop_metasploit()
 
 
 class MaliciousClient(Machine, implements(IConfiguration), implements(IConfigurationCommon),
