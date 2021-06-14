@@ -328,6 +328,8 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
             self.configure_data_theft()
         if Creme.rootkit_ransomware:
             self.configure_rootkit_ransomware()
+        self.reboot()
+        self.wait_machine_up()
 
     def configure_base(self):
         super().configure_base()
