@@ -374,8 +374,9 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         pass
 
     def configure_resource_hijacking(self):
-        # ?????
-        pass
+        filename_path = "configuration/./TargetServer_resource_hijacking.sh"
+        parameters = [self.hostname, self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_disk_wipe(self):
         # ?????

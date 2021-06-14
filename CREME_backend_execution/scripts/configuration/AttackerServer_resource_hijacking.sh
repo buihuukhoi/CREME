@@ -34,7 +34,16 @@ expect " password: "
 send "$controller_pass\r"
 
 expect "*:~# "
-send "chmod +x $path/*.py \r"
+send "chmod +x $path/* \r"
+expect "*:~# "
+send "tar -xvzf $path/xmrig-6.5.0-linux-static-x64.tar.gz -C $path \r"
+
+expect "*:~# "
+send "mv $path/xmrig-6.5.0/xmrig /var/www/html/downloads\r"
+expect "*:~# "
+send "mv $path/xmrig-6.5.0/config.json /var/www/html/downloads\r"
+expect "*:~# "
+send "mv $path/xmrig-6.5.0/SHA256SUMS /var/www/html/downloads\r"
 
 expect "*:~# "
 send "exit\r"

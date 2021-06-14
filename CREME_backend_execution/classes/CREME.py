@@ -273,21 +273,21 @@ class Creme:
         self.attacker_server.resource_hijacking_start_metasploit()
 
         stage = 2
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is exploiting ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is exploiting linux/http/apache_continuum_cmd_exec",
                                     5, new_stage=True)
         self.attacker_server.resource_hijacking_first_stage()
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished exploiting ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished exploiting linux/http/apache_continuum_cmd_exec",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
         stage += 1
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing linux/local/service_persistence",
                                     5, new_stage=True)
         self.attacker_server.resource_hijacking_second_stage()
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing linux/local/service_persistence",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
         stage += 1
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing resource_hijacking",
                                     5, new_stage=True)
         self.attacker_server.resource_hijacking_third_stage()
         # wait and record timestamp
@@ -295,7 +295,7 @@ class Creme:
         timestamp_file = "time_stage_3_end.txt"
         OtherHelper.wait_finishing(sleep_time=90, record_time=True, folder=timestamp_folder,
                                    timestamp_file=timestamp_file)
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing resource_hijacking",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
     def attack_end_point_dos(self):
