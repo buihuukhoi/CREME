@@ -242,22 +242,22 @@ class Creme:
 
         stage = 2
         ProgressHelper.update_stage(stage,
-                                    f"{self.attacker_server.hostname} is exploiting ?????",
+                                    f"{self.attacker_server.hostname} is exploiting unix/irc/unreal_ircd_3281_backdoor",
                                     5, new_stage=True)
         self.attacker_server.ransomware_first_stage()
         ProgressHelper.update_stage(stage,
-                                    f"{self.attacker_server.hostname} finished exploiting ?????",
+                                    f"{self.attacker_server.hostname} finished exploiting unix/irc/unreal_ircd_3281_backdoor",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
         stage += 1
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing linux/local/service_persistence",
                                     5, new_stage=True)
         self.attacker_server.ransomware_second_stage()
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing linux/local/service_persistence",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
         stage += 1
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing ransomware",
                                     5, new_stage=True)
         self.attacker_server.ransomware_third_stage()
         # wait and record timestamp
@@ -265,7 +265,7 @@ class Creme:
         timestamp_file = "time_stage_3_end.txt"
         OtherHelper.wait_finishing(sleep_time=90, record_time=True, folder=timestamp_folder,
                                    timestamp_file=timestamp_file)
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing ?????",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing ransomware",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
     def attack_resource_hijacking(self):
@@ -763,6 +763,20 @@ class Creme:
         return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
                                                   sub_technique_names)
 
+    def process_data_ransomware(self, log_folder):
+        """
+        this function use to create labeling_file that contain information to label accounting and traffic data for
+        Ransomware attack scenario, also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
+        label syslog
+        """
+        labels = [1, 1, 1]  # only for syslog
+        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
+        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
+        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+
+        return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
+                                                  sub_technique_names)
+
     def process_data(self):
         stage = 5
         ProgressHelper.update_stage(stage, f"Start processing data ...", 5, new_stage=True)
@@ -906,6 +920,37 @@ class Creme:
             ProgressHelper.update_stage(stage, f"Finished processing the data of rootkit_ransomware scenario", 5,
                                         finished_task=True, override_pre_message=True)
 
+        if Creme.ransomware:
+            ProgressHelper.update_stage(stage, f"Processing the data of Ransomware scenario", 5)
+
+            scenario = "ransomware"
+            log_folder_ransomware = os.path.join(log_folder, scenario)
+            labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactics,\
+                techniques, sub_techniques = self.process_data_ransomware(log_folder_ransomware)
+            accounting_folder = "accounting"
+            traffic_file = os.path.join("traffic", self.dls.tcp_file)
+            information = [labeling_file_path, log_folder_ransomware, accounting_folder, traffic_file]
+
+            big_list.append(information)
+            traffic_files.append("label_traffic_ransomware.csv")
+            atop_files.append("label_atop_ransomware.csv")
+
+            # syslog
+            syslog_file = os.path.join(log_folder_ransomware, "syslog")
+            syslog_file = os.path.join(syslog_file, "dataset_generation.log")
+            input_files.append(syslog_file)
+            scenarios_timestamps.append(timestamps_syslog)
+            scenarios_abnormal_hostnames.append(abnormal_hostnames)
+            scenarios_normal_hostnames.append(normal_hostnames)
+
+            scenarios_labels.append(labels)
+            scenarios_tactics.append(tactics)
+            scenarios_techniques.append(techniques)
+            scenarios_sub_techniques.append(sub_techniques)
+
+            ProgressHelper.update_stage(stage, f"Finished processing the data of ransomware scenario", 5,
+                                        finished_task=True, override_pre_message=True)
+
         ProgressHelper.update_stage(stage, f"Processing the accounting and network packet data sources", 5)
         folder_traffic = os.path.join(log_folder, "label_traffic")
         final_name_traffic = "label_traffic.csv"
@@ -1027,8 +1072,8 @@ class Creme:
             self.run_mirai()
         if Creme.disk_wipe:
             self.run_disk_wipe()
-        # if Creme.ransomware:
-        #     self.run_ransomware()
+        if Creme.ransomware:
+            self.run_ransomware()
         # if Creme.resource_hijacking:
         #     self.run_resource_hijacking()
         # if Creme.end_point_dos:

