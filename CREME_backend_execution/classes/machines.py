@@ -4,7 +4,7 @@ from .interfaces import IConfiguration, IConfigurationCommon, IConfigurationAtta
     IDataCollection, IDataCentralization, IBenignReproduction, IMiraiAttackerServer, IMiraiMaliciousClient,\
     ICleaningBenignReproduction, ICleaningAttackReproduction, IConfigurationAttackerSide, IDiskWipeAttackerServer,\
     IRansomwareAttackerServer, IResourceHijackingAttackerServer, IEndPointDosAttackerServer, IDataTheftAttackerServer,\
-    IRootkitRansomwareAttackerServer
+    IRootkitRansomwareAttackerServer, ICleaningDataCollection
 from .helper import ScriptHelper, OtherHelper
 from .CREME import Creme
 import time
@@ -33,7 +33,8 @@ class Machine:
 
 
 class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),
-                       implements(IDataCollection), implements(IDataCentralization)):
+                       implements(IDataCollection), implements(IDataCentralization),
+                       implements(ICleaningDataCollection)):
     """
 
     """
@@ -102,6 +103,14 @@ class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigur
     def centralize_time_files(self, data_logger_client, time_files):
         for time_file in time_files:
             self.download_time_file(data_logger_client, time_file)
+
+    def restart_rsyslog(self):
+        filename_path = "./restart_rsyslog.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def clean_data_collection(self):
+        self.restart_rsyslog()
 
 
 class DataLoggerClient(Machine, implements(IConfigurationCommon), implements(IDataCollection)):
@@ -299,7 +308,7 @@ class NonVulnerableClient(DataLoggerClient, implements(IConfiguration), implemen
 
 class TargetServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
                    implements(IConfigurationAttack), implements(IConfigurationBenign), implements(IDataCollection),
-                   implements(ICleaningAttackReproduction)):
+                   implements(ICleaningAttackReproduction), implements(ICleaningDataCollection)):
     vulnerable_clients = None
     non_vulnerable_clients = None
 
@@ -375,7 +384,7 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def configure_resource_hijacking(self):
         filename_path = "configuration/./TargetServer_resource_hijacking.sh"
-        parameters = [self.hostname, self.ip, self.username, self.password]
+        parameters = [self.ip, self.hostname, self.username, self.password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_disk_wipe(self):
@@ -428,9 +437,17 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         self.reboot()
         self.wait_machine_up()
 
+    def restart_rsyslog(self):
+        filename_path = "./restart_rsyslog.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def clean_data_collection(self):
+        self.restart_rsyslog()
+
 
 class BenignServer(DataLoggerClient, implements(IConfiguration), implements(IConfigurationCommon),
-                   implements(IConfigurationBenign), implements(IDataCollection)):
+                   implements(IConfigurationBenign), implements(IDataCollection), implements(ICleaningDataCollection)):
     vulnerable_clients = None
     non_vulnerable_clients = None
 
@@ -480,6 +497,14 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def stop_collect_data(self):
         super().stop_collect_data()
+
+    def restart_rsyslog(self):
+        filename_path = "./restart_rsyslog.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def clean_data_collection(self):
+        self.restart_rsyslog()
 
 
 class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurationCommon),

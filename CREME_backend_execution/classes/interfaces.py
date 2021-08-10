@@ -331,3 +331,12 @@ class ICleaningAttackReproduction(Interface):
 
     def clean_rootkit_ransomware(self):
         pass
+
+
+class ICleaningDataCollection(Interface):
+    """
+    defining actions to clean data collection.
+    should be implemented by DataLoggerServer, TargetServer, and BenignServer.
+    """
+    def clean_data_collection(self):
+        pass

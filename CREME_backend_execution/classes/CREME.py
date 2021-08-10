@@ -455,6 +455,12 @@ class Creme:
         DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
                                     file_names=file_names, local_folder=times_folder)
 
+    # ---------- cleaning ----------
+    def clean_data_collection(self):
+        self.target_server.clean_data_collection()
+        self.benign_server.clean_data_collection()
+        self.dls.clean_data_collection()
+
     # ---------- run scenario ----------
     def run_mirai(self):
         scenario = "mirai"
@@ -464,6 +470,7 @@ class Creme:
         self.attack_mirai()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
+        self.clean_data_collection()
         self.attacker_server.clean_mirai()
 
         self.centralize_data()
@@ -479,6 +486,7 @@ class Creme:
         self.attack_disk_wipe()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
+        self.clean_data_collection()
         self.attacker_server.clean_disk_wipe()
         self.target_server.clean_disk_wipe()
 
@@ -496,6 +504,7 @@ class Creme:
         self.attack_ransomware()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
+        self.clean_data_collection()
         self.attacker_server.clean_ransomware()
         self.target_server.clean_ransomware()
 
@@ -513,6 +522,7 @@ class Creme:
         self.attack_resource_hijacking()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
+        self.clean_data_collection()
         self.attacker_server.clean_resource_hijacking()
         self.target_server.clean_resource_hijacking()
 
@@ -530,6 +540,7 @@ class Creme:
         self.attack_end_point_dos()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
+        self.clean_data_collection()
         self.attacker_server.clean_end_point_dos()
         self.target_server.clean_end_point_dos()
 
@@ -547,6 +558,7 @@ class Creme:
         self.attack_data_theft()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
+        self.clean_data_collection()
         self.attacker_server.clean_data_theft()
         self.target_server.clean_data_theft()
 
@@ -565,6 +577,7 @@ class Creme:
         self.attack_rootkit_ransomware()
         self.stop_collect_data()
         self.stop_reproduce_benign_behavior()
+        self.clean_data_collection()
         self.attacker_server.clean_rootkit_ransomware()
         self.target_server.clean_rootkit_ransomware()
 
