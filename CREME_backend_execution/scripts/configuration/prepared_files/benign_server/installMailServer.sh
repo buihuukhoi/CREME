@@ -399,3 +399,5 @@ service postfix stop
 service dovecot stop
 service dovecot start
 service postfix start
+update-rc.d dovecot defaults
+update-rc.d postfix defaults

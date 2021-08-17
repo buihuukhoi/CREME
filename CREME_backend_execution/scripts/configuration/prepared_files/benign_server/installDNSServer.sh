@@ -28,3 +28,4 @@ cp ./config_files/dns/dnsmasq.service /lib/systemd/system/dnsmasq.service
 cp ./config_files/dns/dnsmasq.conf /etc/dnsmasq.conf
 # systemctl restart dnsmasq
 service dnsmasq restart
+update-rc.d dnsmasq defaults

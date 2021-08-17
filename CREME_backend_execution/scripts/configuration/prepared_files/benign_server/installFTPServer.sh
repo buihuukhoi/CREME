@@ -10,4 +10,5 @@ ufw allow 40000:50000/tcp
 
 cp ./config_files/ftp/vsftpd.conf /etc/vsftpd.conf
 cp ./config_files/ftp/vsftpd.userlist /etc/vsftpd.userlist
-systemctl restart vsftpd
+service vsftpd restart
+update-rc.d vsftpd defaults

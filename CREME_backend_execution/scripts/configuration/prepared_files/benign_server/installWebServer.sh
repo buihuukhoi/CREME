@@ -121,6 +121,7 @@ dpkg-reconfigure --frontend=noninteractive phpmyadmin
 echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
 # systemctl restart apache2
 service apache2 restart
+update-rc.d apache2 defaults
 
 ########################
 # use website template #
