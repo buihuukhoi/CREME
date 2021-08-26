@@ -750,13 +750,19 @@ class AttackerServer(Machine, implements(IConfiguration), implements(IConfigurat
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def end_point_dos_second_stage(self):
+        new_user_account = "cremetest"
+        new_user_password = "password"
         filename_path = "attacks/end_point_dos/./AttackerServer_second_stage.sh"
-        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack,
+                      new_user_account, new_user_password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def end_point_dos_third_stage(self):
+        new_user_account = "cremetest"  # must be same as the second stage
+        new_user_password = "password"
         filename_path = "attacks/end_point_dos/./AttackerServer_third_stage.sh"
-        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack]
+        parameters = [self.ip, self.username, self.password, self.path, self.targeted_attack,
+                      new_user_account, new_user_password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def data_theft_start_metasploit(self):

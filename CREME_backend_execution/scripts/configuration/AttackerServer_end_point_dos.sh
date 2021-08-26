@@ -35,6 +35,8 @@ send "$controller_pass\r"
 
 expect "*:~# "
 send "chmod +x $path/*.py \r"
+expect "*:~# "
+send "chmod +x $path/*.sh \r"
 
 expect "*:~# "
 send "exit\r"
