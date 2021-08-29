@@ -1021,18 +1021,22 @@ class EvaluationHelper:
 
     # ----- coverage -----
     @staticmethod
-    def generate_existing_coverage(output_folder, output_file, weights):
+    def generate_coverage(output_folder, output_file, weights, creme_attack_scenarios, creme_attack_types):
         """
-        use to generate existing coverage for existing datasets with corresponding weights.
+        use to generate coverage for datasets with corresponding weights.
         """
         # weights = {"attack_types": 4 / 10 / 20, "attack_scenarios": 2 / 10 / 20, "data_sources": 1 / 10 / 6,
         #            "labeled_data": 1 / 10 / 6, "feature_set": 1 / 10 / 6, "metadata": 1 / 10}
         filename = os.path.join(output_folder, output_file)
 
+        creme_num_of_scenarios = len(set(creme_attack_scenarios))
+        creme_num_of_attack_types = len(set(creme_attack_types))
+
         csv_columns = ["dataset", "attack_types", "attack_scenarios", "data_sources", "labeled_data", "feature_set",
                        "metadata", "score"]
 
         csv_rows = []
+        # existing datasets
         csv_rows.append({"dataset": "IoT-NID", "attack_types": 5, "attack_scenarios": 1, "data_sources": 1,
                          "labeled_data": 1, "feature_set": 0, "metadata": 1})
         csv_rows.append({"dataset": "NGIDS-DS", "attack_types": 7, "attack_scenarios": 0, "data_sources": 2,
@@ -1050,6 +1054,10 @@ class EvaluationHelper:
         csv_rows.append({"dataset": "NDSec-1", "attack_types": 9, "attack_scenarios": 3, "data_sources": 2,
                          "labeled_data": 1, "feature_set": 1, "metadata": 1})
         csv_rows.append({"dataset": "Ton-IoT", "attack_types": 9, "attack_scenarios": 0, "data_sources": 3,
+                         "labeled_data": 3, "feature_set": 3, "metadata": 1})
+        # creme dataset
+        csv_rows.append({"dataset": "CREME", "attack_types": creme_num_of_attack_types,
+                         "attack_scenarios": creme_num_of_scenarios, "data_sources": 3,
                          "labeled_data": 3, "feature_set": 3, "metadata": 1})
 
         for row in csv_rows:  # dataset

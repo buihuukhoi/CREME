@@ -14,7 +14,7 @@ class Creme:
 
     models_name = ["decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost"]
 
-    # should update to allow users define weights on the website
+    # TODO: should update to allow users define weights on the website
     weights = {"attack_types": 4 / 10 / 20, "attack_scenarios": 2 / 10 / 20, "data_sources": 1 / 10 / 6,
                "labeled_data": 1 / 10 / 6, "feature_set": 1 / 10 / 6, "metadata": 1 / 10}
 
@@ -1084,15 +1084,43 @@ class Creme:
                 ProgressHelper.update_stage(stage, "Finished {0}".format(data_source), 6,
                                             finished_task=True, override_pre_message=True)
 
+    def coverage_generage_attack_scenarios_types(self):
+        attack_scenarios = []
+        attack_types = []
+
+        if Creme.mirai:
+            attack_scenarios.append("mirai")
+            attack_types.extend(["scanning", "brute_force", "backdoor", "DDoS"])
+        if Creme.disk_wipe:
+            attack_scenarios.append("disk_wipe")
+            attack_types.extend(["vulnerability", "backdoor", "data_destruction"])
+        if Creme.ransomware:
+            attack_scenarios.append("ransomware")
+            attack_types.extend(["vulnerability", "privilege_escalation", "backdoor", "ransomware"])
+        if Creme.resource_hijacking:
+            attack_scenarios.append("resource_hijacking")
+            attack_types.extend(["vulnerability", "backdoor", "resource_hijacking"])
+        if Creme.end_point_dos:
+            attack_scenarios.append("end_point_dos")
+            attack_types.extend(["vulnerability", "privilege_escalation", "backdoor", "end_point_dos"])
+        if Creme.data_theft:
+            attack_scenarios.append("data_theft")
+            attack_types.extend(["vulnerability", "backdoor", "exfiltration"])
+        if Creme.run_rootkit_ransomware:
+            attack_scenarios.append("run_rootkit_ransomware")
+            attack_types.extend(["vulnerability", "backdoor", "rootkit", "ransomware"])
+
+        return attack_scenarios, attack_types
+
     def coverage_evaluation(self, cov_result):
         cov_folder = os.path.join("CREME_backend_execution", "evaluation_results")
         cov_folder = os.path.join(cov_folder, "coverage")
         cov_file = "coverage.csv"
         weights = Creme.weights
-        cov_folder, cov_file = EvaluationHelper.generate_existing_coverage(cov_folder, cov_file, weights)
+        attack_scenarios, attack_types = self.coverage_generage_attack_scenarios_types()
 
-        # calculate CREME's coverage *******************************
-        pass
+        cov_folder, cov_file = EvaluationHelper.generate_coverage(cov_folder, cov_file, weights, attack_scenarios,
+                                                                  attack_types)
 
     def evaluation(self, eff_result):
         stage = 7
