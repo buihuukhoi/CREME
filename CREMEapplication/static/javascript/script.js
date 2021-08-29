@@ -18,24 +18,33 @@ setInterval(function(){
 
 function processJson(data){
     document.getElementById("scenario").innerHTML = "Scenario: " + data.scenario;
+
     change("status1", data.stage_1_status);
     document.getElementById("detail1").innerHTML = data.stage_1_detail;
+
+    document.getElementById("status2").innerHTML = data.attack_phase_1_data;
     change("status2", data.stage_2_status);
     document.getElementById("detail2").innerHTML = data.stage_2_detail;
+
+    document.getElementById("status3").innerHTML = data.attack_phase_2_data;
     change("status3", data.stage_3_status);
     document.getElementById("detail3").innerHTML = data.stage_3_detail;
+
+    document.getElementById("status4").innerHTML = data.attack_phase_3_data;
     change("status4", data.stage_4_status);
     document.getElementById("detail4").innerHTML = data.stage_4_detail;
+
     change("status5", data.stage_5_status);
     document.getElementById("detail5").innerHTML = data.stage_5_detail;
+
     change("status6", data.stage_6_status);
     document.getElementById("detail6").innerHTML = data.stage_6_detail;
+
     change("status7", data.stage_7_status);
     document.getElementById("detail7").innerHTML = data.stage_7_detail;
 }
 
 function change(id, status){
-    //reset();
     e = document.getElementById(id);
     if(status <= '1'){
         e.classList.add("bg-dark");    

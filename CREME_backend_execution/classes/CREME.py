@@ -464,7 +464,11 @@ class Creme:
     # ---------- run scenario ----------
     def run_mirai(self):
         scenario = "mirai"
+        attack_phases_name = ("Attack Phase 1<br>(Valid Accounts)", "Attack Phase 2</br>(Non-App Layer Protocol)",
+                              "Attack Phase 3</br>(Network DoS)")
         ProgressHelper.update_scenario(scenario)
+        ProgressHelper.update_attack_phase_data(attack_phases_name)
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_mirai()
@@ -480,7 +484,11 @@ class Creme:
 
     def run_disk_wipe(self):
         scenario = "disk_wipe"
+        attack_phases_name = ("Attack Phase 1<br>(Exploit Public Application)", "Attack Phase 2</br>(Non-App Layer Protocol)",
+                              "Attack Phase 3</br>(Disk wipe)")
         ProgressHelper.update_scenario(scenario)
+        ProgressHelper.update_attack_phase_data(attack_phases_name)
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_disk_wipe()
@@ -498,7 +506,11 @@ class Creme:
 
     def run_ransomware(self):
         scenario = "ransomware"
+        attack_phases_name = ("Attack Phase 1<br>(Exploit Public Application)", "Attack Phase 2</br>(Non-App Layer Protocol)",
+                              "Attack Phase 3</br>(Data Encrypted)")
         ProgressHelper.update_scenario(scenario)
+        ProgressHelper.update_attack_phase_data(attack_phases_name)
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_ransomware()
@@ -516,7 +528,11 @@ class Creme:
 
     def run_resource_hijacking(self):
         scenario = "resource_hijacking"
+        attack_phases_name = ("Attack Phase 1<br>(Exploit Public Application)", "Attack Phase 2</br>(Non-App Layer Protocol)",
+                              "Attack Phase 3</br>(Resource Hijacking)")
         ProgressHelper.update_scenario(scenario)
+        ProgressHelper.update_attack_phase_data(attack_phases_name)
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_resource_hijacking()
@@ -534,7 +550,11 @@ class Creme:
 
     def run_end_point_dos(self):
         scenario = "end_point_dos"
+        attack_phases_name = ("Attack Phase 1<br>(Exploit Public Application)", "Attack Phase 2</br>(Create Account)",
+                              "Attack Phase 3</br>(Endpoint DoS)")
         ProgressHelper.update_scenario(scenario)
+        ProgressHelper.update_attack_phase_data(attack_phases_name)
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_end_point_dos()
@@ -552,7 +572,11 @@ class Creme:
 
     def run_data_theft(self):
         scenario = "data_theft"
+        attack_phases_name = ("Attack Phase 1<br>(Exploit Public Application)", "Attack Phase 2</br>(Non-App Layer Protocol)",
+                              "Attack Phase 3</br>(Exfiltration Over C2 Channel)")
         ProgressHelper.update_scenario(scenario)
+        ProgressHelper.update_attack_phase_data(attack_phases_name)
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_data_theft()
@@ -571,7 +595,11 @@ class Creme:
 
     def run_rootkit_ransomware(self):
         scenario = "rootkit_ransomware"
+        attack_phases_name = ("Attack Phase 1<br>(Exploit Public Application)", "Attack Phase 2</br>(Non-App Layer Protocol)",
+                              "Attack Phase 3</br>(Data Encrypted)")
         ProgressHelper.update_scenario(scenario)
+        ProgressHelper.update_attack_phase_data(attack_phases_name)
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_rootkit_ransomware()
@@ -603,7 +631,7 @@ class Creme:
         labels = [1, 1, 1]  # only for syslog
         tactic_names = ['Initial Access', 'Command and Control', 'Impact']
         technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
-        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+        sub_technique_names = ['Local Accounts', 'Non-Application Layer Protocol', 'Direct Network Flood']
 
         src_ips_1 = []
         des_ips_1 = []
@@ -743,8 +771,8 @@ class Creme:
         """
         labels = [1, 1, 1]  # only for syslog
         tactic_names = ['Initial Access', 'Command and Control', 'Impact']
-        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
-        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+        technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Disk wipe']
+        sub_technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Disk Content Wipe']
 
         return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names, sub_technique_names)
 
@@ -755,9 +783,9 @@ class Creme:
         label syslog
         """
         labels = [1, 1, 1]  # only for syslog
-        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
-        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
-        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+        tactic_names = ['Initial Access', 'Command and Control', 'Exfiltration']
+        technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Exfiltration Over C2 Channel']
+        sub_technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Exfiltration Over C2 Channel']
 
         return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
                                                   sub_technique_names)
@@ -770,8 +798,8 @@ class Creme:
         """
         labels = [1, 1, 1]  # only for syslog
         tactic_names = ['Initial Access', 'Command and Control', 'Impact']
-        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
-        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+        technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Data Encrypted']
+        sub_technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Data Encrypted']
 
         return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
                                                   sub_technique_names)
@@ -784,8 +812,8 @@ class Creme:
         """
         labels = [1, 1, 1]  # only for syslog
         tactic_names = ['Initial Access', 'Command and Control', 'Impact']
-        technique_names = ['Valid Accounts', 'Non-Application Layer Protocol', 'Network Denial of Service']
-        sub_technique_names = ['SubTechnique-Stage-1', 'SubTechnique-Stage-2', 'SubTechnique-Stage-3']
+        technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Data Encrypted']
+        sub_technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Data Encrypted']
 
         return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
                                                   sub_technique_names)

@@ -26,6 +26,11 @@ class ProgressData(models.Model):
     stage_7_status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished
     stage_7_detail = models.TextField(default='None')
 
+    # attack phases
+    attack_phase_1_data = models.TextField(default='Attack Phase 1')
+    attack_phase_2_data = models.TextField(default='Attack Phase 2')
+    attack_phase_3_data = models.TextField(default='Attack Phase 3')
+
 
 class Testbed(models.Model):
     status = models.IntegerField(default=1)  # 1: off, 2: running, 3: finished

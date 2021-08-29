@@ -76,6 +76,7 @@ class ProgressHelper:
                      5: "stage_5_status", 6: "stage_6_status", 7: "stage_7_status"}
     detail_fields = {1: "stage_1_detail", 2: "stage_2_detail", 3: "stage_3_detail", 4: "stage_4_detail",
                      5: "stage_5_detail", 6: "stage_6_detail", 7: "stage_7_detail"}
+    attack_phase_fields = {1: "attack_phase_1_data", 2: "attack_phase_2_data", 3: "attack_phase_3_data"}
     messages = []
 
     @staticmethod
@@ -160,6 +161,26 @@ class ProgressHelper:
             setattr(progress_data, status_field, 3)
         detail_field = ProgressHelper.detail_fields[stage]
         setattr(progress_data, detail_field, detail)
+        progress_data.save()
+
+    @staticmethod
+    def update_attack_phase_data(attack_phases_data):
+        """
+        use to update the content(sub-technique) of attack phases
+        """
+        num_of_phases = len(attack_phases_data)
+        if num_of_phases is not 3:
+            while True:
+                # should not come here, number of phases must be 3
+                pass
+
+        progress_data_all = ProgressData.objects.all()
+        progress_data = progress_data_all.first()
+
+        for i in range(3):
+            attack_phase_field = ProgressHelper.attack_phase_fields[i]
+            data = attack_phases_data[i]
+            setattr(progress_data, attack_phase_field, data)
         progress_data.save()
 
 
