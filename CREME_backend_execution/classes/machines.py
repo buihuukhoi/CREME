@@ -409,6 +409,8 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def wait_machine_up(self):
         OtherHelper.wait_machine_up(self.ip)
+        # waiting for the machine completely turns on
+        time.sleep(180)
 
     def clean_mirai(self):
         pass

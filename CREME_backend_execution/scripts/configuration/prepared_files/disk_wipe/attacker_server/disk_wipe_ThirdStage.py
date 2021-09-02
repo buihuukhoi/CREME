@@ -37,7 +37,8 @@ def main(argv):
 
     shell = client.sessions.session('4')
     shell.write('apt install wipe -y')
-    shell.write("wipe -r -f {0}".format(wipe_disk_folder))
+    time.sleep(30)
+    shell.write("wipe -f {0}".format(wipe_disk_folder))
 
 
 main(sys.argv)
