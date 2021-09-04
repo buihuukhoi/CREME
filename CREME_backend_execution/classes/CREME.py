@@ -1141,8 +1141,8 @@ class Creme:
             self.run_mirai()
         if Creme.disk_wipe:
             self.run_disk_wipe()
-        # if Creme.ransomware:
-        #     self.run_ransomware()
+        if Creme.ransomware:
+            self.run_ransomware()
         # if Creme.resource_hijacking:
         #     self.run_resource_hijacking()
         # if Creme.end_point_dos:
