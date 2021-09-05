@@ -464,9 +464,18 @@ class Creme:
 
     # ---------- cleaning ----------
     def clean_data_collection(self):
+        # TODO: think about whether we really need this one ?
+        #  Or restarting rsyslog when entering the attack scenarios is enough?
+
         self.target_server.clean_data_collection()
         self.benign_server.clean_data_collection()
         self.dls.clean_data_collection()
+
+    # ---------- cleaning ----------
+    def restart_rsyslog_service(self):
+        self.target_server.restart_rsyslog()
+        self.benign_server.restart_rsyslog()
+        self.dls.restart_rsyslog()
 
     # ---------- run scenario ----------
     def run_mirai(self):
@@ -475,6 +484,9 @@ class Creme:
                               "Attack Phase 3</br>(Network DoS)")
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
+
+        # restart the rsyslog at data logger server
+        self.restart_rsyslog_service()
 
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
@@ -495,6 +507,9 @@ class Creme:
                               "Attack Phase 3</br>(Disk wipe)")
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
+
+        # restart the rsyslog at data logger server
+        self.restart_rsyslog_service()
 
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
@@ -518,6 +533,9 @@ class Creme:
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
 
+        # restart the rsyslog at data logger server
+        self.restart_rsyslog_service()
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_ransomware()
@@ -539,6 +557,9 @@ class Creme:
                               "Attack Phase 3</br>(Resource Hijacking)")
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
+
+        # restart the rsyslog at data logger server
+        self.restart_rsyslog_service()
 
         # restart continuum services at target server and benign server
         self.target_server.restart_continuum()
@@ -575,6 +596,9 @@ class Creme:
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
 
+        # restart the rsyslog at data logger server
+        self.restart_rsyslog_service()
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_end_point_dos()
@@ -596,6 +620,9 @@ class Creme:
                               "Attack Phase 3</br>(Exfiltration Over C2 Channel)")
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
+
+        # restart the rsyslog at data logger server
+        self.restart_rsyslog_service()
 
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
@@ -619,6 +646,9 @@ class Creme:
                               "Attack Phase 3</br>(Data Encrypted)")
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
+
+        # restart the rsyslog at data logger server
+        self.restart_rsyslog_service()
 
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
