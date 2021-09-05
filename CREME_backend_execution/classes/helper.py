@@ -832,6 +832,37 @@ class ProcessDataHelper:
         df.to_csv(tmp_filename, encoding='utf-8', index=False)
 
 
+    @staticmethod
+    def merge_other_logs_2_syslog(other_log_files, syslog_file, timestamps_syslog, hostnames, time_zone="+08:00",
+                                  component="continuum[]"):
+        t_start = timestamps_syslog[0][0]
+        t_end = timestamps_syslog[-1][1]
+        new_lines = []
+
+        for i, log_file in enumerate(other_log_files):
+            with open(log_file, 'rt') as fr:
+                lines = fr.readlines()
+
+            for line in lines:
+                fields = line.split(maxsplit=4)
+                tmp_date = fields[0]
+                hour_min_second = (fields[1]).split(',')[0]
+                log_message = fields[-1]
+                if len(fields) < 5 or len(tmp_date.split('-')) is not 3:
+                    continue  # something is wrong here
+
+                time_string = "{0}T{1}{2}".format(tmp_date, hour_min_second, time_zone)
+                dateTime = parse(time_string)
+                timestamp = (int)(dateTime.timestamp())
+                if (int)(t_start) <= timestamp <= (int)(t_end):
+                    new_line = "{0} {1} {2}: {3}".format(time_string, hostnames[i], component, log_message)
+                    new_lines.append(new_line)
+
+        with open(syslog_file, 'a') as fa:
+            for line in new_lines:
+                fa.write("{}\n".format(line))
+
+
 class TrainMLHelper:
     @staticmethod
     def accuracy(data_source, input_folder, input_file, output_folder, models_name=[], num_of_folds=5,

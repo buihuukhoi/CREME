@@ -92,21 +92,22 @@ class DataLoggerServer(Machine, implements(IConfiguration), implements(IConfigur
                       data_logger_client.password, data_logger_client.path, time_file, self.path]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
-    def centralize_data(self, data_logger_client, contain_continuum_log=False):
+    def centralize_data(self, data_logger_client, other_data=False, remote_paths=[], remote_files=[]):
         self.download_atop_data(data_logger_client)
-        if contain_continuum_log:  # download apache continuum's log
-            remote_path = '/opt/apache_continuum/apache-continuum-1.4.2/logs'
-            remote_log = 'continuum.log'
-            new_log = '{0}_continuum.log'.format(data_logger_client.hostname)
-            self.download_log_data(data_logger_client, remote_path, remote_log, new_log)
+        if other_data:  # download apache continuum's log
+            for index, remote_path in enumerate(remote_paths):
+                remote_file = remote_files[index]
+                new_file = '{0}_{1}'.format(data_logger_client.hostname, remote_file)
+                self.download_log_data(data_logger_client, remote_path, remote_file, new_file)
 
     def centralize_time_files(self, data_logger_client, time_files):
         for time_file in time_files:
             self.download_time_file(data_logger_client, time_file)
 
     def restart_rsyslog(self):
-        filename_path = "./restart_rsyslog.sh"
-        parameters = [self.ip, self.username, self.password]
+        filename_path = "./restart_service.sh"
+        service_name = "rsyslog"
+        parameters = [self.ip, self.username, self.password, service_name]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def clean_data_collection(self):
@@ -440,8 +441,15 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         self.wait_machine_up()
 
     def restart_rsyslog(self):
-        filename_path = "./restart_rsyslog.sh"
-        parameters = [self.ip, self.username, self.password]
+        filename_path = "./restart_service.sh"
+        service_name = "rsyslog"
+        parameters = [self.ip, self.username, self.password, service_name]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def restart_continuum(self):
+        filename_path = "./restart_service.sh"
+        service_name = "continuum"
+        parameters = [self.ip, self.username, self.password, service_name]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def clean_data_collection(self):
@@ -501,8 +509,15 @@ class BenignServer(DataLoggerClient, implements(IConfiguration), implements(ICon
         super().stop_collect_data()
 
     def restart_rsyslog(self):
-        filename_path = "./restart_rsyslog.sh"
-        parameters = [self.ip, self.username, self.password]
+        filename_path = "./restart_service.sh"
+        service_name = "rsyslog"
+        parameters = [self.ip, self.username, self.password, service_name]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
+
+    def restart_continuum(self):
+        filename_path = "./restart_service.sh"
+        service_name = "continuum"
+        parameters = [self.ip, self.username, self.password, service_name]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def clean_data_collection(self):

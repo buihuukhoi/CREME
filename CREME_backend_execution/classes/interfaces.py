@@ -85,11 +85,13 @@ class IDataCentralization(Interface):
     """
     defining functions to centralize data that should be implemented by the data logger server:
     """
-    def centralize_data(self, data_logger_client, contain_continuum_log=False):
+    def centralize_data(self, data_logger_client, other_data=False, remote_paths=[], remote_files=[]):
         """
         using to centralize data from the data logger client to the data logger server
         :param data_logger_client: the machine which we want to centralize data from
-        :param contain_continuum_log: whether the data logger client contains log of apache continuum server or not
+        :param other_data: except atop files, whether we needs to collect other data at the data logger client or not
+        :param remote_paths: paths correspond to files
+        :param remote_files: files correspond to paths
         """
         pass
 

@@ -127,17 +127,19 @@ class Creme:
         for non_vulnerable_client in self.non_vulnerable_clients:
             non_vulnerable_client.stop_collect_data()
 
-    def centralize_data(self, contain_continuum_log=False):
+    def centralize_data(self, other_data=False, remote_paths=[], remote_files=[]):
         """
         using to centralize data from the data logger client to the data logger server
-        :param contain_continuum_log: whether the attack scenario should collect log of apache continuum server or not
+        :param other_data: except atop files, whether we needs to collect other data at the data logger client or not
+        :param remote_paths: paths correspond to files
+        :param remote_files: files correspond to paths
         """
         for vulnerable_client in self.vulnerable_clients:
             self.dls.centralize_data(vulnerable_client)
         for non_vulnerable_client in self.non_vulnerable_clients:
             self.dls.centralize_data(non_vulnerable_client)
-        self.dls.centralize_data(self.target_server, contain_continuum_log)
-        self.dls.centralize_data(self.benign_server, contain_continuum_log)
+        self.dls.centralize_data(self.target_server, other_data, remote_paths, remote_files)
+        self.dls.centralize_data(self.benign_server, other_data, remote_paths, remote_files)
 
     def centralize_time_files(self, remote_machine, time_files):
         """
@@ -393,12 +395,15 @@ class Creme:
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
     # ---------- download data to controller ----------
-    def download_data_to_controller(self, scenario_log_folder, contain_continuum_log=False, time_filenames=[]):
+    def download_data_to_controller(self, scenario_log_folder, time_filenames=[], other_files_flag=False,
+                                    local_folders=[], remote_files=[]):
         """
         using to download data from the data logger server to controller, and save it to scenario_log_folder.
         :param scenario_log_folder: a folder of specific scenario insides the logs folder.
-        :param contain_continuum_log: whether the attack scenario should collect log of apache continuum server or not
         :param time_filenames: name of timestamp files
+        :param other_files_flag: whether we needs to collect other data to controller or not
+        :param local_folders: local folders at controller
+        :param remote_files: other files at remote_machine (not pcap, accounting, syslog, timestamp)
         """
         log_folder = self.dls.controller_path
         tmp_folder_names = ["CREME", "CREME_backend_execution", "logs", scenario_log_folder]
@@ -437,15 +442,17 @@ class Creme:
         DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=remote_folder,
                                     file_names=file_names, local_folder=syslog_folder)
 
-        if contain_continuum_log:  # download apache continuum's log
-            syslog = "syslog"
-            syslog_folder = os.path.join(log_folder, syslog)
-            file_names = []
-            file_names.append('{0}_continuum.log'.format(self.benign_server.hostname))
-            file_names.append('{0}_continuum.log'.format(self.target_server.hostname))
+        if other_files_flag:  # download other logs/files
+            for i, tmp_folder in enumerate(local_folders):
+                # syslog = "syslog"
+                local_folder = os.path.join(log_folder, tmp_folder)
+                file_names = []
+                file_names.append(remote_files[i])
+                # file_names.append('{0}_continuum.log'.format(self.benign_server.hostname))
+                # file_names.append('{0}_continuum.log'.format(self.target_server.hostname))
 
-            DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
-                                        file_names=file_names, local_folder=syslog_folder)
+                DownloadDataHelper.get_data(self.dls.ip, self.dls.username, self.dls.password, remote_folder=self.dls.path,
+                                            file_names=file_names, local_folder=local_folder)
 
         # ----- download timestamp files -----
         times = "times"
@@ -533,6 +540,10 @@ class Creme:
         ProgressHelper.update_scenario(scenario)
         ProgressHelper.update_attack_phase_data(attack_phases_name)
 
+        # restart continuum services at target server and benign server
+        self.target_server.restart_continuum()
+        self.benign_server.restart_continuum()
+
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
         self.attack_resource_hijacking()
@@ -542,11 +553,20 @@ class Creme:
         self.attacker_server.clean_resource_hijacking()
         self.target_server.clean_resource_hijacking()
 
-        self.centralize_data()
+        remote_paths = ["/opt/apache_continuum/apache-continuum-1.4.2/logs"]
+        remote_files = ["continuum.log"]
+        self.centralize_data(True, remote_paths, remote_files)
+
         file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
                       "time_stage_2_end.txt", "time_stage_3_start.txt"]
         self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
-        self.download_data_to_controller(scenario, time_filenames=file_names)
+
+        local_folders = ["syslog", "syslog"]
+        remote_files = []
+        remote_files.append("{0}_continuum.log".format(self.benign_server.hostname))
+        remote_files.append("{0}_continuum.log".format(self.target_server.hostname))
+        self.download_data_to_controller(scenario, time_filenames=file_names, other_files_flag=True,
+                                         local_folders=local_folders, remote_files=remote_files)
 
     def run_end_point_dos(self):
         scenario = "end_point_dos"
@@ -818,6 +838,20 @@ class Creme:
         return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
                                                   sub_technique_names)
 
+    def process_data_resource_hijacking(self, log_folder):
+        """
+        this function use to create labeling_file that contain information to label accounting and traffic data for
+        Resource_Hijacking attack scenario, also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
+        label syslog
+        """
+        labels = [1, 1, 1]  # only for syslog
+        tactic_names = ['Initial Access', 'Command and Control', 'Impact']
+        technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Resource Hijacking']
+        sub_technique_names = ['Exploit Public Application', 'Non-Application Layer Protocol', 'Resource Hijacking']
+
+        return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
+                                                  sub_technique_names)
+
     def process_data(self):
         stage = 5
         ProgressHelper.update_stage(stage, f"Start processing data ...", 5, new_stage=True)
@@ -992,6 +1026,45 @@ class Creme:
             ProgressHelper.update_stage(stage, f"Finished processing the data of ransomware scenario", 5,
                                         finished_task=True, override_pre_message=True)
 
+        if Creme.resource_hijacking:
+            ProgressHelper.update_stage(stage, f"Processing the data of Resource_Hijacking scenario", 5)
+
+            scenario = "resource_hijacking"
+            log_folder_resource_hijacking = os.path.join(log_folder, scenario)
+            labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactics,\
+                techniques, sub_techniques = self.process_data_resource_hijacking(log_folder_resource_hijacking)
+            accounting_folder = "accounting"
+            traffic_file = os.path.join("traffic", self.dls.tcp_file)
+            information = [labeling_file_path, log_folder_resource_hijacking, accounting_folder, traffic_file]
+
+            big_list.append(information)
+            traffic_files.append("label_traffic_resource_hijacking.csv")
+            atop_files.append("label_atop_resource_hijacking.csv")
+
+            # syslog
+            syslog_folder = os.path.join(log_folder_resource_hijacking, "syslog")
+            syslog_file = os.path.join(syslog_folder, "dataset_generation.log")
+            input_files.append(syslog_file)
+            scenarios_timestamps.append(timestamps_syslog)
+            scenarios_abnormal_hostnames.append(abnormal_hostnames)
+            scenarios_normal_hostnames.append(normal_hostnames)
+            # merge continuum logs to dataset_generation.log
+            continuum_log_files = []
+            tmp_hostnames = []
+            continuum_log_files.append(os.path.join(syslog_folder, "{0}_continuum.log".format(self.benign_server.hostname)))
+            tmp_hostnames.append(self.benign_server.hostname)
+            continuum_log_files.append(os.path.join(syslog_folder, "{0}_continuum.log".format(self.target_server.hostname)))
+            tmp_hostnames.append(self.target_server.hostname)
+            ProcessDataHelper.merge_other_logs_2_syslog(continuum_log_files, syslog_file, timestamps_syslog, tmp_hostnames)
+
+            scenarios_labels.append(labels)
+            scenarios_tactics.append(tactics)
+            scenarios_techniques.append(techniques)
+            scenarios_sub_techniques.append(sub_techniques)
+
+            ProgressHelper.update_stage(stage, f"Finished processing the data of resource_hijacking scenario", 5,
+                                        finished_task=True, override_pre_message=True)
+
         ProgressHelper.update_stage(stage, f"Processing the accounting and network packet data sources", 5)
         folder_traffic = os.path.join(log_folder, "label_traffic")
         final_name_traffic = "label_traffic.csv"
@@ -1143,8 +1216,8 @@ class Creme:
             self.run_disk_wipe()
         if Creme.ransomware:
             self.run_ransomware()
-        # if Creme.resource_hijacking:
-        #     self.run_resource_hijacking()
+        if Creme.resource_hijacking:
+            self.run_resource_hijacking()
         # if Creme.end_point_dos:
         #     self.run_end_point_dos()
         if Creme.data_theft:
