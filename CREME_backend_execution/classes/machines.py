@@ -385,7 +385,7 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
 
     def configure_resource_hijacking(self):
         filename_path = "configuration/./TargetServer_resource_hijacking.sh"
-        parameters = [self.ip, self.hostname, self.username, self.password]
+        parameters = [self.ip, self.username, self.password]
         ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_disk_wipe(self):
@@ -395,6 +395,13 @@ class TargetServer(DataLoggerClient, implements(IConfiguration), implements(ICon
     def configure_end_point_dos(self):
         # ?????
         pass
+
+    # TODO: use right before running process, think about whether run it during configuration time, but remembering
+    #  about persistent configuration after reboot
+    def configure_end_point_dos_ulimit(self):
+        filename_path = "configuration/./TargetServer_end_point_dos_ulimit.sh"
+        parameters = [self.ip, self.username, self.password]
+        ScriptHelper.execute_script(filename_path, parameters, self.show_cmd)
 
     def configure_data_theft(self):
         pass

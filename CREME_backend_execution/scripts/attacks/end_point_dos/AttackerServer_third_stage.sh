@@ -22,7 +22,7 @@ expect " password: "
 send "$password\r"
 
 expect "*:~# "
-send "rm ~/.ssh/known_hosts \r"
+send "rm /root/.ssh/known_hosts \r"  # apply for root only
 
 set DATE [exec date +%s]
 set outputTimeFile [open $folder/$outputTime "w+"]
