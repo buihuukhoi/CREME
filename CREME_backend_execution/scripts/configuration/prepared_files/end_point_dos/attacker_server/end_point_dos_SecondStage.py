@@ -28,7 +28,7 @@ def main(argv):
     time.sleep(2)
 
     shell = client.sessions.session('2')
-    shell.run_with_output('shell')
+    shell.run_with_output('shell', end_strs=None)  # end_strs=None means waiting until timeout
     # shell.write('useradd -p $(openssl passwd -1 password) test') # cremetest:password
     shell.write('useradd -p $(openssl passwd -1 {0}) {1}'.format(new_user_password, new_user_account))
 
