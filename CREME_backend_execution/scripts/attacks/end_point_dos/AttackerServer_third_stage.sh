@@ -10,6 +10,7 @@ set new_user_password [lindex $argv 7]
 
 set timeout 1200
 
+set timestamp_folder "CREME_backend_execution/logs/rootkit_ransomware/times"
 set outputTime "time_stage_3_start.txt"
 
 # SSH connection
@@ -22,10 +23,10 @@ expect " password: "
 send "$password\r"
 
 expect "*:~# "
-send "rm /root/.ssh/known_hosts \r"  # apply for root only
+send "rm /root/.ssh/known_hosts \r"
 
 set DATE [exec date +%s]
-set outputTimeFile [open $folder/$outputTime "w+"]
+set outputTimeFile [open $timestamp_folder/$outputTime "w+"]
 puts $outputTimeFile $DATE
 close $outputTimeFile
 

@@ -336,18 +336,18 @@ class Creme:
 
         stage = 2
         ProgressHelper.update_stage(stage,
-                                    f"{self.attacker_server.hostname} is exploiting unreal_ircd_3281_backdoor",
+                                    f"{self.attacker_server.hostname} is exploiting rails_secret_deserialization",
                                     5, new_stage=True)
         self.attacker_server.data_theft_first_stage()
         ProgressHelper.update_stage(stage,
-                                    f"{self.attacker_server.hostname} finished exploiting unreal_ircd_3281_backdoor",
+                                    f"{self.attacker_server.hostname} finished exploiting rails_secret_deserialization",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
         stage += 1
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing docker_daemon_privilege_escalation",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} is executing service_persistence",
                                     5, new_stage=True)
         self.attacker_server.data_theft_second_stage()
-        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing docker_daemon_privilege_escalation",
+        ProgressHelper.update_stage(stage, f"{self.attacker_server.hostname} finished executing service_persistence",
                                     5, finished_task=True, override_pre_message=True, finished_stage=True)
 
         stage += 1
