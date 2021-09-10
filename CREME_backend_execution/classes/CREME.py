@@ -809,6 +809,9 @@ class Creme:
 
         labeling_file_path = os.path.join(log_folder, "labeling_file_path.txt")
 
+        # TODO: labels are not used, think about using it to label accounting and traffic data (pass to
+        #  make_labeling_file which is used to create a file as parameters for labeling accounting and traffic).
+        #  Currently, hard-code label 1 for abnormal data in filter_label_atop.py and make_label_subflow.py
         ProcessDataHelper.make_labeling_file(labeling_file_path, tactic_names, technique_names,
                                              sub_technique_names, t, src_ips, des_ips, normal_ips, normal_hostnames,
                                              abnormal_hostnames, drop_cmd_list)
