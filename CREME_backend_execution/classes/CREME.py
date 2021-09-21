@@ -1313,8 +1313,8 @@ class Creme:
             self.run_ransomware()
         if Creme.resource_hijacking:
             self.run_resource_hijacking()
-        # if Creme.end_point_dos:
-        #     self.run_end_point_dos()
+        if Creme.end_point_dos:
+            self.run_end_point_dos()
         if Creme.data_theft:
             self.run_data_theft()
         if Creme.rootkit_ransomware:
