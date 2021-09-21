@@ -747,13 +747,13 @@ class Creme:
         normal_ips = [normal_ips_1, normal_ips_2, normal_ips_3]
         normal_hostnames = [normal_hostnames_1, normal_hostnames_2, normal_hostnames_3]
         abnormal_hostnames = [abnormal_hostnames_1, abnormal_hostnames_2, abnormal_hostnames_3]
-        drop_cmd_list = ['kworker']
+        pattern_normal_cmd_list = ['kworker']
 
         labeling_file_path = os.path.join(log_folder, "labeling_file_path.txt")
 
         ProcessDataHelper.make_labeling_file(labeling_file_path, tactic_names, technique_names,
                                              sub_technique_names, t, src_ips, des_ips, normal_ips, normal_hostnames,
-                                             abnormal_hostnames, drop_cmd_list)
+                                             abnormal_hostnames, pattern_normal_cmd_list)
 
         timestamps_syslog = [[t1, t2], [t2, t3], [t3, t4]]
 
@@ -806,7 +806,7 @@ class Creme:
         normal_ips = [normal_ips_1, normal_ips_2, normal_ips_3]
         normal_hostnames = [normal_hostnames_1, normal_hostnames_2, normal_hostnames_3]
         abnormal_hostnames = [abnormal_hostnames_1, abnormal_hostnames_2, abnormal_hostnames_3]
-        drop_cmd_list = ['kworker']
+        pattern_normal_cmd_list = ['kworker']
 
         labeling_file_path = os.path.join(log_folder, "labeling_file_path.txt")
 
@@ -815,7 +815,7 @@ class Creme:
         #  Currently, hard-code label 1 for abnormal data in filter_label_atop.py and make_label_subflow.py
         ProcessDataHelper.make_labeling_file(labeling_file_path, tactic_names, technique_names,
                                              sub_technique_names, t, src_ips, des_ips, normal_ips, normal_hostnames,
-                                             abnormal_hostnames, drop_cmd_list)
+                                             abnormal_hostnames, pattern_normal_cmd_list)
 
         timestamps_syslog = [[t1, t2], [t3, t4], [t5, t6]]
 

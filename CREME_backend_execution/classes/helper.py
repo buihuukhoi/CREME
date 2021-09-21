@@ -187,7 +187,7 @@ class ProgressHelper:
 class ProcessDataHelper:
     @staticmethod
     def make_labeling_file(labeling_file_path, tactic_names, technique_names, sub_technique_names, t, src_ips, des_ips,
-                           normal_ips, normal_hostnames, abnormal_hostnames, drop_cmd_list):
+                           normal_ips, normal_hostnames, abnormal_hostnames, pattern_normal_cmd_list):
         """
         use to create a labeling file which is a parameter using to label data
         """
@@ -198,11 +198,11 @@ class ProcessDataHelper:
 
         my_list = []
         my_list.append([tactic_names[0], technique_names[0], sub_technique_names[0], t1, t2 + 1, src_ips[0], des_ips[0],
-                        normal_ips[0], normal_hostnames[0], abnormal_hostnames[0], drop_cmd_list])
+                        normal_ips[0], normal_hostnames[0], abnormal_hostnames[0], pattern_normal_cmd_list])
         my_list.append([tactic_names[1], technique_names[1], sub_technique_names[1], t3, t4 + 1, src_ips[1], des_ips[1],
-                        normal_ips[1], normal_hostnames[1], abnormal_hostnames[1], drop_cmd_list])
+                        normal_ips[1], normal_hostnames[1], abnormal_hostnames[1], pattern_normal_cmd_list])
         my_list.append([tactic_names[2], technique_names[2], sub_technique_names[2], t5, t6 + 1, src_ips[2], des_ips[2],
-                        normal_ips[2], normal_hostnames[2], abnormal_hostnames[2], drop_cmd_list])
+                        normal_ips[2], normal_hostnames[2], abnormal_hostnames[2], pattern_normal_cmd_list])
         with open(labeling_file_path, "w+") as fw:
             json.dump(my_list, fw)
 

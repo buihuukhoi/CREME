@@ -78,7 +78,9 @@ def compareStage(labeling_list, result_abs_path, result_file_name):
         # normalip_list = stage_list[7]
         normal_atop_list = [s + "_merge.csv" for s in stage_list[8]]
         abnormal_atop_list = [s + "_merge.csv" for s in stage_list[9]]
-        normal_cmd_list = stage_list[10]
+
+        # cmd with these patterns are always the label 0,
+        pattern_normal_cmd_list = stage_list[10]
 
         normal_set = set()
         for normal_filename in normal_atop_list:
@@ -98,11 +100,9 @@ def compareStage(labeling_list, result_abs_path, result_file_name):
                 abnormal_set = abnormal_set.intersection(abnormal_cmd_list)
 
         stage_abnormal_cmd_list = list(abnormal_set - normal_set)
-        for cmd in stage_abnormal_cmd_list:
-            for normal_cmd in normal_cmd_list:
-                if normal_cmd in cmd:
-                    stage_abnormal_cmd_list.remove(cmd)
-                    break
+        for pattern_normal_cmd in pattern_normal_cmd_list:
+            # remove cmd contains this pattern in abnormal_cmd_list  --> always label 0
+            stage_abnormal_cmd_list = [cmd for cmd in stage_abnormal_cmd_list if pattern_normal_cmd not in cmd]
 
         all_stage_abnormal_cmd_list.append(stage_abnormal_cmd_list)
 
