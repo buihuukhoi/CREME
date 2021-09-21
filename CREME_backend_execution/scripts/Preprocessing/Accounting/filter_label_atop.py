@@ -50,6 +50,8 @@ def label(labeling_list, all_stage_abnormal_cmd_list, result_abs_path, result_fi
                 sub_technique_name = stage_list[2]
                 start_time = stage_list[3]
                 end_time = stage_list[4]
+                # TODO: currently, using only cmd to label accounting data. There is a problem if normal and abnormal
+                #  processes have the same cmd. Think about how to solve this problem???
                 abnormal_cmd_list = all_stage_abnormal_cmd_list[idx]
 
                 stage = df[(df['TIMESTAMP'] >= start_time) & (df['TIMESTAMP'] < end_time)]
@@ -79,8 +81,8 @@ def compareStage(labeling_list, result_abs_path, result_file_name):
         normal_atop_list = [s + "_merge.csv" for s in stage_list[8]]
         abnormal_atop_list = [s + "_merge.csv" for s in stage_list[9]]
 
-        # cmd with these patterns are always the label 0,
-        pattern_normal_cmd_list = stage_list[10]
+        pattern_normal_cmd_list = stage_list[10]  # cmd with these patterns are always the label 0,
+        force_abnormal_cmd_list = stage_list[11]  # all cmd in this list will be labeled as 1
 
         normal_set = set()
         for normal_filename in normal_atop_list:
@@ -103,6 +105,7 @@ def compareStage(labeling_list, result_abs_path, result_file_name):
         for pattern_normal_cmd in pattern_normal_cmd_list:
             # remove cmd contains this pattern in abnormal_cmd_list  --> always label 0
             stage_abnormal_cmd_list = [cmd for cmd in stage_abnormal_cmd_list if pattern_normal_cmd not in cmd]
+        stage_abnormal_cmd_list.extend(force_abnormal_cmd_list)
 
         all_stage_abnormal_cmd_list.append(stage_abnormal_cmd_list)
 

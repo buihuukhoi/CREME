@@ -747,7 +747,7 @@ class Creme:
         normal_ips = [normal_ips_1, normal_ips_2, normal_ips_3]
         normal_hostnames = [normal_hostnames_1, normal_hostnames_2, normal_hostnames_3]
         abnormal_hostnames = [abnormal_hostnames_1, abnormal_hostnames_2, abnormal_hostnames_3]
-        pattern_normal_cmd_list = ['kworker']
+        pattern_normal_cmd_list = [['kworker'], ['kworker'], ['kworker']]
 
         labeling_file_path = os.path.join(log_folder, "labeling_file_path.txt")
 
@@ -760,7 +760,8 @@ class Creme:
         return labeling_file_path, timestamps_syslog, abnormal_hostnames, normal_hostnames, labels, tactic_names,\
             technique_names, sub_technique_names
 
-    def process_data_general_scenario(self, log_folder, labels, tactic_names, technique_names, sub_technique_names):
+    def process_data_general_scenario(self, log_folder, labels, tactic_names, technique_names, sub_technique_names,
+                                      force_abnormal_cmd_list=[[],[],[]]):
         """
         this function use to create labeling_file that contain information to label accounting and traffic data for
         general attack scenarios (excepting Mirai), also return abnormal_hostnames, normal_hostnames, timestamps_syslog to process and
@@ -806,7 +807,7 @@ class Creme:
         normal_ips = [normal_ips_1, normal_ips_2, normal_ips_3]
         normal_hostnames = [normal_hostnames_1, normal_hostnames_2, normal_hostnames_3]
         abnormal_hostnames = [abnormal_hostnames_1, abnormal_hostnames_2, abnormal_hostnames_3]
-        pattern_normal_cmd_list = ['kworker']
+        pattern_normal_cmd_list = [['kworker'], ['kworker'], ['kworker']]
 
         labeling_file_path = os.path.join(log_folder, "labeling_file_path.txt")
 
@@ -815,7 +816,7 @@ class Creme:
         #  Currently, hard-code label 1 for abnormal data in filter_label_atop.py and make_label_subflow.py
         ProcessDataHelper.make_labeling_file(labeling_file_path, tactic_names, technique_names,
                                              sub_technique_names, t, src_ips, des_ips, normal_ips, normal_hostnames,
-                                             abnormal_hostnames, pattern_normal_cmd_list)
+                                             abnormal_hostnames, pattern_normal_cmd_list, force_abnormal_cmd_list)
 
         timestamps_syslog = [[t1, t2], [t3, t4], [t5, t6]]
 
@@ -908,8 +909,12 @@ class Creme:
         technique_names = ['Exploit Public Application', 'Create Account', 'Endpoint DoS']
         sub_technique_names = ['Exploit Public Application', 'Local Account', 'OS Exhaustion Flood']
 
+        # TODO: currently, using only cmd to label accounting data. There is a problem if normal and abnormal processes
+        #  have the same cmd. Think about how to solve this problem???
+        force_abnormal_cmd_list = [[],[],["<bash>"]]  # pattern of force bomb process
+
         return self.process_data_general_scenario(log_folder, labels, tactic_names, technique_names,
-                                                  sub_technique_names)
+                                                  sub_technique_names, force_abnormal_cmd_list)
 
     def process_data(self):
         stage = 5
