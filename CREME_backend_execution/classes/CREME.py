@@ -601,7 +601,8 @@ class Creme:
 
         # config ulimit to limit the number of processes for normal users,
         # opening many processes will cause to problems about stuck atop collection
-        self.target_server.configure_end_point_dos_ulimit()
+        # TODO: currently, ulimit can't be applied to ssh session.
+        #self.target_server.configure_end_point_dos_ulimit()
 
         self.start_reproduce_benign_behavior()
         self.start_collect_data()
@@ -614,7 +615,7 @@ class Creme:
 
         self.centralize_data()
         file_names = ["time_stage_1_start.txt", "time_stage_1_end.txt", "time_stage_2_start.txt",
-                      "time_stage_2_end.txt", "time_stage_3_start.txt"]
+                      "time_stage_2_end.txt"]
         self.centralize_time_files(remote_machine=self.attacker_server, time_files=file_names)
         self.download_data_to_controller(scenario, time_filenames=file_names)
 

@@ -17,6 +17,13 @@ send "$password\r"
 expect "$ "
 send "/bin/bash \r"
 
+# TODO: tmp solution to limit number of process for the user,
+# because ulimit can't be applied to ssh session.
+# If we can apply ulimit setting to ssh session,
+# this tmp solution can be removed
+expect "$ "
+send "ulimit -u 500 \r"
+
 expect "$ "
 send ":(){ :|: &};: \r"
 

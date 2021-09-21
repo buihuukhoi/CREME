@@ -10,7 +10,7 @@ set new_user_password [lindex $argv 7]
 
 set timeout 1200
 
-set timestamp_folder "CREME_backend_execution/logs/rootkit_ransomware/times"
+set timestamp_folder "CREME_backend_execution/logs/end_point_dos/times"
 set outputTime "time_stage_3_start.txt"
 
 # SSH connection
