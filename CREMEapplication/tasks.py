@@ -76,10 +76,19 @@ def load_testbed_information():
                                                       info_vc.path, server=target_server)
         vulnerable_clients.append(vulnerable_client)
 
+    if len(info_list_nvc) < 2:
+        # Make sure at least 2 non_vul_clients, even this condition has been checked before
+        print("number of non_vul_client: {0} < 2".format(len(info_list_nvc)))
+        while True:
+            pass
     non_vulnerable_clients = []
-    for info_nvc in info_list_nvc:
+    for idx, info_nvc in enumerate(info_list_nvc):
+        # 1/2 connects to benign_server, 1/2 connects to target_server
+        server_tmp = benign_server
+        if idx >= len(info_list_nvc) // 2:
+            server_tmp = target_server
         non_vulnerable_client = machines.NonVulnerableClient(info_nvc.hostname, info_nvc.ip, info_nvc.username,
-                                                             info_nvc.password, info_nvc.path, server=benign_server)
+                                                             info_nvc.password, info_nvc.path, server=server_tmp)
         non_vulnerable_clients.append(non_vulnerable_client)
 
     machines.TargetServer.vulnerable_clients = vulnerable_clients

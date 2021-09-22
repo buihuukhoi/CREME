@@ -105,6 +105,7 @@ def new_testbed(request):
             testbed.number_of_benign_server = 1
             testbed.number_of_attacker_server = 1
             testbed.number_of_malicious_client = 1
+            testbed.number_of_non_vulnerable_client = max(2, testbed.number_of_non_vulnerable_client)
             testbed.save()
 
         scenario_valid = False  # at least one scenario must be selected

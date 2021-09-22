@@ -39,7 +39,7 @@ class Testbed(models.Model):
     number_of_target_server = models.IntegerField(default=1)  # only 1
     number_of_benign_server = models.IntegerField(default=1)  # only 1
     number_of_vulnerable_client = models.IntegerField(default=1)
-    number_of_non_vulnerable_client = models.IntegerField(default=1)
+    number_of_non_vulnerable_client = models.IntegerField(default=2)  # at least 2: 1 for benign, 1 for target server
     number_of_attacker_server = models.IntegerField(default=1)  # only 1
     number_of_malicious_client = models.IntegerField(default=1)  # only 1
 
