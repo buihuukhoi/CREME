@@ -16,6 +16,9 @@ expect " password: "
 send "$password\r"
 
 expect "*:~# "
+send "chmod 777 /var/www/html\r"
+
+expect "*:~# "
 send "reboot\r"
 
 expect "*:~# "
