@@ -19,7 +19,7 @@ from sklearn.feature_selection import RFECV
 import matplotlib.pyplot as plt
 import time
 import socket
-
+import time
 
 class ScriptHelper:
     @staticmethod
@@ -122,7 +122,9 @@ class ProgressHelper:
             icon = success_icon
         else:
             icon = running_icon
-        message = f'<h{size}>{icon} {message}</h{size}>'
+        localtime = time.localtime()
+        time_stamp =  time.strftime("%H:%M:%S", localtime)
+        message = f'<h{size}>{icon} {message} {time_stamp}</h{size}>'
         # message += "<br>"
 
         if override_pre_message:
