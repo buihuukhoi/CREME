@@ -1708,7 +1708,7 @@ Kali_test = AttackerServer(None, '192.168.1.106', 'root', 'qsefthuk', None, Vul_
 Creme_test = Creme(dls_test, [Vul_client_1], [Non_vul_client_1, Non_vul_client_2], Kali_test, True, False)
 
 
-#Creme_test.run()
+Creme_test.run()
 #Creme_test.start_collect_data()
 #time.sleep(20)
 #Creme_test.stop_collect_data()
