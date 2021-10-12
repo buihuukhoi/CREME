@@ -1697,7 +1697,7 @@ print("Starting")
 Machine.controller_ip = "192.168.1.87"
 Machine.controller_username = "controller"
 Machine.controller_password = "qsefthuk"
-Machine.controller_path = "/home/"+Machine.controller_username+"/CREME_windows"
+Machine.controller_path = "/home/"+Machine.controller_username+"/CREME/CREME_windows"
 
 dls_test = DataLoggerServer(None, '192.168.1.99', 'dataloggerserver', 'qsefthuk', "/home/dataloggerserver/All_data")
 Vul_client_1 = VulnerableClient(None, '192.168.1.110', 'testbed_2', 'qsefthuk', None)
