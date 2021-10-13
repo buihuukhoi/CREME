@@ -16,7 +16,7 @@ This project is a part of "CREME: A toolchain of automatic dataset collection fo
 ## Getting Started
 
 For the first trial version, please refer to the document [here](https://drive.google.com/drive/folders/1YgQs4MJjuBBz8sdJkAw_0OIyy3_d5gsL?usp=sharing)
-
+For the Windows version, please refer to the document [here](https://docs.google.com/document/d/1srZq0dbnCsJPIyiTZOxlUwVurmoTb20UIFHJhRtVplY/edit?usp=sharing)
 
 <!-- Dataset -->
 ## Dataset
