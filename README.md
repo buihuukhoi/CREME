@@ -25,6 +25,6 @@ For the Windows version, please refer to the document [here](https://docs.google
 The dataset can be found at [here](https://drive.google.com/drive/folders/1bEsx64H2vogJKgI_OTVQ8n71VahtLxz5?usp=sharing)
 
 <!--PROJECT MEMO -->
-## PROJECT MEMO
+## Project Memo
 
 For the project memo, please refer to the document [here](https://docs.google.com/document/d/1DDwuftnkgjxZNX43AR4oXdEoKSMkIlb_5s3KMaKCbW4/edit?usp=sharing)
