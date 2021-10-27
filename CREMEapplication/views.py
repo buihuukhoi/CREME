@@ -81,7 +81,20 @@ def validate_ips(hostname_ip_map):
 
 def dashboard(request):
     create_progress_data_if_not_exist()
-    return render(request, 'testbed/dashboard.html', {})
+    testbeds = Testbed.objects.all()
+    out = [[]]
+    headers = []
+    if testbeds:
+        first_testbed = testbeds.first()
+        if first_testbed.status == 3:
+            csv_fp = open("../CREME_backend_execution/evaluation_results/accuracy/accuracy_for_accounting.csv",'r')
+            reader = csv.DictReader(csv_fp)
+            headers = [col for col in reader.fieldnames]
+            out_dict = [row for row in reader]
+            out = []
+            for ele in out_dict:
+                out.append(list(ele.values()))
+    return render(request, 'testbed/dashboard.html', {'data' : out, 'headers' : headers})
 
 
 def new_testbed(request):
