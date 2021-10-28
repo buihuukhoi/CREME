@@ -87,7 +87,9 @@ def dashboard(request):
     if testbeds:
         first_testbed = testbeds.first()
         if first_testbed.status == 3:
-            csv_fp = open("../CREME_backend_execution/evaluation_results/accuracy/accuracy_for_accounting.csv",'r')
+            file_dir = os.path.dirname(__file__)
+            file_path = os.path.join(file_dir, '../CREME_backend_execution/evaluation_results/accuracy/accuracy_for_accounting.csv')
+            csv_fp = open(file_path,'r')
             reader = csv.DictReader(csv_fp)
             headers = [col for col in reader.fieldnames]
             out_dict = [row for row in reader]
