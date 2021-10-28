@@ -87,16 +87,21 @@ def dashboard(request):
     if testbeds:
         first_testbed = testbeds.first()
         if first_testbed.status == 3:
+            # Ref : https://www.geeksforgeeks.org/rendering-data-frame-to-html-template-in-table-view-using-django-framework/
             file_dir = os.path.dirname(__file__)
-            file_path = os.path.join(file_dir, '../CREME_backend_execution/evaluation_results/accuracy/accuracy_for_accounting.csv')
-            csv_fp = open(file_path,'r')
-            reader = csv.DictReader(csv_fp)
-            headers = [col for col in reader.fieldnames]
-            out_dict = [row for row in reader]
-            out = []
-            for ele in out_dict:
-                out.append(list(ele.values()))
-    return render(request, 'testbed/dashboard.html', {'data' : out, 'headers' : headers})
+            accuracy_dir =  os.path.join(file_dir, '../CREME_backend_execution/evaluation_results/accuracy')
+            data_sources = ['accounting','syslog','traffic']
+            data = []
+            context = {}
+            for i, source in enumerate(data_sources): 
+                csv_path = os.path.join(accuracy_dir, 'accuracy_for_{}.csv'.format(source))
+                json_records = df.reset_index().to_json(orient ='records')
+                data.append([])
+                data[-1] = json.loads(json_records)
+                context['d_{}'.format(source)] = data[-1]
+                
+                
+    return render(request, 'testbed/dashboard.html', context)
 
 
 def new_testbed(request):
