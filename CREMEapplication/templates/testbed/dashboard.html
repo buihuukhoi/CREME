@@ -109,24 +109,105 @@
       </div>
     </div>
   </div>
-  <table id="table" class="display" style="width: 100%;">
-    <thead>
-      <tr>
-        {% for header in headers %}
-        <th>{{ header }}</th>
+  <div>
+    <p>
+      Accuracy for accounting
+    </p>
+    <table id="table" class="display" style="width: 50%;">
+      <thead>
+        <tr>
+          <th>ML_algorithms</th>
+          <th>fit_time</th>
+          <th>score_time</th>
+          <th>test_accuracy</th>
+          <th>test_f1</th>
+          <th>test_precision</th>
+          <th>test_recall</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if d_accounting %}
+        {% for i in d_accounting %}
+        <tr>
+          <td>{{i.ML_algorithms}}</td>
+          <td>{{i.fit_time}}</td>
+          <td>{{i.score_time}}</td>
+          <td>{{i.test_accuracy}}</td>
+          <td>{{i.test_f1}}</td>
+          <td>{{i.test_precision}}</td>
+          <td>{{i.test_recall}}</td>
+        </tr>
         {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for rows in data %}
-      <tr>
-        {% for row in rows %}
-        <td>{{ row }}</td>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <p>
+      Accuracy for syslog
+    </p>
+    <table id="table" class="display" style="width: 50%;">
+      <thead>
+        <tr>
+          <th>ML_algorithms</th>
+          <th>fit_time</th>
+          <th>score_time</th>
+          <th>test_accuracy</th>
+          <th>test_f1</th>
+          <th>test_precision</th>
+          <th>test_recall</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if d_syslog %}
+        {% for i in d_syslog %}
+        <tr>
+          <td>{{i.ML_algorithms}}</td>
+          <td>{{i.fit_time}}</td>
+          <td>{{i.score_time}}</td>
+          <td>{{i.test_accuracy}}</td>
+          <td>{{i.test_f1}}</td>
+          <td>{{i.test_precision}}</td>
+          <td>{{i.test_recall}}</td>
+        </tr>
         {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <p>
+      Accuracy for traffic
+    </p>
+    <table id="table" class="display" style="width: 50%;">
+      <thead>
+        <tr>
+          <th>ML_algorithms</th>
+          <th>fit_time</th>
+          <th>score_time</th>
+          <th>test_accuracy</th>
+          <th>test_f1</th>
+          <th>test_precision</th>
+          <th>test_recall</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if d_traffic %}
+        {% for i in d_traffic %}
+        <tr>
+          <td>{{i.ML_algorithms}}</td>
+          <td>{{i.fit_time}}</td>
+          <td>{{i.score_time}}</td>
+          <td>{{i.test_accuracy}}</td>
+          <td>{{i.test_f1}}</td>
+          <td>{{i.test_precision}}</td>
+          <td>{{i.test_recall}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

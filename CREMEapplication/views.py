@@ -13,8 +13,8 @@ from .tasks import execute_toolchain
 from django.contrib import messages
 import os
 import socket
-
-
+import json
+import pandas as pd
 # Create your views here.
 
 
@@ -84,6 +84,7 @@ def dashboard(request):
     testbeds = Testbed.objects.all()
     out = [[]]
     headers = []
+    context = {}
     if testbeds:
         first_testbed = testbeds.first()
         if first_testbed.status == 3:
@@ -91,14 +92,17 @@ def dashboard(request):
             file_dir = os.path.dirname(__file__)
             accuracy_dir =  os.path.join(file_dir, '../CREME_backend_execution/evaluation_results/accuracy')
             data_sources = ['accounting','syslog','traffic']
-            data = []
-            context = {}
-            for i, source in enumerate(data_sources): 
+            
+            
+            for i, source in enumerate(data_sources):
+                data = []
                 csv_path = os.path.join(accuracy_dir, 'accuracy_for_{}.csv'.format(source))
+                df = pd.read_csv(csv_path) 
                 json_records = df.reset_index().to_json(orient ='records')
                 data.append([])
-                data[-1] = json.loads(json_records)
-                context['d_{}'.format(source)] = data[-1]
+                data = json.loads(json_records)
+                
+                context["d_{}".format(source)] =  data 
                 
                 
     return render(request, 'testbed/dashboard.html', context)
