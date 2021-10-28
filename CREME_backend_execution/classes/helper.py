@@ -954,7 +954,7 @@ class TrainMLHelper:
                         str(round((i.get_width()), 2)), 
                         fontsize=10, fontweight='bold', 
                         color='grey') 
-            ax.get_figure().savefig('accuracy_for_{0}.png')
+            ax.get_figure().savefig(os.path.join(output_folder,'accuracy_for_{0}.png'))
         except IOError:
             print("I/O error")
             output_folder = None
