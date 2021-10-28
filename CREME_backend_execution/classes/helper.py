@@ -20,7 +20,8 @@ import matplotlib.pyplot as plt
 import time
 import socket
 import time
-
+import numpy as np
+import matplotlib as plt
 class ScriptHelper:
     @staticmethod
     def get_del_known_hosts_path(scripts_path, del_script="./del_known_hosts.sh"):
@@ -943,6 +944,17 @@ class TrainMLHelper:
                 writer.writeheader()
                 for data in csv_rows:
                     writer.writerow(data)
+            # draw chart
+            csv_file = os.path.join(output_folder, csv_output_file)
+            df = pd.read_csv(csv_file)
+            ax = df.plot.barh(x='ML_algorithms',y=['test_accuracy','test_f1','test_precision','test_recall'],width=0.8,figsize=(10,10))
+            ax.legend(bbox_to_anchor=(1.1,1.1))
+            for i in ax.patches:
+                ax.text(i.get_width(), i.get_y()+0.1, 
+                        str(round((i.get_width()), 2)), 
+                        fontsize=10, fontweight='bold', 
+                        color='grey') 
+            ax.get_figure().savefig('accuracy_for_{0}.png')
         except IOError:
             print("I/O error")
             output_folder = None
