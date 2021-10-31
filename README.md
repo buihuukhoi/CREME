@@ -17,9 +17,14 @@ This project is a part of "CREME: A toolchain of automatic dataset collection fo
 
 For the first trial version, please refer to the document [here](https://drive.google.com/drive/folders/1YgQs4MJjuBBz8sdJkAw_0OIyy3_d5gsL?usp=sharing)
 
+For the Windows version, please refer to the document [here](https://docs.google.com/document/d/1srZq0dbnCsJPIyiTZOxlUwVurmoTb20UIFHJhRtVplY/edit?usp=sharing)
 
 <!-- Dataset -->
 ## Dataset
 
 The dataset can be found at [here](https://drive.google.com/drive/folders/1bEsx64H2vogJKgI_OTVQ8n71VahtLxz5?usp=sharing)
 
+<!--PROJECT MEMO -->
+## Project Memo
+
+For the project memo, please refer to the document [here](https://docs.google.com/document/d/1DDwuftnkgjxZNX43AR4oXdEoKSMkIlb_5s3KMaKCbW4/edit?usp=sharing)
