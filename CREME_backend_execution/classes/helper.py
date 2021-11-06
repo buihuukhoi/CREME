@@ -138,7 +138,10 @@ class ProgressHelper:
             class_finish_stage = ' class="alert alert-success" role="alert"'
             finished_message = f'<h{size}{class_finish_stage}>{icon} {finished_message}</h{size}>'
             ProgressHelper.messages.append(finished_message)
-
+    @staticmethod
+    def set_status_3(stage):
+        status_field = = ProgressHelper.status_fields[stage]
+        setattr(progress_data, status_field, 3)
     @staticmethod
     def update_stage(stage, message, size, finished_task=False, override_pre_message=False, finished_stage=False,
                      new_stage=False):

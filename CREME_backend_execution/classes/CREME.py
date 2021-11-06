@@ -99,6 +99,11 @@ class Creme:
             self.attacker_server.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.attacker_server.hostname}", 5,
                                         finished_task=True, override_pre_message=False)
+        def ConfigureMaliciousClient():
+            ProgressHelper.update_stage(stage, f"Controller is configuring {self.malicious_client.hostname}", 5)
+            self.malicious_client.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
+                                        finished_task=True, override_pre_message=True, finished_stage=False)
         t_pool = []
         t_pool.append(threading.Thread(target = ConfigureDataLoggerServer))
         t_pool.append(threading.Thread(target = ConfigureTargetServer))
@@ -110,11 +115,8 @@ class Creme:
             thread.start()
         for i, thread in enumerate(t_pool):
             thread.join()
-        ProgressHelper.update_stage(stage, f"Controller is configuring {self.malicious_client.hostname}", 5)
-        self.malicious_client.configure()
-        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
-                                    finished_task=True, override_pre_message=True, finished_stage=True)
-
+        
+        ProcessDataHelper.set_status_3(stage)
         # tmp solution, should be deal in the future
         for vulnerable_client in self.vulnerable_clients:
             vulnerable_client.tmp_noexec()
