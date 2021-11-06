@@ -21,7 +21,7 @@ import time
 import socket
 import time
 import numpy as np
-import matplotlib as plt
+
 class ScriptHelper:
     @staticmethod
     def get_del_known_hosts_path(scripts_path, del_script="./del_known_hosts.sh"):
