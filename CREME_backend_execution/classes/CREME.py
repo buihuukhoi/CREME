@@ -122,7 +122,7 @@ class Creme:
             thread.join()
         #t_pool.append(threading.Thread(target = ConfigureAttackerServer))
         ConfigureAttackerServer()
-        ProcessDataHelper.set_status_3(stage)
+        
         # tmp solution, should be deal in the future
         for vulnerable_client in self.vulnerable_clients:
             vulnerable_client.tmp_noexec()
