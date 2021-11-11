@@ -103,7 +103,7 @@ class Creme:
             ProgressHelper.update_stage(stage, f"Controller is configuring {self.malicious_client.hostname}", 5)
             self.malicious_client.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
-                                        finished_task=True, override_pre_message=True, finished_stage=False)
+                                        finished_task=True, override_pre_message=True, finished_stage=True)
         t_pool = []
         t_pool.append(Thread(target = ConfigureDataLoggerServer))
         t_pool.append(Thread(target = ConfigureTargetServer))
