@@ -81,3 +81,8 @@ class MachineLearningModelForm(forms.ModelForm):
     class Meta:
         model = MachineLearningModel
         fields = ("decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost")
+
+class SkipStageForm(forms.ModelForm):
+    class Meta:
+        model = SkipStage
+        fields = {"skip configuration","skip reproduction","skip data processing","skip ML training","skip evaluation"}
