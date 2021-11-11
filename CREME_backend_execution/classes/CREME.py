@@ -114,9 +114,9 @@ class Creme:
             p_pool.append(Process(target = ConfigureNonVulnerableClient))
         p_pool.append(Process(target = ConfigureAttackerServer))
         # 8 processes
-        for i, process in enumerate(t_pool):
+        for i, process in enumerate(p_pool):
             process.start()
-        for i, thread in enumerate(t_pool):
+        for i, thread in enumerate(p_pool):
             process.join()
         #t_pool.append(threading.Thread(target = ConfigureAttackerServer))
         ConfigureMaliciousClient()
