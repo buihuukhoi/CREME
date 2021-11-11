@@ -1,7 +1,7 @@
 from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper, EvaluationHelper, OtherHelper
 import os
 from multiprocessing import Process
-
+from threaing import Thread
 class Creme:
     mirai = True
     ransomware = True
@@ -82,13 +82,13 @@ class Creme:
             self.benign_server.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.benign_server.hostname}", 5,
                                         finished_task=True, override_pre_message=False)
-        def ConfigureVulnerableClient():
+        def ConfigureVulnerableClient(vulnerable_client):
             #for vulnerable_client in self.vulnerable_clients:
             ProgressHelper.update_stage(stage, f"Controller is configuring {vulnerable_client.hostname}", 5)
             vulnerable_client.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {vulnerable_client.hostname}", 5,
                                             finished_task=True, override_pre_message=False)
-        def ConfigureNonVulnerableClient():
+        def ConfigureNonVulnerableClient(non_vulnerable_client):
             #for non_vulnerable_client in self.non_vulnerable_clients:
             ProgressHelper.update_stage(stage, f"Controller is configuring {non_vulnerable_client.hostname}", 5)
             non_vulnerable_client.configure()
@@ -104,21 +104,19 @@ class Creme:
             self.malicious_client.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
                                         finished_task=True, override_pre_message=True, finished_stage=False)
-        p_pool = []
-        p_pool.append(Process(target = ConfigureDataLoggerServer))
-        p_pool.append(Process(target = ConfigureTargetServer))
-        p_pool.append(Process(target = ConfigureBenignServer))
+        t_pool = []
+        t_pool.append(Thread(target = ConfigureDataLoggerServer))
+        t_pool.append(Thread(target = ConfigureTargetServer))
+        t_pool.append(Thread(target = ConfigureBenignServer))
+        for i, thread in enumerate(t_pool):
+            thread.start()
+        for i, thread in enumerate(t_pool):
+            thread.join()
         for vulnerable_client in self.vulnerable_clients:
-            p_pool.append(Process(target = ConfigureVulnerableClient))
+            ConfigureVulnerableClient(vulnerable_client)
         for non_vulnerable_client in self.non_vulnerable_clients:
-            p_pool.append(Process(target = ConfigureNonVulnerableClient))
-        p_pool.append(Process(target = ConfigureAttackerServer))
-        # 8 processes
-        for i, process in enumerate(p_pool):
-            process.start()
-        for i, thread in enumerate(p_pool):
-            process.join()
-        #t_pool.append(threading.Thread(target = ConfigureAttackerServer))
+            ConfigureNonVulnerableClient(non_vulnerable_client)
+        ConfigureAttackerServer()
         ConfigureMaliciousClient()
         
         # tmp solution, should be deal in the future
