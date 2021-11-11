@@ -160,7 +160,6 @@ def new_testbed(request):
                                                                        instance=first_machine_learning_model)
             form_machine_learning_model.save()
 
-        
         if form_skip_stage.is_valid():
             skip_stages = SkipStage.objects.all()
             if skip_stages:
@@ -194,6 +193,7 @@ def new_testbed(request):
         dict_forms['Number of machines:'] = TestbedForm()
         dict_forms['Scenario:'] = AttackScenarioForm()
         dict_forms['Machine Learning model:'] = MachineLearningModelForm()
+        dict_forms['Skip Stage:'] = SkipStageForm()
     return render(request, 'testbed/new_testbed.html', {'dict_forms': dict_forms})
 
 
