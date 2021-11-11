@@ -1,7 +1,7 @@
 from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper, EvaluationHelper, OtherHelper
 import os
 from multiprocessing import Process
-from threaing import Thread
+from threading import Thread
 class Creme:
     mirai = True
     ransomware = True
