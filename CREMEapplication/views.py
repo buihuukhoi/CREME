@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, \
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel, SkipStage
 from .forms import TestbedForm, ControllerForm, DataLoggerServerForm, TargetServerForm, BenignServerForm, \
     VulnerableClientForm, NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm, \
-    MachineLearningModelForm
+    MachineLearningModelForm, SkipStageForm
 from django.shortcuts import redirect
 
 from .serializers import ProgressDataSerializer
