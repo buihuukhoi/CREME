@@ -131,6 +131,12 @@ class MachineLearningModel(models.Model):
     random_forest = models.BooleanField(default=True)
     XGBoost = models.BooleanField(default=True)
 
+class SkipStage(models.Model):
+    skip_configuration = models.BooleanField(default=False)
+    skip_reproduction = models.BooleanField(default=False)
+    skip_data_processing = models.BooleanField(default=False)
+    skip_ML_training = models.BooleanField(default=False)
+    skip_evaluation = models.BooleanField(default=False)
 
 
 
