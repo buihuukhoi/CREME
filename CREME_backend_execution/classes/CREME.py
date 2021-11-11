@@ -1,6 +1,6 @@
 from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper, EvaluationHelper, OtherHelper
 import os
-import threading
+from multiprocessing import Process
 
 class Creme:
     mirai = True
@@ -104,24 +104,22 @@ class Creme:
             self.malicious_client.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
                                         finished_task=True, override_pre_message=True, finished_stage=False)
-        t_pool = []
-        #t_pool.append(threading.Thread(target = ConfigureDataLoggerServer))
-        ConfigureDataLoggerServer()
-        #t_pool.append(threading.Thread(target = ConfigureTargetServer))
-        ConfigureTargetServer()
-        #t_pool.append(threading.Thread(target = ConfigureBenignServer))
-        ConfigureBenignServer()
+        p_pool = []
+        p_pool.append(Process(target = ConfigureDataLoggerServer))
+        p_pool.append(Process(target = ConfigureTargetServer))
+        p_pool.append(Process(target = ConfigureBenignServer))
         for vulnerable_client in self.vulnerable_clients:
-            t_pool.append(threading.Thread(target = ConfigureVulnerableClient))
+            p_pool.append(Process(target = ConfigureVulnerableClient))
         for non_vulnerable_client in self.non_vulnerable_clients:
-            t_pool.append(threading.Thread(target = ConfigureNonVulnerableClient))
-        
+            p_pool.append(Process(target = ConfigureNonVulnerableClient))
+        p_pool.append(Process(target = ConfigureAttackerServer))
+        # 8 processes
+        for i, process in enumerate(t_pool):
+            process.start()
         for i, thread in enumerate(t_pool):
-            thread.start()
-        for i, thread in enumerate(t_pool):
-            thread.join()
+            process.join()
         #t_pool.append(threading.Thread(target = ConfigureAttackerServer))
-        ConfigureAttackerServer()
+        ConfigureMaliciousClient()
         
         # tmp solution, should be deal in the future
         for vulnerable_client in self.vulnerable_clients:
