@@ -165,6 +165,7 @@ def new_testbed(request):
             first_skip_stage = SkipStage.first()
             form_skip_stage = SkipStageForm(request.POST,
                                                     instance=first_skip_stage)
+            form_skip_stage.save()
 
         # if not valid --> re-fill the form
         if not scenario_valid or not ml_model_valid:
