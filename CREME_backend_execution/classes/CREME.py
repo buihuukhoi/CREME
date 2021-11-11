@@ -14,13 +14,19 @@ class Creme:
 
     models_name = ["decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost"]
 
+    skip_configuration = False
+    skip_reproduction = False
+    skip_data_processing = False
+    skip_ML_training = False
+    skip_evaluation = False
+
     # TODO: should update to allow users define weights on the website
     weights = {"attack_types": 4 / 10 / 20, "attack_scenarios": 2 / 10 / 20, "data_sources": 1 / 10 / 6,
                "labeled_data": 1 / 10 / 6, "feature_set": 1 / 10 / 6, "metadata": 1 / 10}
 
     def __init__(self, dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
                  attacker_server, malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos,
-                 data_theft, rootkit_ransomware):
+                 data_theft, rootkit_ransomware, skip_configuration, skip_reproduction, skip_data_processing, skip_ML_training, skip_evaluation):
         # self.stage = 0
         # self.status = 1
         # self.finishedTasks = []
@@ -1318,29 +1324,32 @@ class Creme:
         ProgressHelper.update_stage(stage, f"Finished evaluation:", 5, finished_task=True, finished_stage=True)
 
     def run(self):
-        self.configure()
-
-        if Creme.mirai:
-            self.run_mirai()
-        if Creme.disk_wipe:
-            self.run_disk_wipe()
-        if Creme.ransomware:
-            self.run_ransomware()
-        if Creme.resource_hijacking:
-            self.run_resource_hijacking()
-        if Creme.end_point_dos:
-            self.run_end_point_dos()
-        if Creme.data_theft:
-            self.run_data_theft()
-        if Creme.rootkit_ransomware:
-            self.run_rootkit_ransomware()
-
+        if(not skip_configuration):
+            self.configure()
+        if(not skip_reproduction):
+            if Creme.mirai:
+                self.run_mirai()
+            if Creme.disk_wipe:
+                self.run_disk_wipe()
+            if Creme.ransomware:
+                self.run_ransomware()
+            if Creme.resource_hijacking:
+                self.run_resource_hijacking()
+            if Creme.end_point_dos:
+                self.run_end_point_dos()
+            if Creme.data_theft:
+                self.run_data_theft()
+            if Creme.rootkit_ransomware:
+                self.run_rootkit_ransomware()
         # process data
-        data_sources = self.process_data()
+        if not skip_data_processing:
+            data_sources = self.process_data()
 
         # train ML
-        eff_result = self.train_ML(data_sources)
+        if not skip_ML_training:
+            eff_result = self.train_ML(data_sources)
 
         # evaluation
-        self.evaluation(eff_result)
+        if not skip_evaluation:
+            self.evaluation(eff_result)
 
