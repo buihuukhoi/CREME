@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient,\
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, MachineLearningModel
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, MachineLearningModel, SkipStage
 
 
 class TestbedForm(forms.ModelForm):
