@@ -891,7 +891,7 @@ class TrainMLHelper:
             if 'knn' in models_name:
                 models['knn'] = KNeighborsClassifier()
             if 'random_forest' in models_name:
-                models['random_forest'] = RandomForestClassifier()
+                models['random_forest'] = RandomForestClassifier(n_jobs=-1)
             if 'XGBoost' in models_name:
                 models['XGBoost'] = XGBClassifier()
             # print('Defined %d models' % len(models))
