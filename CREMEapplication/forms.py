@@ -85,4 +85,4 @@ class MachineLearningModelForm(forms.ModelForm):
 class SkipStageForm(forms.ModelForm):
     class Meta:
         model = SkipStage
-        fields = {"skip configuration","skip reproduction","skip data processing","skip ML training","skip evaluation"}
+        fields = {"skip_configuration","skip_reproduction","skip_data_processing","skip_ML_training","skip_evaluation"}
