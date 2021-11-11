@@ -162,8 +162,10 @@ def new_testbed(request):
 
         
         if form_skip_stage.is_valid():
-            first_skip_stage = SkipStage.first()
-            form_skip_stage = SkipStageForm(request.POST,
+            skip_stages = SkipStage.objects.all()
+            if skip_stages:
+                first_skip_stage = skip_stages.first()
+                form_skip_stage = SkipStageForm(request.POST,
                                                     instance=first_skip_stage)
             form_skip_stage.save()
 
