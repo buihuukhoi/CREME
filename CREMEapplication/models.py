@@ -49,7 +49,7 @@ class Controller(models.Model):
     ip = models.CharField(max_length=255,default="192.168.1.35")
     username = models.CharField(max_length=255,default="controller")
     password = models.CharField(max_length=255,default="qsefthuk")
-    path = models.CharField(max_length=255)
+    path = models.CharField(max_length=255,default="/home/controller")
 
 
 class DataLoggerServer(models.Model):
@@ -58,7 +58,7 @@ class DataLoggerServer(models.Model):
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
-    network_interface = models.CharField(max_length=255)
+    network_interface = models.CharField(max_length=255,default="enp0s3")
     atop_interval = models.IntegerField(default=1)  # second
 
 

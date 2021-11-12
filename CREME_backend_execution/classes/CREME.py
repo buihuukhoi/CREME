@@ -1324,9 +1324,9 @@ class Creme:
         ProgressHelper.update_stage(stage, f"Finished evaluation:", 5, finished_task=True, finished_stage=True)
 
     def run(self):
-        if(not Creme.skip_configuration):
+        if not Creme.skip_configuration:
             self.configure()
-        if(not Creme.skip_reproduction):
+        if not Creme.skip_reproduction:
             if Creme.mirai:
                 self.run_mirai()
             if Creme.disk_wipe:
@@ -1342,11 +1342,11 @@ class Creme:
             if Creme.rootkit_ransomware:
                 self.run_rootkit_ransomware()
         # process data
-        if not skip_data_processing:
+        if not Creme.skip_data_processing:
             data_sources = self.process_data()
 
         # train ML
-        if not skip_ML_training:
+        if not Creme.skip_ML_training:
             eff_result = self.train_ML(data_sources)
 
         # evaluation
