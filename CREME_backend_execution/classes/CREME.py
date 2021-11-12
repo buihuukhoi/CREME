@@ -1324,9 +1324,9 @@ class Creme:
         ProgressHelper.update_stage(stage, f"Finished evaluation:", 5, finished_task=True, finished_stage=True)
 
     def run(self):
-        if(not skip_configuration):
+        if(not Creme.skip_configuration):
             self.configure()
-        if(not skip_reproduction):
+        if(not Creme.skip_reproduction):
             if Creme.mirai:
                 self.run_mirai()
             if Creme.disk_wipe:
