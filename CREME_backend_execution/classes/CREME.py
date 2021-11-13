@@ -1351,6 +1351,6 @@ class Creme:
             eff_result = self.train_ML(data_sources)
 
         # evaluation
-        if not skip_evaluation:
+        if not Creme.skip_evaluation:
             self.evaluation(eff_result)
 
