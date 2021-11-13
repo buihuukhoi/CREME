@@ -115,9 +115,9 @@ class Creme:
         t_pool.append(Thread(target = ConfigureTargetServer))
         t_pool.append(Thread(target = ConfigureBenignServer))
         for vulnerable_client in self.vulnerable_clients:
-            t_pool.append(Thread(target = ConfigureVulnerableClient(vulnerable_client)))
+            t_pool.append(Thread(target = ConfigureVulnerableClient, args = (vulnerable_client,)))
         for non_vulnerable_client in self.non_vulnerable_clients:
-            t_pool.append(Thread(target = ConfigureNonVulnerableClient(non_vulnerable_client)))
+            t_pool.append(Thread(target = ConfigureNonVulnerableClient, args = (non_vulnerable_client,)))
         for i, thread in enumerate(t_pool):
             thread.start()
         for i, thread in enumerate(t_pool):
