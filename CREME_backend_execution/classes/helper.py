@@ -883,15 +883,15 @@ class TrainMLHelper:
         def define_models(models_name):
             models = dict()
             if 'decision_tree' in models_name:
-                models['decision_tree'] = DecisionTreeClassifier()
+                models['decision_tree'] = DecisionTreeClassifier(random_state=1)
             if 'naive_bayes' in models_name:
                 models['naive_bayes'] = GaussianNB()
             if 'extra_tree' in models_name:
-                models['extra_tree'] = ExtraTreeClassifier()
+                models['extra_tree'] = ExtraTreeClassifier(random_state=1)
             if 'knn' in models_name:
                 models['knn'] = KNeighborsClassifier()
             if 'random_forest' in models_name:
-                models['random_forest'] = RandomForestClassifier(n_jobs=-1)
+                models['random_forest'] = RandomForestClassifier(n_jobs=-1,random_state=1)
             if 'XGBoost' in models_name:
                 models['XGBoost'] = XGBClassifier()
             # print('Defined %d models' % len(models))
