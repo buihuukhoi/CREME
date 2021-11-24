@@ -121,14 +121,16 @@ class Creme:
         t_pool.append(Thread(target = ConfigureDataLoggerServer))
         t_pool.append(Thread(target = ConfigureTargetServer))
         t_pool.append(Thread(target = ConfigureBenignServer))
-        for vulnerable_client in self.vulnerable_clients:
-            t_pool.append(Thread(target = ConfigureVulnerableClient, args = (vulnerable_client,)))
-        for non_vulnerable_client in self.non_vulnerable_clients:
-            t_pool.append(Thread(target = ConfigureNonVulnerableClient, args = (non_vulnerable_client,)))
         for i, thread in enumerate(t_pool):
             thread.start()
         for i, thread in enumerate(t_pool):
             thread.join()
+        for vulnerable_client in self.vulnerable_clients:
+            #t_pool.append(Thread(target = ConfigureVulnerableClient, args = (vulnerable_client,)))
+            ConfigureVulnerableClient(vulnerable_client)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            #t_pool.append(Thread(target = ConfigureNonVulnerableClient, args = (non_vulnerable_client,)))
+            ConfigureNonVulnerableClient(non_vulnerable_client)
         
         ConfigureAttackerServer()
         ConfigureMaliciousClient()
