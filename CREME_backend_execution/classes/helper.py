@@ -893,7 +893,7 @@ class TrainMLHelper:
             if 'random_forest' in models_name:
                 models['random_forest'] = RandomForestClassifier(n_jobs=-1,random_state=1)
             if 'XGBoost' in models_name:
-                models['XGBoost'] = XGBClassifier()
+                models['XGBoost'] = XGBClassifier(n_jobs=-1,random_state=1)
             # print('Defined %d models' % len(models))
             return models
 

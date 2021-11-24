@@ -53,6 +53,13 @@ class Creme:
         Creme.data_theft = data_theft
         Creme.rootkit_ransomware = rootkit_ransomware
 
+        # Skip 
+        Creme.skip_configuration = skip_configuration
+        Creme.skip_reproduction = skip_configuration
+        Creme.skip_data_processing = skip_data_processing
+        Creme.skip_ML_training = skip_ML_training
+        Creme.skip_evaluation = skip_evaluation
+
         # prepare to build mirai source code
         if mirai:
             mirai_o4_xxx = "(o4 == 1 || o4 == 2 || o4 == 3"  # default gateway
