@@ -81,6 +81,7 @@ class Creme:
     def configure(self):
         stage = 1
         def ConfigureDataLoggerServer():
+            stage = 1
             ProgressHelper.update_stage(stage, f"Controller is configuring {self.dls.hostname}", 5, new_stage=True)
             self.dls.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.dls.hostname}", 5,
@@ -125,15 +126,25 @@ class Creme:
             thread.start()
         for i, thread in enumerate(t_pool):
             thread.join()
+            
+        # critical section
         for vulnerable_client in self.vulnerable_clients:
             #t_pool.append(Thread(target = ConfigureVulnerableClient, args = (vulnerable_client,)))
             ConfigureVulnerableClient(vulnerable_client)
         for non_vulnerable_client in self.non_vulnerable_clients:
             #t_pool.append(Thread(target = ConfigureNonVulnerableClient, args = (non_vulnerable_client,)))
             ConfigureNonVulnerableClient(non_vulnerable_client)
+        # end critical section
         
-        ConfigureAttackerServer()
-        ConfigureMaliciousClient()
+        t_pool = []
+        t_pool.append(Thread(target = ConfigureAttackerServer))
+        t_pool.append(Thread(target = ConfigureMaliciousClient))
+        for i, thread in enumerate(t_pool):
+            thread.start()
+        for i, thread in enumerate(t_pool):
+            thread.join()
+        #ConfigureAttackerServer()
+        #ConfigureMaliciousClient()
         
         # tmp solution, should be deal in the future
         for vulnerable_client in self.vulnerable_clients:
@@ -1202,6 +1213,7 @@ class Creme:
                                                                 final_name_atop, time_window_traffic)
         # balance data and filter features
         ProcessDataHelper.balance_data(folder_atop, final_name_atop)
+        ProcessDataHelper.balance_data(folder_traffic, final_name_traffic)
         ProcessDataHelper.filter_features(folder_atop, final_name_atop, 0.1)
         ProcessDataHelper.filter_features(folder_traffic, final_name_traffic, 0.04)
         ProgressHelper.update_stage(stage, f"Finished processing the accounting and network packet data sources", 5,

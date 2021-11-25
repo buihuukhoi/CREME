@@ -21,6 +21,7 @@ import time
 import socket
 import time
 import numpy as np
+import random
 
 class ScriptHelper:
     @staticmethod
@@ -801,18 +802,31 @@ class ProcessDataHelper:
         # print('label_0: {0}'.format(len(df_0)))
         # print('label_1: {0}'.format(len(df_1)))
 
+        
+        df_0.drop_duplicates(keep='last', inplace=True)
+        df_1.drop_duplicates(keep='last', inplace=True)
+        num_of_label_0 = len(df_0)
+        num_of_label_1 = len(df_1)
+        new_df_0 = pd.DataFrame()
         if balanced_label_zero:
-            df_0.drop_duplicates(keep='last', inplace=True)
-            num_of_label_0 = len(df_0)
-            num_of_label_1 = len(df_1)
-            new_df_0 = pd.DataFrame()
-            for i in range(num_of_label_1//num_of_label_0 + 1):
-                new_df_0 = new_df_0.append(df_0)
-            # print('len(df_0) after remove duplicate and append several times: {0}'.format(len(new_df_0)))
-            # print('len(df_1): {0}'.format(len(df_1)))
-
-            df = new_df_0.append(df_1)
-            # print('len(df) after balance data: {0}'.format(len(df)))
+            
+            drop_list = []
+            for i in range(num_of_label_1):
+                drop_list.append(i)
+            drop_list = random.sample(drop_list,len(drop_list))
+            drop_list = drop_list[0 : num_of_label_1 - num_of_label_0]
+            df_1.drop(drop_list)
+            df = df_0.append(df_1)
+            
+            
+        else:
+            drop_list = []
+            for i in range(num_of_label_0):
+                drop_list.append(i)
+            drop_list = random.sample(drop_list,len(drop_list))
+            drop_list = drop_list[0 : num_of_label_0 - num_of_label_1]
+            df_0.drop(drop_list)
+            df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
 
