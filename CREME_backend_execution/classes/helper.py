@@ -810,25 +810,18 @@ class ProcessDataHelper:
         new_df_0 = pd.DataFrame()
         if balanced_label_zero:
             if(num_of_label_1 > num_of_label_0):
-                drop_list = []
-                for i in range(num_of_label_1):
-                    drop_list.append(i)
-                drop_list = random.sample(drop_list, num_of_label_1 - num_of_label_0)
-                drop_list = list(dict.fromkeys(drop_list))
                 if("traffic" in input_file):
-                    df_1.drop( df[(df['Rate'] == 0.0) & (df['SrcRate'] == 0.0) & (df['DstRate'] == 0)].index )
+                    df_1.drop( df_1[(df_1['Rate'] == 0.0) & (df_1['SrcRate'] == 0.0) & (df_1['DstRate'] == 0)].index )
                 df = df_0.append(df_1)
             
             
         else:
             if(num_of_label_1 < num_of_label_0):
-                drop_list = []
-                for i in range(num_of_label_0):
-                    drop_list.append(i)
-                drop_list = random.sample(drop_list, num_of_label_0 - num_of_label_1)
-                drop_list = list(dict.fromkeys(drop_list))
+                
+                
                 if("traffic" in input_file):
-                    df_0.drop( df[(df['Rate'] == 0.0) & (df['SrcRate'] == 0.0) & (df['DstRate'] == 0)].index )
+                    ind = df_0[(df_0['Rate'] == 0.0) & (df_0['SrcRate'] == 0.0) & (df_0['DstRate'] == 0)].index)
+                    df_0.drop(ind)
                 df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
