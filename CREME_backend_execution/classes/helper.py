@@ -803,11 +803,7 @@ class ProcessDataHelper:
         # print('label_1: {0}'.format(len(df_1)))
 
         
-        df_0.drop_duplicates(keep='last', inplace=True)
-        df_1.drop_duplicates(keep='last', inplace=True)
-        num_of_label_0 = len(df_0)
-        num_of_label_1 = len(df_1)
-        new_df_0 = pd.DataFrame()
+        
         if balanced_label_zero:
             df_0.drop_duplicates(keep='last', inplace=True)
             num_of_label_0 = len(df_0)
@@ -829,8 +825,9 @@ class ProcessDataHelper:
             
         else:
             if(num_of_label_1 < num_of_label_0):
-                
-                
+                df_0.drop_duplicates(keep='last', inplace=True)
+                num_of_label_0 = len(df_0)
+                num_of_label_1 = len(df_1)
                 if("traffic" in input_file):
                     ind = df_0[(df_0['Sum'] == 0.0) | (df_0['Min'] == 0.0) | (df_0['Max'] == 0.0)].index
                     df_0.drop(ind,inplace = True)
