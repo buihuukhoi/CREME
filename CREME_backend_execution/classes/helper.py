@@ -813,11 +813,10 @@ class ProcessDataHelper:
                 drop_list = []
                 for i in range(num_of_label_1):
                     drop_list.append(i)
-                drop_list = random.sample(drop_list,len(drop_list))
-                drop_list2 = drop_list[0 : num_of_label_1 - num_of_label_0]
-                drop_list2.sort()
+                drop_list = random.sample(drop_list, num_of_label_1 - num_of_label_0)
+                
                 #print("drop_list2:", drop_list2)
-                df_1.drop(labels = drop_list2, axis = 0)
+                df_1.drop(index = drop_list)
                 df = df_0.append(df_1)
             
             
@@ -825,12 +824,12 @@ class ProcessDataHelper:
             if(num_of_label_1 < num_of_label_0):
                 drop_list = []
                 for i in range(num_of_label_0):
-                    drop_list.append(i)
-                drop_list = random.sample(drop_list,len(drop_list))
-                drop_list2 = drop_list[0 : num_of_label_0 - num_of_label_1]
-                drop_list2.sort()                
+                    drop_list.append(int(i))
+                drop_list = random.sample(drop_list, num_of_label_0 - num_of_label_1)
+                
+                
                 #print("drop_list2:", drop_list2)
-                df_0.drop(labels = drop_list2, axis = 0)
+                df_0.drop(index = drop_list)
                 df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
