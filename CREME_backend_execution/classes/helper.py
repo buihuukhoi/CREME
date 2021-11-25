@@ -809,24 +809,27 @@ class ProcessDataHelper:
         num_of_label_1 = len(df_1)
         new_df_0 = pd.DataFrame()
         if balanced_label_zero:
-            
-            drop_list = []
-            for i in range(num_of_label_1):
-                drop_list.append(i)
-            drop_list = random.sample(drop_list,len(drop_list))
-            drop_list = drop_list[0 : num_of_label_1 - num_of_label_0]
-            df_1.drop(drop_list)
-            df = df_0.append(df_1)
+            if(num_of_label_1 > num_of_label_0):
+                drop_list = []
+                for i in range(num_of_label_1):
+                    drop_list.append(i)
+                drop_list = random.sample(drop_list,len(drop_list))
+                drop_list2 = drop_list[0 : num_of_label_1 - num_of_label_0]
+                print("drop_list2:", drop_list2)
+                df_1.drop(index = drop_list2)
+                df = df_0.append(df_1)
             
             
         else:
-            drop_list = []
-            for i in range(num_of_label_0):
-                drop_list.append(i)
-            drop_list = random.sample(drop_list,len(drop_list))
-            drop_list = drop_list[0 : num_of_label_0 - num_of_label_1]
-            df_0.drop(drop_list)
-            df = df_1.append(df_0)
+            if(num_of_label_1 < num_of_label_0):
+                drop_list = []
+                for i in range(num_of_label_0):
+                    drop_list.append(i)
+                drop_list = random.sample(drop_list,len(drop_list))
+                drop_list2 = drop_list[0 : num_of_label_0 - num_of_label_1]
+                print("drop_list2:", drop_list2)
+                df_0.drop(index = drop_list2)
+                df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
 
