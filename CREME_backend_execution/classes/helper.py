@@ -811,27 +811,16 @@ class ProcessDataHelper:
             new_df_0 = pd.DataFrame()
             for i in range(num_of_label_1//num_of_label_0 + 1):
                 new_df_0 = new_df_0.append(df_0)
-            # print('len(df_0) after remove duplicate and append several times: {0}'.format(len(new_df_0)))
-            # print('len(df_1): {0}'.format(len(df_1)))
-
             df = new_df_0.append(df_1)
-            # print('len(df) after balance data: {0}'.format(len(df)))
-            '''if(num_of_label_1 > num_of_label_0):
-                if("traffic" in input_file):
-                    ind = df_1[(df_1['Rate'] == 0.0) & (df_1['SrcRate'] == 0.0) & (df_1['DstRate'] == 0)].index
-                    df_1.drop(ind)
-                df = df_0.append(df_1)
-            '''
             
         else:
-            if(num_of_label_1 < num_of_label_0):
-                df_0.drop_duplicates(keep='last', inplace=True)
-                num_of_label_0 = len(df_0)
-                num_of_label_1 = len(df_1)
-                if("traffic" in input_file):
-                    ind = df_0[(df_0['Sum'] == 0.0) | (df_0['Min'] == 0.0) | (df_0['Max'] == 0.0)].index
-                    df_0.drop(ind,inplace = True)
-                df = df_1.append(df_0)
+            df_0.drop_duplicates(keep='last', inplace=True)
+            num_of_label_0 = len(df_0)
+            num_of_label_1 = len(df_1)
+            if("traffic" in input_file):
+                ind = df_0[(df_0['Sum'] == 0.0) | (df_0['Min'] == 0.0) | (df_0['Max'] == 0.0)].index
+                df_0.drop(ind,inplace = True)
+            df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
 
