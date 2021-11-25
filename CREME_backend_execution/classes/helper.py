@@ -814,8 +814,8 @@ class ProcessDataHelper:
                 for i in range(num_of_label_1):
                     drop_list.append(i)
                 drop_list = random.sample(drop_list, num_of_label_1 - num_of_label_0)
-
-                df_1.drop(index = list(drop_list),inplace=True)
+                drop_list = list(dict.fromkeys(drop_list))
+                df_1.drop(index = drop_list,inplace=True)
                 df = df_0.append(df_1)
             
             
@@ -825,8 +825,8 @@ class ProcessDataHelper:
                 for i in range(num_of_label_0):
                     drop_list.append(i)
                 drop_list = random.sample(drop_list, num_of_label_0 - num_of_label_1)
-                
-                df_0.drop(index = list(drop_list),inplace=True)
+                drop_list = list(dict.fromkeys(drop_list))
+                df_0.drop(index = drop_list,inplace=True)
                 df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
