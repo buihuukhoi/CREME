@@ -815,7 +815,8 @@ class ProcessDataHelper:
                     drop_list.append(i)
                 drop_list = random.sample(drop_list,len(drop_list))
                 drop_list2 = drop_list[0 : num_of_label_1 - num_of_label_0]
-                print("drop_list2:", drop_list2)
+                drop_list2.sort()
+                #print("drop_list2:", drop_list2)
                 df_1.drop(index = drop_list2)
                 df = df_0.append(df_1)
             
@@ -827,7 +828,8 @@ class ProcessDataHelper:
                     drop_list.append(i)
                 drop_list = random.sample(drop_list,len(drop_list))
                 drop_list2 = drop_list[0 : num_of_label_0 - num_of_label_1]
-                print("drop_list2:", drop_list2)
+                drop_list2.sort()                
+                #print("drop_list2:", drop_list2)
                 df_0.drop(index = drop_list2)
                 df = df_1.append(df_0)
 
