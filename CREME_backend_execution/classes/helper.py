@@ -811,7 +811,8 @@ class ProcessDataHelper:
         if balanced_label_zero:
             if(num_of_label_1 > num_of_label_0):
                 if("traffic" in input_file):
-                    df_1.drop( df_1[(df_1['Rate'] == 0.0) & (df_1['SrcRate'] == 0.0) & (df_1['DstRate'] == 0)].index 
+                    ind = df_1[(df_1['Rate'] == 0.0) & (df_1['SrcRate'] == 0.0) & (df_1['DstRate'] == 0)].index
+                    df_1.drop(ind)
                 df = df_0.append(df_1)
             
             
