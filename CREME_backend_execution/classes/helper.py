@@ -832,8 +832,8 @@ class ProcessDataHelper:
                 
                 
                 if("traffic" in input_file):
-                    ind = df_0[(df_0['Sum'] == 0.0) & (df_0['Min'] == 0.0) & (df_0['Max'] == 0.0)].index
-                    df_0.drop(ind)
+                    ind = df_0[(df_0['Sum'] == 0.0) | (df_0['Min'] == 0.0) | (df_0['Max'] == 0.0)].index
+                    df_0.drop(ind,inplace = True)
                 df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
