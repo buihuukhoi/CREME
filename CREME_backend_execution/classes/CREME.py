@@ -1213,7 +1213,7 @@ class Creme:
                                                                 final_name_atop, time_window_traffic)
         # balance data and filter features
         ProcessDataHelper.balance_data(folder_atop, final_name_atop)
-        ProcessDataHelper.balance_data(folder_traffic, final_name_traffic)
+        ProcessDataHelper.balance_data(folder_traffic, final_name_traffic, balanced_label_zero = False)
         ProcessDataHelper.filter_features(folder_atop, final_name_atop, 0.1)
         ProcessDataHelper.filter_features(folder_traffic, final_name_traffic, 0.04)
         ProgressHelper.update_stage(stage, f"Finished processing the accounting and network packet data sources", 5,
