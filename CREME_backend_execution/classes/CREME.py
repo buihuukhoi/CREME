@@ -1,7 +1,7 @@
 from .helper import DownloadDataHelper, ProgressHelper, ProcessDataHelper, TrainMLHelper, EvaluationHelper, OtherHelper
 import os
-
-
+from multiprocessing import Process
+from threading import Thread
 class Creme:
     mirai = True
     ransomware = True
@@ -14,13 +14,19 @@ class Creme:
 
     models_name = ["decision_tree", "naive_bayes", "extra_tree", "knn", "random_forest", "XGBoost"]
 
+    skip_configuration = False
+    skip_reproduction = False
+    skip_data_processing = False
+    skip_ML_training = False
+    skip_evaluation = False
+
     # TODO: should update to allow users define weights on the website
     weights = {"attack_types": 4 / 10 / 20, "attack_scenarios": 2 / 10 / 20, "data_sources": 1 / 10 / 6,
                "labeled_data": 1 / 10 / 6, "feature_set": 1 / 10 / 6, "metadata": 1 / 10}
 
     def __init__(self, dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients,
                  attacker_server, malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos,
-                 data_theft, rootkit_ransomware):
+                 data_theft, rootkit_ransomware, skip_configuration, skip_reproduction, skip_data_processing, skip_ML_training, skip_evaluation):
         # self.stage = 0
         # self.status = 1
         # self.finishedTasks = []
@@ -47,6 +53,13 @@ class Creme:
         Creme.data_theft = data_theft
         Creme.rootkit_ransomware = rootkit_ransomware
 
+        # Skip 
+        Creme.skip_configuration = skip_configuration
+        Creme.skip_reproduction = skip_configuration
+        Creme.skip_data_processing = skip_data_processing
+        Creme.skip_ML_training = skip_ML_training
+        Creme.skip_evaluation = skip_evaluation
+
         # prepare to build mirai source code
         if mirai:
             mirai_o4_xxx = "(o4 == 1 || o4 == 2 || o4 == 3"  # default gateway
@@ -67,43 +80,72 @@ class Creme:
 
     def configure(self):
         stage = 1
-        ProgressHelper.update_stage(stage, f"Controller is configuring {self.dls.hostname}", 5, new_stage=True)
-        self.dls.configure()
-        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.dls.hostname}", 5,
-                                    finished_task=True, override_pre_message=True)
-
-        ProgressHelper.update_stage(stage, f"Controller is configuring {self.target_server.hostname}", 5)
-        self.target_server.configure()
-        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.target_server.hostname}", 5,
-                                    finished_task=True, override_pre_message=True)
-
-        ProgressHelper.update_stage(stage, f"Controller is configuring {self.benign_server.hostname}", 5)
-        self.benign_server.configure()
-        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.benign_server.hostname}", 5,
-                                    finished_task=True, override_pre_message=True)
-
-        for vulnerable_client in self.vulnerable_clients:
+        def ConfigureDataLoggerServer():
+            stage = 1
+            ProgressHelper.update_stage(stage, f"Controller is configuring {self.dls.hostname}", 5, new_stage=True)
+            self.dls.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.dls.hostname}", 5,
+                                        finished_task=True, override_pre_message=False)
+        def ConfigureTargetServer():
+            ProgressHelper.update_stage(stage, f"Controller is configuring {self.target_server.hostname}", 5)
+            self.target_server.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.target_server.hostname}", 5,
+                                        finished_task=True, override_pre_message=False)
+        def ConfigureBenignServer():
+            ProgressHelper.update_stage(stage, f"Controller is configuring {self.benign_server.hostname}", 5)
+            self.benign_server.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.benign_server.hostname}", 5,
+                                        finished_task=True, override_pre_message=False)
+        def ConfigureVulnerableClient(vulnerable_client):
+            #for vulnerable_client in self.vulnerable_clients:
             ProgressHelper.update_stage(stage, f"Controller is configuring {vulnerable_client.hostname}", 5)
             vulnerable_client.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {vulnerable_client.hostname}", 5,
-                                        finished_task=True, override_pre_message=True)
-
-        for non_vulnerable_client in self.non_vulnerable_clients:
+                                            finished_task=True, override_pre_message=False)
+        def ConfigureNonVulnerableClient(non_vulnerable_client):
+            #for non_vulnerable_client in self.non_vulnerable_clients:
             ProgressHelper.update_stage(stage, f"Controller is configuring {non_vulnerable_client.hostname}", 5)
             non_vulnerable_client.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {non_vulnerable_client.hostname}", 5,
-                                        finished_task=True, override_pre_message=True)
-
-        ProgressHelper.update_stage(stage, f"Controller is configuring {self.attacker_server.hostname}", 5)
-        self.attacker_server.configure()
-        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.attacker_server.hostname}", 5,
-                                    finished_task=True, override_pre_message=True)
-
-        ProgressHelper.update_stage(stage, f"Controller is configuring {self.malicious_client.hostname}", 5)
-        self.malicious_client.configure()
-        ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
-                                    finished_task=True, override_pre_message=True, finished_stage=True)
-
+                                            finished_task=True, override_pre_message=False)
+        def ConfigureAttackerServer():
+            ProgressHelper.update_stage(stage, f"Controller is configuring {self.attacker_server.hostname}", 5)
+            self.attacker_server.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.attacker_server.hostname}", 5,
+                                        finished_task=True, override_pre_message=False)
+        def ConfigureMaliciousClient():
+            ProgressHelper.update_stage(stage, f"Controller is configuring {self.malicious_client.hostname}", 5)
+            self.malicious_client.configure()
+            ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
+                                        finished_task=True, override_pre_message=True, finished_stage=True)
+        #t_pool = []
+        ConfigureDataLoggerServer()
+        ConfigureTargetServer()
+        ConfigureBenignServer()
+        #for i, thread in enumerate(t_pool):
+        #    thread.start()
+        #for i, thread in enumerate(t_pool):
+        #    thread.join()
+            
+        # critical section
+        for vulnerable_client in self.vulnerable_clients:
+            #t_pool.append(Thread(target = ConfigureVulnerableClient, args = (vulnerable_client,)))
+            ConfigureVulnerableClient(vulnerable_client)
+        for non_vulnerable_client in self.non_vulnerable_clients:
+            #t_pool.append(Thread(target = ConfigureNonVulnerableClient, args = (non_vulnerable_client,)))
+            ConfigureNonVulnerableClient(non_vulnerable_client)
+        # end critical section
+        
+        #t_pool = []
+        ConfigureAttackerServer()
+        ConfigureMaliciousClient()
+        #for i, thread in enumerate(t_pool):
+        #    thread.start()
+        #for i, thread in enumerate(t_pool):
+        #    thread.join()
+        #ConfigureAttackerServer()
+        #ConfigureMaliciousClient()
+        
         # tmp solution, should be deal in the future
         for vulnerable_client in self.vulnerable_clients:
             vulnerable_client.tmp_noexec()
@@ -1185,6 +1227,7 @@ class Creme:
                                                                 final_name_atop, time_window_traffic)
         # balance data and filter features
         ProcessDataHelper.balance_data(folder_atop, final_name_atop)
+        ProcessDataHelper.balance_data(folder_traffic, final_name_traffic, balanced_label_zero = False)
         ProcessDataHelper.filter_features(folder_atop, final_name_atop, 0.1)
         ProcessDataHelper.filter_features(folder_traffic, final_name_traffic, 0.04)
         ProgressHelper.update_stage(stage, f"Finished processing the accounting and network packet data sources", 5,
@@ -1317,29 +1360,32 @@ class Creme:
         ProgressHelper.update_stage(stage, f"Finished evaluation:", 5, finished_task=True, finished_stage=True)
 
     def run(self):
-        self.configure()
-
-        if Creme.mirai:
-            self.run_mirai()
-        if Creme.disk_wipe:
-            self.run_disk_wipe()
-        if Creme.ransomware:
-            self.run_ransomware()
-        if Creme.resource_hijacking:
-            self.run_resource_hijacking()
-        if Creme.end_point_dos:
-            self.run_end_point_dos()
-        if Creme.data_theft:
-            self.run_data_theft()
-        if Creme.rootkit_ransomware:
-            self.run_rootkit_ransomware()
-
+        if not Creme.skip_configuration:
+            self.configure()
+        if not Creme.skip_reproduction:
+            if Creme.mirai:
+                self.run_mirai()
+            if Creme.disk_wipe:
+                self.run_disk_wipe()
+            if Creme.ransomware:
+                self.run_ransomware()
+            if Creme.resource_hijacking:
+                self.run_resource_hijacking()
+            if Creme.end_point_dos:
+                self.run_end_point_dos()
+            if Creme.data_theft:
+                self.run_data_theft()
+            if Creme.rootkit_ransomware:
+                self.run_rootkit_ransomware()
         # process data
-        data_sources = self.process_data()
+        if not Creme.skip_data_processing:
+            data_sources = self.process_data()
 
         # train ML
-        eff_result = self.train_ML(data_sources)
+        if not Creme.skip_ML_training:
+            eff_result = self.train_ML(data_sources)
 
         # evaluation
-        self.evaluation(eff_result)
+        if not Creme.skip_evaluation:
+            self.evaluation(eff_result)
 

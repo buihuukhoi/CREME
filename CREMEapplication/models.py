@@ -45,34 +45,34 @@ class Testbed(models.Model):
 
 
 class Controller(models.Model):
-    hostname = models.CharField(max_length=255)
-    ip = models.CharField(max_length=255)
-    username = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
-    path = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255,default="controller-VirtualBox")
+    ip = models.CharField(max_length=255,default="192.168.1.35")
+    username = models.CharField(max_length=255,default="controller")
+    password = models.CharField(max_length=255,default="qsefthuk")
+    path = models.CharField(max_length=255,default="/home/controller")
 
 
 class DataLoggerServer(models.Model):
-    hostname = models.CharField(max_length=255)
-    ip = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255,default="data-logger-server")
+    ip = models.CharField(max_length=255,default="192.168.1.5")
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
-    network_interface = models.CharField(max_length=255)
+    network_interface = models.CharField(max_length=255,default="enp0s3")
     atop_interval = models.IntegerField(default=1)  # second
 
 
 class TargetServer(models.Model):
-    hostname = models.CharField(max_length=255)
-    ip = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255,default="target-server-1")
+    ip = models.CharField(max_length=255,default="192.168.1.11")
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
 
 
 class BenignServer(models.Model):
-    hostname = models.CharField(max_length=255)
-    ip = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255,default="benign-server-1")
+    ip = models.CharField(max_length=255,default="192.168.1.21")
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
@@ -95,8 +95,8 @@ class NonVulnerableClient(models.Model):
 
 
 class AttackerServer(models.Model):
-    hostname = models.CharField(max_length=255)
-    ip = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255,default="attacker-server")
+    ip = models.CharField(max_length=255,default="192.168.1.36")
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/home/attacker-server/Desktop/reinstall")
@@ -106,8 +106,8 @@ class AttackerServer(models.Model):
 
 
 class MaliciousClient(models.Model):
-    hostname = models.CharField(max_length=255)
-    ip = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255,default="malicious-client")
+    ip = models.CharField(max_length=255,default="192.168.1.103")
     username = models.CharField(max_length=255, default="root")
     password = models.CharField(max_length=255, default="qsefthuk")
     path = models.CharField(max_length=255, default="/root")
@@ -131,6 +131,12 @@ class MachineLearningModel(models.Model):
     random_forest = models.BooleanField(default=True)
     XGBoost = models.BooleanField(default=True)
 
+class SkipStage(models.Model):
+    skip_configuration = models.BooleanField(default=False)
+    skip_reproduction = models.BooleanField(default=False)
+    skip_data_processing = models.BooleanField(default=False)
+    skip_ML_training = models.BooleanField(default=False)
+    skip_evaluation = models.BooleanField(default=False)
 
 
 

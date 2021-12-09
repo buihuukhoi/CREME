@@ -1,108 +1,225 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
-    <script src="{% static 'javascript/script.js' %}"></script>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Dash Board</title>
-  </head>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
+  <script src="{% static 'javascript/script.js' %}"></script>
 
-  <body>
-    <div>
-        <h1><a href="/">CREME</a></h1>
+  <title>Dash Board</title>
+</head>
+
+<body>
+  <div>
+    <h1><a href="/">CREME</a></h1>
+  </div>
+  <div style="text-align:center;">
+    <h2 id="scenario"> Progress : Mirai </h2>
+  </div>
+
+  <br>
+
+  <div class="progress" style="height: 70px; font-size: 21px;">
+    <div id="status1" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar"
+      style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Configuration</div>
+    <div id="status2" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar"
+      style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 1</div>
+    <div id="status3" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar"
+      style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 2</div>
+    <div id="status4" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar"
+      style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 3</div>
+    <div id="status5" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar"
+      style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Data Processing
     </div>
-    <div style="text-align:center;">
-        <h2 id="scenario"> Progress : Mirai </h2>
+    <div id="status6" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar"
+      style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Training ML Models
     </div>
+    <div id="status7" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar"
+      style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Evaluation</div>
+  </div>
 
-    <br>
+  <br>
 
-    <div class="progress" style="height: 70px; font-size: 21px;">
-        <div id="status1" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Configuration</div>
-        <div id="status2" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 1</div>
-        <div id="status3" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 2</div>
-        <div id="status4" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Attack Phase 3</div>
-        <div id="status5" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Data Processing</div>
-        <div id="status6" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Training ML Models</div>
-        <div id="status7" class="progress-bar bg-dark progress-bar-striped progress-bar-animated" role="progressbar" style="width: 15%; font-weight: bold" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Evaluation</div>
-    </div>
-
-    <br>
-
-    <div class="row">
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-header" style="text-align:center">Configuration</h5>
-            <div id="detail1" class="card-text">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-header" style="text-align:center">Attack Phase 1<br>(Valid Accounts)</h5>
-            <div id="detail2" class="card-text">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-header" style="text-align:center">Attack Phase 2<br>(Non-App Layer Protocol)</h5>
-            <div id="detail3" class="card-text">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-header" style="text-align:center">Attack Phase 3<br>(Network DoS)</h5>
-            <div id="detail4" class="card-text"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-header" style="text-align:center">Data Processing</h5>
-            <div id="detail5" class="card-text"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-header" style="text-align:center">Training ML</h5>
-            <div id="detail6" class="card-text"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-header" style="text-align:center">Evaluation</h5>
-            <div id="detail7" class="card-text"></div>
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-header" style="text-align:center">Configuration</h5>
+          <div id="detail1" class="card-text">
           </div>
         </div>
       </div>
     </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-header" style="text-align:center">Attack Phase 1<br>(Valid Accounts)</h5>
+          <div id="detail2" class="card-text">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-header" style="text-align:center">Attack Phase 2<br>(Non-App Layer Protocol)</h5>
+          <div id="detail3" class="card-text">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-header" style="text-align:center">Attack Phase 3<br>(Network DoS)</h5>
+          <div id="detail4" class="card-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-header" style="text-align:center">Data Processing</h5>
+          <div id="detail5" class="card-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-header" style="text-align:center">Training ML</h5>
+          <div id="detail6" class="card-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-header" style="text-align:center">Evaluation</h5>
+          <div id="detail7" class="card-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <p>
+      Accuracy for accounting
+    </p>
+    <table id="table" class="display" style="width: 40%;">
+      <thead>
+        <tr>
+          <th>ML_algorithms</th>
+          <th>fit_time</th>
+          <th>score_time</th>
+          <th>test_accuracy</th>
+          <th>test_f1</th>
+          <th>test_precision</th>
+          <th>test_recall</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if d_accounting %}
+        {% for i in d_accounting %}
+        <tr>
+          <td>{{i.ML_algorithms}}</td>
+          <td>{{i.fit_time}}</td>
+          <td>{{i.score_time}}</td>
+          <td>{{i.test_accuracy}}</td>
+          <td>{{i.test_f1}}</td>
+          <td>{{i.test_precision}}</td>
+          <td>{{i.test_recall}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <<img src="CREME/CREME_backend_execution/evaluation_results/accuracy/accuracy_for_accounting.png" alt="Accuracy for accounting">
+  <div>
+    <p>
+      Accuracy for syslog
+    </p>
+    <table id="table" class="display" style="width: 50%;">
+      <thead>
+        <tr>
+          <th>ML_algorithms</th>
+          <th>fit_time</th>
+          <th>score_time</th>
+          <th>test_accuracy</th>
+          <th>test_f1</th>
+          <th>test_precision</th>
+          <th>test_recall</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if d_syslog %}
+        {% for i in d_syslog %}
+        <tr>
+          <td>{{i.ML_algorithms}}</td>
+          <td>{{i.fit_time}}</td>
+          <td>{{i.score_time}}</td>
+          <td>{{i.test_accuracy}}</td>
+          <td>{{i.test_f1}}</td>
+          <td>{{i.test_precision}}</td>
+          <td>{{i.test_recall}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <p>
+      Accuracy for traffic
+    </p>
+    <table id="table" class="display" style="width: 50%;">
+      <thead>
+        <tr>
+          <th>ML_algorithms</th>
+          <th>fit_time</th>
+          <th>score_time</th>
+          <th>test_accuracy</th>
+          <th>test_f1</th>
+          <th>test_precision</th>
+          <th>test_recall</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if d_traffic %}
+        {% for i in d_traffic %}
+        <tr>
+          <td>{{i.ML_algorithms}}</td>
+          <td>{{i.fit_time}}</td>
+          <td>{{i.score_time}}</td>
+          <td>{{i.test_accuracy}}</td>
+          <td>{{i.test_f1}}</td>
+          <td>{{i.test_precision}}</td>
+          <td>{{i.test_recall}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+</body>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
 </html>

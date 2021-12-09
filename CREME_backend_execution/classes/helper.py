@@ -19,7 +19,9 @@ from sklearn.feature_selection import RFECV
 import matplotlib.pyplot as plt
 import time
 import socket
-
+import time
+import numpy as np
+import random
 
 class ScriptHelper:
     @staticmethod
@@ -122,7 +124,9 @@ class ProgressHelper:
             icon = success_icon
         else:
             icon = running_icon
-        message = f'<h{size}>{icon} {message}</h{size}>'
+        localtime = time.localtime()
+        time_stamp =  time.strftime("%H:%M:%S", localtime)
+        message = f'<h{size}>{icon} {message} {time_stamp}</h{size}>'
         # message += "<br>"
 
         if override_pre_message:
@@ -135,8 +139,7 @@ class ProgressHelper:
             class_finish_stage = ' class="alert alert-success" role="alert"'
             finished_message = f'<h{size}{class_finish_stage}>{icon} {finished_message}</h{size}>'
             ProgressHelper.messages.append(finished_message)
-
-    @staticmethod
+    
     def update_stage(stage, message, size, finished_task=False, override_pre_message=False, finished_stage=False,
                      new_stage=False):
         """
@@ -799,6 +802,8 @@ class ProcessDataHelper:
         # print('label_0: {0}'.format(len(df_0)))
         # print('label_1: {0}'.format(len(df_1)))
 
+        
+        
         if balanced_label_zero:
             df_0.drop_duplicates(keep='last', inplace=True)
             num_of_label_0 = len(df_0)
@@ -806,11 +811,16 @@ class ProcessDataHelper:
             new_df_0 = pd.DataFrame()
             for i in range(num_of_label_1//num_of_label_0 + 1):
                 new_df_0 = new_df_0.append(df_0)
-            # print('len(df_0) after remove duplicate and append several times: {0}'.format(len(new_df_0)))
-            # print('len(df_1): {0}'.format(len(df_1)))
-
             df = new_df_0.append(df_1)
-            # print('len(df) after balance data: {0}'.format(len(df)))
+            
+        else:
+            df_0.drop_duplicates(keep='last', inplace=True)
+            num_of_label_0 = len(df_0)
+            num_of_label_1 = len(df_1)
+            if("traffic" in input_file):
+                ind = df_0[(df_0['Sum'] == 0.0) | (df_0['Min'] == 0.0) | (df_0['Max'] == 0.0)].index
+                df_0.drop(ind,inplace = True)
+            df = df_1.append(df_0)
 
         df.to_csv(os.path.join(folder, input_file), encoding='utf-8', index=False)
 
@@ -881,17 +891,17 @@ class TrainMLHelper:
         def define_models(models_name):
             models = dict()
             if 'decision_tree' in models_name:
-                models['decision_tree'] = DecisionTreeClassifier()
+                models['decision_tree'] = DecisionTreeClassifier(random_state=1)
             if 'naive_bayes' in models_name:
                 models['naive_bayes'] = GaussianNB()
             if 'extra_tree' in models_name:
-                models['extra_tree'] = ExtraTreeClassifier()
+                models['extra_tree'] = ExtraTreeClassifier(random_state=1)
             if 'knn' in models_name:
                 models['knn'] = KNeighborsClassifier()
             if 'random_forest' in models_name:
-                models['random_forest'] = RandomForestClassifier()
+                models['random_forest'] = RandomForestClassifier(n_jobs=-1,random_state=1)
             if 'XGBoost' in models_name:
-                models['XGBoost'] = XGBClassifier()
+                models['XGBoost'] = XGBClassifier(n_jobs=-1,random_state=1)
             # print('Defined %d models' % len(models))
             return models
 
@@ -941,6 +951,17 @@ class TrainMLHelper:
                 writer.writeheader()
                 for data in csv_rows:
                     writer.writerow(data)
+            # draw chart
+            csv_file = os.path.join(output_folder, csv_output_file)
+            df = pd.read_csv(csv_file)
+            ax = df.plot.barh(x='ML_algorithms',y=['test_accuracy','test_f1','test_precision','test_recall'],width=0.8,figsize=(10,10))
+            ax.legend(bbox_to_anchor=(1.1,1.1))
+            for i in ax.patches:
+                ax.text(i.get_width(), i.get_y()+0.1, 
+                        str(round((i.get_width()), 2)), 
+                        fontsize=10, fontweight='bold', 
+                        color='grey') 
+            ax.get_figure().savefig(os.path.join(output_folder,'accuracy_for_{0}.png'))
         except IOError:
             print("I/O error")
             output_folder = None

@@ -1,6 +1,6 @@
 from CREME.celery import app
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, \
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel, SkipStage
 from CREME_backend_execution.classes import machines
 from CREME_backend_execution.classes.CREME import Creme
 
@@ -52,6 +52,13 @@ def load_testbed_information():
         models_name.append("random_forest")
     if info_machine_learning_model.XGBoost:
         models_name.append("XGBoost")
+
+    info_skip_stage = SkipStage.objects.all().first()
+    skip_configuration = info_skip_stage.skip_configuration
+    skip_reproduction = info_skip_stage.skip_reproduction
+    skip_data_processing = info_skip_stage.skip_data_processing
+    skip_ML_training = info_skip_stage.skip_ML_training
+    skip_evaluation = info_skip_stage.skip_evaluation
 
     # ===> prepare machine's information for a Creme object <===
     machines.Machine.controller_hostname = info_controller.hostname
@@ -112,7 +119,7 @@ def load_testbed_information():
     Creme.models_name = models_name[:]
     creme = Creme(dls, target_server, benign_server, vulnerable_clients, non_vulnerable_clients, attacker_server,
                   malicious_client, mirai, ransomware, resource_hijacking, disk_wipe, end_point_dos, data_theft,
-                  rootkit_ransomware)
+                  rootkit_ransomware, skip_configuration, skip_reproduction, skip_data_processing, skip_ML_training, skip_evaluation)
     creme.run()
     # creme.test_print_information()
     # creme.configure()

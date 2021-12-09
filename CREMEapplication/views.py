@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from .models import Testbed, Controller, DataLoggerServer, TargetServer, BenignServer, VulnerableClient, \
-    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel
+    NonVulnerableClient, AttackerServer, MaliciousClient, AttackScenario, ProgressData, MachineLearningModel, SkipStage
 from .forms import TestbedForm, ControllerForm, DataLoggerServerForm, TargetServerForm, BenignServerForm, \
     VulnerableClientForm, NonVulnerableClientForm, AttackerServerForm, MaliciousClientForm, AttackScenarioForm, \
-    MachineLearningModelForm
+    MachineLearningModelForm, SkipStageForm
 from django.shortcuts import redirect
 
 from .serializers import ProgressDataSerializer
@@ -13,8 +13,8 @@ from .tasks import execute_toolchain
 from django.contrib import messages
 import os
 import socket
-
-
+import json
+import pandas as pd
 # Create your views here.
 
 
@@ -81,7 +81,31 @@ def validate_ips(hostname_ip_map):
 
 def dashboard(request):
     create_progress_data_if_not_exist()
-    return render(request, 'testbed/dashboard.html', {})
+    testbeds = Testbed.objects.all()
+    out = [[]]
+    headers = []
+    context = {}
+    if testbeds:
+        first_testbed = testbeds.first()
+        if first_testbed.status == 3:
+            # Ref : https://www.geeksforgeeks.org/rendering-data-frame-to-html-template-in-table-view-using-django-framework/
+            file_dir = os.path.dirname(__file__)
+            accuracy_dir =  os.path.join(file_dir, '../CREME_backend_execution/evaluation_results/accuracy')
+            data_sources = ['accounting','syslog','traffic']
+            
+            
+            for i, source in enumerate(data_sources):
+                data = []
+                csv_path = os.path.join(accuracy_dir, 'accuracy_for_{}.csv'.format(source))
+                df = pd.read_csv(csv_path) 
+                json_records = df.reset_index().to_json(orient ='records')
+                data.append([])
+                data = json.loads(json_records)
+                
+                context["d_{}".format(source)] =  data 
+                
+                
+    return render(request, 'testbed/dashboard.html', context)
 
 
 def new_testbed(request):
@@ -92,6 +116,7 @@ def new_testbed(request):
         form_testbed = TestbedForm(request.POST)
         form_attack_scenario = AttackScenarioForm(request.POST)
         form_machine_learning_model = MachineLearningModelForm(request.POST)
+        form_skip_stage = SkipStageForm(request.POST)
 
         if form_testbed.is_valid():
             testbeds = Testbed.objects.all()
@@ -135,6 +160,14 @@ def new_testbed(request):
                                                                        instance=first_machine_learning_model)
             form_machine_learning_model.save()
 
+        if form_skip_stage.is_valid():
+            skip_stages = SkipStage.objects.all()
+            if skip_stages:
+                first_skip_stage = skip_stages.first()
+                form_skip_stage = SkipStageForm(request.POST,
+                                                    instance=first_skip_stage)
+            form_skip_stage.save()
+
         # if not valid --> re-fill the form
         if not scenario_valid or not ml_model_valid:
             if not scenario_valid:
@@ -148,8 +181,10 @@ def new_testbed(request):
             dict_forms['Number of machines:'] = TestbedForm(request.POST)
             dict_forms['Scenario:'] = AttackScenarioForm(request.POST)
             dict_forms['Machine Learning model:'] = MachineLearningModelForm(request.POST)
-
+            dict_forms['Skip Stage:'] = SkipStageForm(request.POST)
             return render(request, 'testbed/new_testbed.html', {'dict_forms': dict_forms})
+
+        
 
         return redirect(NEW_TESTBED_INFORMATION)
 
@@ -158,6 +193,7 @@ def new_testbed(request):
         dict_forms['Number of machines:'] = TestbedForm()
         dict_forms['Scenario:'] = AttackScenarioForm()
         dict_forms['Machine Learning model:'] = MachineLearningModelForm()
+        dict_forms['Skip Stage:'] = SkipStageForm()
     return render(request, 'testbed/new_testbed.html', {'dict_forms': dict_forms})
 
 
@@ -166,7 +202,11 @@ def new_testbed_information(request):
         return redirect(NEW_TESTBED)
     if is_running_testbed():
         return redirect(DASHBOARD)
-
+    '''if SkipStage.skip_configuration and SkipStage.skip_reproduction:
+        create_progress_data_if_not_exist()
+        execute_toolchain.delay()
+        return redirect(DASHBOARD)'''
+        
     testbed = Testbed.objects.all().first()
     num_of_c = testbed.number_of_controller
     num_of_dls = testbed.number_of_data_logger_server
