@@ -3,7 +3,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project is a part of "CREME: A toolchain of automatic dataset collection for machine learning in intrusion detection" paper.
+This project is a part of [CREME: A toolchain of automatic dataset collection for machine learning in intrusion detection](https://www.sciencedirect.com/science/article/abs/pii/S1084804521002137) paper.
 
 ### Built With
 
