@@ -118,14 +118,14 @@ class Creme:
             self.malicious_client.configure()
             ProgressHelper.update_stage(stage, f"Controller FINISHED configuring {self.malicious_client.hostname}", 5,
                                         finished_task=True, override_pre_message=True, finished_stage=True)
-        t_pool = []
-        t_pool.append(Thread(target = ConfigureDataLoggerServer))
-        t_pool.append(Thread(target = ConfigureTargetServer))
-        t_pool.append(Thread(target = ConfigureBenignServer))
-        for i, thread in enumerate(t_pool):
-            thread.start()
-        for i, thread in enumerate(t_pool):
-            thread.join()
+        #t_pool = []
+        ConfigureDataLoggerServer()
+        ConfigureTargetServer()
+        ConfigureBenignServer())
+        #for i, thread in enumerate(t_pool):
+        #    thread.start()
+        #for i, thread in enumerate(t_pool):
+        #    thread.join()
             
         # critical section
         for vulnerable_client in self.vulnerable_clients:
