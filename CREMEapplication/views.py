@@ -202,10 +202,10 @@ def new_testbed_information(request):
         return redirect(NEW_TESTBED)
     if is_running_testbed():
         return redirect(DASHBOARD)
-    if SkipStage.skip_configuration and SkipStage.skip_reproduction:
+    '''if SkipStage.skip_configuration and SkipStage.skip_reproduction:
         create_progress_data_if_not_exist()
         execute_toolchain.delay()
-        return redirect(DASHBOARD)
+        return redirect(DASHBOARD)'''
         
     testbed = Testbed.objects.all().first()
     num_of_c = testbed.number_of_controller

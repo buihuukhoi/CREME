@@ -136,13 +136,13 @@ class Creme:
             ConfigureNonVulnerableClient(non_vulnerable_client)
         # end critical section
         
-        t_pool = []
-        t_pool.append(Thread(target = ConfigureAttackerServer))
-        t_pool.append(Thread(target = ConfigureMaliciousClient))
-        for i, thread in enumerate(t_pool):
-            thread.start()
-        for i, thread in enumerate(t_pool):
-            thread.join()
+        #t_pool = []
+        ConfigureAttackerServer()
+        ConfigureMaliciousClient()
+        #for i, thread in enumerate(t_pool):
+        #    thread.start()
+        #for i, thread in enumerate(t_pool):
+        #    thread.join()
         #ConfigureAttackerServer()
         #ConfigureMaliciousClient()
         
