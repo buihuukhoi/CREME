@@ -121,7 +121,7 @@ class Creme:
         #t_pool = []
         ConfigureDataLoggerServer()
         ConfigureTargetServer()
-        ConfigureBenignServer())
+        ConfigureBenignServer()
         #for i, thread in enumerate(t_pool):
         #    thread.start()
         #for i, thread in enumerate(t_pool):
