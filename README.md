@@ -15,11 +15,11 @@ This project is a part of [CREME: A toolchain of automatic dataset collection fo
 <!-- GETTING STARTED -->
 ## Getting Started
 
-For the first trial version, please refer to the document [here](https://drive.google.com/drive/folders/1YgQs4MJjuBBz8sdJkAw_0OIyy3_d5gsL?usp=sharing)
+For the first trial version, please refer to the document [here](https://drive.google.com/drive/folders/1haDkyRYzix_5OR4v_pgcRdD4Q-ERL7OQ?usp=share_link)
 
 
 <!-- Dataset -->
 ## Dataset
 
-The dataset can be found at [here](https://drive.google.com/drive/folders/1bEsx64H2vogJKgI_OTVQ8n71VahtLxz5?usp=sharing)
+The dataset can be found at [here](https://drive.google.com/drive/folders/1Pw2lXD1QsBkibd1klII38l9mjz9O9mAX?usp=share_link)
 
